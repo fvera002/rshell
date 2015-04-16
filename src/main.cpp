@@ -13,9 +13,6 @@
 #include <queue>
 using namespace std;
 
-//quando echo a || echo b; echo c
-//deve executar echo c
-
 bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
@@ -72,47 +69,57 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     commands.pop();
     
     //execpv and fork process
-    //cout << "_"<< com.toString() << "_"<< endl;
+    cout << "_"<< com.toString() << "_"<< endl;
     if(com.toString() == "exit") exit(0);
     bool ok = exec(com);
-    if(!ok){ //if command execution failed
-        if(!connectors.empty() && con != "&&"){ //if command FAILED and is diff form AND then GO ON
+    if(ok){ //SUCESS
+        if(!connectors.empty() && con == "||" ){
             connectors.pop();
-            run(commands, connectors);
-            return ;
+            commands.pop();
         }
-    } else { //if command execution succeed
-        if(!connectors.empty() && con != "||"){
+        else if(!connectors.empty() && ( con == "&&" || con == ";")){
             connectors.pop();
-            run(commands, connectors);
-            return ;
+        }
+    } else {//FAIL
+        //if command FAILED and is diff form AND then GO ON
+        if(!connectors.empty() && con != "&&"){ 
+            connectors.pop();
+            commands.pop();
+        }
+        //if command FAILED and is diff form AND then GO ON
+        else if(!connectors.empty() && ( con == "||" || con == ";")){ 
+            connectors.pop();
         }
     }
+    
+    run(commands, connectors);
+    return ;
 }
 
 string getPrompt(){
     char machine[50];
-    string user, ini;
+    string user;
+    string prompt;
+    
     struct passwd *pass = getpwuid(getuid());
     int host = gethostname(machine,50);
+    
     if(pass != NULL && host != -1){
         user = pass->pw_name;
-        ini = user + "@" + string(machine)  + "$ ";
+        prompt = user + "@" + string(machine)  + "$ ";
     } else{
-        ini = "$ ";
+        prompt = "$ ";
         if(pass == NULL)
-            perror("ERROR: hostName");
+            perror("There was an error in getPrompt > host name");
         if(host == -1)
-            perror("ERROR: ");
+            perror("There was an error ingetPrompt > machine");
     }
-    return ini; 
+    return prompt; 
 
 }
 
-
 int main()
 {
-
     while(true){
         cout << getPrompt();
         string st;
