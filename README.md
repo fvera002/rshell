@@ -6,16 +6,16 @@ This is an implementation of a command shell in which users can input either a s
 
 * this is an example of a single command:
 
-`ls`
+    `ls`
 
 * this is an example of mutiple commands separeted by the connector comma:
 
-`ls ; pwd ; echo test`
+    `ls ; pwd ; echo test`
 
-There are only 3 conectors supported:
+There are only 3 conectors supported by rshell:
 * `&&`  if a command is followed by `&&`, then the next command is executed only if the first one succeeds
 * `||`  if a command is followed by `||`, then the next command is executed only if the first one fails
-* `;`   if a command is followed by `;` then the next command is always executed 
+* `;`   if a command is followed by `;`, then the next command is always executed 
 
 A command can have mutiple arguments, also known as flags. For example:
 
@@ -29,10 +29,15 @@ Users can also include comments in a entry by using the character `#`:
 To be able to install and run the program, it's necessary to clone the repository, install and run the rshell. The following commands would do the described steps:
 
 `$ git clone  https://github.com/fvera002/rshell.git`
+
 `$ cd rshell`
+
 `$ git checkout hw0`
+
 `$ make`
+
 `$ bin/rshell` 
+
 
 Upon running, the program will display a prompt waiting for an entry:
 
@@ -46,7 +51,7 @@ It can also be used together with other commands and connectors. For instance:
 
 `ls -l ; pwd; exit`
 
-This last example would ran `ls -l` then `pwd`, so finally it would exit the program. 
+This last example would run `ls -l`, then `pwd`, so finally it would exit the program. 
 
 
 ## Bugs and Limitations
@@ -55,6 +60,6 @@ This last example would ran `ls -l` then `pwd`, so finally it would exit the pro
 
     `echo "This is README file" > README.md`
 
-Instead, it would echo exactly what was written: `"This is README file" > README.md`
+    Instead, it would echo exactly what was written: `"This is README file" > README.md`
 
 * Consequently, special signal commonly used in linux are not supported by rshell. Therfore the `^C` signal will not terminate the program; only the `exit` command will.
