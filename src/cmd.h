@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <vector>
 #include <queue>
-#include <boost/algorithm/string.hpp>
 using namespace std;
 
 class cmd
@@ -48,7 +47,8 @@ class cmd
             }
         }
         
-        void extComment(string &cmd){
+        void extComment(string &cmd)
+        {
             size_t found;
             found = cmd.find("#");
             if(found !=string::npos){
@@ -58,18 +58,28 @@ class cmd
             }
         }
         
-        bool isConnector(char a, char b){
+        bool isConnector(char a, char b)
+        {
             if(a==';') return true;
             if(a=='|' && b=='|') return true;
             if(a=='&' && b=='&') return true;
             return false;
         }
         
+        string trim(string const& str)
+        {
+            if(str.empty())return str;
+        
+            size_t first = str.find_first_not_of(' ');
+            size_t last  = str.find_last_not_of(' ');
+            return str.substr(first, last-first+1);
+        }
+        
     public:
         cmd(string command)
         {
             extComment(command);
-            input = command;
+            input = trim(command);
             buffer = new char[command.size()+1];
             c_argList = new char* [command.size()+1];
             strcpy(buffer, command.c_str());
@@ -119,11 +129,4 @@ class cmd
             return list;
         }
         
-        ~cmd(){
-            //delete[] buffer;
-        }
-};
-
-
-
 #endif
