@@ -73,8 +73,8 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     cmd com = commands.front();
     commands.pop();
     
-    //execpv and fork process
-    cout << "_"<< com.toString() << "_"<< endl;
+    // execpv and fork process
+    // cout << "_"<< com.toString() << "_"<< endl;
     if(com.toString() == "exit") exit(0);
     bool ok = exec(com);
     if(ok){ //SUCESS
@@ -103,19 +103,19 @@ void run(queue<cmd> &commands, queue<string> &connectors)
 
 // returns a string with user and machine name
 string getPrompt(){
-    char machine[50];
+    char machine[128];
     string user;
     string prompt;
     
-    struct passwd *pass = getpwuid(getuid());
-    int host = gethostname(machine,50);
+    struct passwd *pw  = getpwuid(getuid());
+    int host = gethostname(machine,128);
     
-    if(pass != NULL && host != -1){
-        user = pass->pw_name;
+    if(pw != NULL && host != -1){
+        user = pw->pw_name;
         prompt = user + "@" + string(machine)  + "$ ";
     } else{
         prompt = "$ ";
-        if(pass == NULL)
+        if(pw == NULL)
             perror("There was an error in getpwuid()");
         if(host == -1)
             perror("There was an error in gethostname()");
