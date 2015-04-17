@@ -62,7 +62,7 @@ class cmd
             }
         }
         
-		// return whether a and b together make a connector
+	// return whether a and b together make a connector
         bool isConnector(char a, char b)
         {
             if(a==';') return true;
@@ -83,10 +83,10 @@ class cmd
         
     public:
 
-		// constructor
-		// initialize members
-		// extract comments
-		// split/tokenize
+	// constructor
+	// initialize members
+	// extract comments
+	// split/tokenize
         cmd(string command)
         {
             extComment(command);
@@ -120,9 +120,9 @@ class cmd
             cout <<endl;
         }
        
-		// split commands according to the connectors
-		// store the new pieces into a queue
-		// store the connectors inorder in another queue of connectors
+	// split commands according to the connectors
+	// store the new pieces into a queue
+	// store the connectors inorder in another queue of connectors
         queue<cmd> split(queue<string> &connectors)
         {
             queue<cmd> list;
