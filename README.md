@@ -1,6 +1,12 @@
 #Rshell
 HW0 CS100 Spring 2015
 
+##Licensing
+Please check the LICENSE file.
+
+##Authors and contributors
+Fernando Donizete Verago Junior
+
 ##General Information
 This is an implementation of a command shell in which users can input either a simple command or multiple commands at a single entry by using connectors. 
 
@@ -26,17 +32,18 @@ Users can also include comments in a entry by using the character `#`:
 `ls -a #this is a comment`
 
 ##How to run
-To be able to install and run the program, it's necessary to clone the repository, install and run the rshell. The following commands would do the described steps:
+To be able to install and run the program, it's necessary to clone the repository, run the make command, then finally run rshell that is going to be located in the bin folder. The following commands would do the described steps:
+```
+$ git clone  https://github.com/fvera002/rshell.git
 
-`$ git clone  https://github.com/fvera002/rshell.git`
+$ cd rshell
 
-`$ cd rshell`
+$ git checkout hw0
 
-`$ git checkout hw0`
+$ make
 
-`$ make`
-
-`$ bin/rshell` 
+$ bin/rshell
+```
 
 
 Upon running, the program will display a prompt waiting for an entry:
@@ -63,3 +70,5 @@ This last example would run `ls -l`, then `pwd`, so finally it would exit the pr
     Instead, it would echo exactly what was written: `"This is README file" > README.md`
 
 * Consequently, special signal commonly used in linux are not supported by rshell. Therfore the `^C` signal will not terminate the program; only the `exit` command will.
+
+* It's possible to run several commands in a single input; however there is a limitations of characters accepted. In our tests the limit was 4094 charecters for a single line. 
