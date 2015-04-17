@@ -126,10 +126,13 @@ class cmd
         queue<cmd> split(queue<string> &connectors)
         {
             queue<cmd> list;
+			if(input.empty()) return list;
+
             int i =0;
             string newCmd;
             string con;
-            for(unsigned j=0; j< input.size()-1; ++j){
+           
+			for(unsigned j=0; j< input.size()-2; ++j){
                 if(isConnector(input[j], input[j+1])){
                     newCmd = input.substr(i,j-i); 
                     list.push(cmd(newCmd));
@@ -142,6 +145,7 @@ class cmd
                 
             }
             newCmd = input.substr(i); 
+            if(newCmd.at(newCmd.size()-1)==';') newCmd = newCmd.substr(0, newCmd.length() -1);
             list.push(cmd(newCmd));
             return list;
         }
