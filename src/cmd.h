@@ -19,6 +19,7 @@ class cmd
         string comment;
         string input;
         
+        // prints c_argList showing each char
         void print(int argc)
         {
             int i = 0;int j = 0;
@@ -34,6 +35,8 @@ class cmd
             }
         }
         
+        // split the buffer using space as reference
+        // store each piece in c_argList and v_argList
         void tokenize()
         {
             int argc;
@@ -47,6 +50,7 @@ class cmd
             }
         }
         
+        // extract comment from cmd and save it in comment
         void extComment(string &cmd)
         {
             size_t found;
@@ -58,6 +62,7 @@ class cmd
             }
         }
         
+		// return whether a and b together make a connector
         bool isConnector(char a, char b)
         {
             if(a==';') return true;
@@ -66,6 +71,7 @@ class cmd
             return false;
         }
         
+        // extract the spaces in the beginning and at the end of str
         string trim(string const& str)
         {
             if(str.empty())return str;
@@ -76,6 +82,11 @@ class cmd
         }
         
     public:
+
+		// constructor
+		// initialize members
+		// extract comments
+		// split/tokenize
         cmd(string command)
         {
             extComment(command);
@@ -88,16 +99,19 @@ class cmd
             //print();
         }
         
+        // return the c_string version of the command
         char** toArray()
         {
             return c_argList;
         }
         
+        // return the string version of the command
         string toString()
         {
             return input;
         }
         
+        // print commands separeted by _ to check blank spaces
         void print()
         {
             for(unsigned i=0; i< v_argList.size(); ++i){
@@ -105,7 +119,10 @@ class cmd
             }
             cout <<endl;
         }
-        
+       
+		// split commands according to the connectors
+		// store the new pieces into a queue
+		// store the connectors inorder in another queue of connectors
         queue<cmd> split(queue<string> &connectors)
         {
             queue<cmd> list;
@@ -128,5 +145,5 @@ class cmd
             list.push(cmd(newCmd));
             return list;
         }
-        
+};
 #endif
