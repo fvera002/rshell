@@ -17,6 +17,7 @@ bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
 
+// runs fork and execvp returning true if execvp succeed
 bool exec(cmd c)
 {
     int status;
@@ -48,6 +49,7 @@ bool exec(cmd c)
     return false; 
 }
 
+// aux run() by spliting the root command
 void runPrep(cmd &c)
 {
     queue<cmd> commands;
@@ -59,6 +61,9 @@ void runPrep(cmd &c)
     run(commands, connectors);
 }
 
+// do the logics of commands, executing execpv when needed 
+// then call run again recursively
+// or exits the program if it's the case
 void run(queue<cmd> &commands, queue<string> &connectors)
 {
     if(commands.empty()) return;
@@ -96,6 +101,7 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     return ;
 }
 
+// returns a string with user and machine name
 string getPrompt(){
     char machine[50];
     string user;
@@ -110,14 +116,17 @@ string getPrompt(){
     } else{
         prompt = "$ ";
         if(pass == NULL)
-            perror("There was an error in getPrompt > host name");
+            perror("There was an error in getpwuid()");
         if(host == -1)
-            perror("There was an error ingetPrompt > machine");
+            perror("There was an error in gethostname()");
     }
     return prompt; 
 
 }
 
+// main program
+// get input until in a infinite loop
+// within functions are responsible for exiting the program
 int main()
 {
     while(true){
