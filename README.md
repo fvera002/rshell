@@ -78,9 +78,11 @@ This last example would run `ls -l`, then `pwd`, so finally it would exit the pr
     Instead, it would echo exactly what was written: `"This is a README file" > README.md`
 
 * Running `bin/rshell` by redirecting its input would not work properly. 
-```
-Do not run:
-bin/rshell < tests.txt
-```
+    ```
+    Do not run:
+    bin/rshell < tests.txt
+    ```
 
 * It's possible to run a number of commands in a single input; however, there is a limitation of characters accepted depending on the environment. In most of the tests this limit was 4094 characters per entry.
+
+* The use of `\` may cause undefined behavior. 
