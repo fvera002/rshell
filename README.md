@@ -4,7 +4,7 @@ HW0 CS100 Spring 2015
 ##Licensing
 Please check the LICENSE file.
 
-##Authors and contributors
+##Authors and Contributors
 Fernando Donizete Verago Junior
 
 ##General Information
@@ -35,13 +35,9 @@ Users can also include comments in a entry by using the character `#`:
 To be able to install and run the program, it's necessary to clone the repository, run the make command, then finally run rshell that is going to be located in the bin folder. The following commands would do the described steps:
 ```
 $ git clone  https://github.com/fvera002/rshell.git
-
 $ cd rshell
-
 $ git checkout hw0
-
 $ make
-
 $ bin/rshell
 ```
 
@@ -60,6 +56,17 @@ It can also be used together with other commands and connectors. For instance:
 
 This last example would run `ls -l`, then `pwd`, so finally it would exit the program. 
 
+When mixing up connectors in a single entry, rshell group the commands from left to right. For example:
+
+`echo a || echo b && echo c && echo d`
+
+This command would return: 
+```
+a
+c
+d
+```
+Since `echo a` succeed, `echo b` is not executed. Then `echo c` is run because the previous command failed. Finally, `echo d` is executed also because `echo c` succeed. 
 
 ## Bugs and Limitations
 
@@ -71,4 +78,4 @@ This last example would run `ls -l`, then `pwd`, so finally it would exit the pr
 
 * Consequently, special signal commonly used in linux are not supported by rshell. Therfore the `^C` signal will not terminate the program; only the `exit` command will.
 
-* It's possible to run several commands in a single input; however there is a limitations of characters accepted. In our tests the limit was 4094 charecters for a single line. 
+* It's possible to run several commands in a single input; however there is a limitation of characters accepted. In the test run on hammer the limit was 4094 characters per entry. 
