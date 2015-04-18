@@ -31,7 +31,7 @@ Users can also include comments in a entry by using the character `#`:
 
 `ls -a #this is a comment`
 
-##How to run
+##Installation
 To be able to install and run the program, it's necessary to clone the repository, run the make command, then finally run rshell that is going to be located in the bin folder. The following commands would do the described steps:
 ```
 $ git clone  https://github.com/fvera002/rshell.git
@@ -76,6 +76,4 @@ Since `echo a` succeed, `echo b` is not executed. Then `echo c` is run because t
 
     Instead, it would echo exactly what was written: `"This is README file" > README.md`
 
-* Consequently, special signal commonly used in linux are not supported by rshell. Therfore the `^C` signal will not terminate the program; only the `exit` command will.
-
-* It's possible to run several commands in a single input; however there is a limitation of characters accepted. In the test run on hammer the limit was 4094 characters per entry. 
+* It's possible to run a number of commands in a single input; however, there is a limitation of characters accepted depending on the environment. In most of the tests enviroment this limit was 4094 characters per entry.
