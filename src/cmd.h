@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <vector>
 #include <queue>
+#include <boost/tokenizer.hpp>
 using namespace std;
 
 class cmd
@@ -23,11 +24,9 @@ class cmd
         void print(int argc)
         {
             int i = 0;int j = 0;
-            while(i < argc-1)
-            {
+            while(i < argc-1){
                 j=0;
-                while(*(c_argList[i]+j) != '\0')
-                {
+                while(*(c_argList[i]+j) != '\0'){
                     printf("arg[%d][%d] : %c\n", i,j,*(c_argList[i]+(j)));
                     j++;
                 } 
@@ -62,12 +61,19 @@ class cmd
             }
         }
         
-	// return whether a and b together make a connector
+        // return whether a and b together make a connector
         bool isConnector(char a, char b)
         {
-            if(a==';') return true;
+            if(a==';' || b==';') return true;
             if(a=='|' && b=='|') return true;
             if(a=='&' && b=='&') return true;
+            return false;
+        }
+        
+        // return whether a or b is a comma
+        bool isComma(char a, char b)
+        {
+            if(a==';' || b==';') return true;
             return false;
         }
         
@@ -83,10 +89,10 @@ class cmd
         
     public:
 
-	// constructor
-	// initialize members
-	// extract comments
-	// split/tokenize
+        // constructor
+        // initialize members
+        // extract comments
+        // split/tokenize
         cmd(string command)
         {
             extComment(command);
@@ -120,33 +126,37 @@ class cmd
             cout <<endl;
         }
        
-	// split commands according to the connectors
-	// store the new pieces into a queue
-	// store the connectors inorder in another queue of connectors
+        // split commands according to the connectors
+        // store the new pieces into a queue
+        // store the connectors inorder in another queue of connectors
         queue<cmd> split(queue<string> &connectors)
         {
             queue<cmd> list;
-			if(input.empty()) return list;
-
-            int i =0;
-            string newCmd;
-            string con;
-           
-			for(unsigned j=0; j< input.size()-2; ++j){
-                if(isConnector(input[j], input[j+1])){
-                    newCmd = input.substr(i,j-i); 
-                    list.push(cmd(newCmd));
-                    int nx = j+1;
-                    if(input.at(nx)== '|' || input.at(nx)== '&' )++nx;
-                    con = input.substr(j,nx-j);
-                    connectors.push(con);
-                    i= nx;
+            if(input.empty()) return list;
+            if(input.size()>2){
+                for(unsigned i =0; i< input.size()-2; ++i){
+                    if(isConnector(input[i], input[i+1])){
+                        string con = input.substr(i , 2);
+                        
+                        if(isComma(input[i], input[i+1])){
+                            con = ";";
+                            ++i;
+                        }
+                        connectors.push(con);
+                    }
                 }
-                
             }
-            newCmd = input.substr(i); 
-            if(newCmd.at(newCmd.size()-1)==';') newCmd = newCmd.substr(0, newCmd.length() -1);
-            list.push(cmd(newCmd));
+                    
+                    
+            
+            typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+            boost::char_separator<char> sep("&;|");
+            tokenizer tokens(input, sep);
+            tokenizer::iterator tok_iter;
+            
+            for (tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter){
+                list.push(*tok_iter);
+            }
             return list;
         }
 };
