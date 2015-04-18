@@ -1,0 +1,739 @@
+Script started on Fri 17 Apr 2015 07:11:40 PM PDT
+~
+fvera002@hammer $ cd she[K[K[K[K[K[Kcs[K[Kcd cs100/rshell
+~/cs100/rshell
+fvera002@hammer $ make
+mkdir -p bin
+cd bin; g++ ../src/main.cpp -g -Wall -Werror -ansi -pedantic -o rshell
+~/cs100/rshell
+fvera002@hammer $ bin/rshell
+fvera002@hammer.cs.ucr.edu$ ;
+fvera002@hammer.cs.ucr.edu$ ;;;; ahdjkhk
+There was an error in execvp(): No such file or directory
+fvera002@hammer.cs.ucr.edu$ ||
+fvera002@hammer.cs.ucr.edu$ ||||||
+fvera002@hammer.cs.ucr.edu$ &&
+fvera002@hammer.cs.ucr.edu$ &&& exit
+~/cs100/rshell
+fvera002@hammer $ bin/rshell
+fvera002@hammer.cs.ucr.edu$ ls
+bin  LICENSE  Makefile	README.md  src	tests
+fvera002@hammer.cs.ucr.edu$ ls -a
+.  ..  bin  .git  LICENSE  Makefile  README.md	src  tests
+fvera002@hammer.cs.ucr.edu$ ls -l;
+total 24
+drwx------ 2 fvera002 csmajs 4096 Apr 17 19:06 bin
+-rw------- 1 fvera002 csmajs 1473 Apr 17 19:05 LICENSE
+-rw------- 1 fvera002 csmajs  298 Apr 17 19:05 Makefile
+-rw------- 1 fvera002 csmajs 3015 Apr 17 19:05 README.md
+drwx------ 2 fvera002 csmajs 4096 Apr 17 19:05 src
+drwx------ 2 fvera002 csmajs 4096 Apr 17 19:06 tests
+fvera002@hammer.cs.ucr.edu$ vim test.cpp
+7[?47h[?1h=[1;42r[m[H[2J[42;1H"test.cpp" [New File][>c[1;1H[33m  1 [m
+[1m[34m~                                                                                                                                                  [3;1H~                                                                                                                                                  [4;1H~                                                                                                                                                  [5;1H~                                                                                                                                                  [6;1H~                                                                                                                                                  [7;1H~                                                                                                                                                  [8;1H~                                                                                                                                                  [9;1H~                                                                                                                                                  [10;1H~                                                                                                                                                  [11;1H~                                                                                                                                                  [12;1H~                                                                                                                                                  [13;1H~                                                                                                                                                  [14;1H~                                                                                                                                                  [15;1H~                                                                                                                                                  [16;1H~                                                                                                                                                  [17;1H~                                                                                                                                                  [18;1H~                                                                                                                                                  [19;1H~                                                                                                                                                  [20;1H~                                                                                                                                                  [21;1H~                                                                                                                                                  [22;1H~                                                                                                                                                  [23;1H~                                                                                                                                                  [24;1H~                                                                                                                                                  [25;1H~                                                                                                                                                  [26;1H~                                                                                                                                                  [27;1H~                                                                                                                                                  [28;1H~                                                                                                                                                  [29;1H~                                                                                                                                                  [30;1H~                                                                                                                                                  [31;1H~                                                                                                                                                  [32;1H~                                                                                                                                                  [33;1H~                                                                                                                                                  [34;1H~                                                                                                                                                  [35;1H~                                                                                                                                                  [36;1H~                                                                                                                                                  [37;1H~                                                                                                                                                  [38;1H~                                                                                                                                                  [39;1H~                                                                                                                                                  [40;1H~                                                                                                                                                  [41;1H~                                                                                                                                                  [m[42;130H0,0-1[9CAll[1;5HP+q436f\P+q6b75\P+q6b64\P+q6b72\P+q6b6c\P+q2332\P+q2334\P+q2569\P+q2a37\P+q6b31\[42;120H:[1;5H[42;1H[K[42;1H:q![42;1H[K[42;1H[?1l>[2J[?47l8fvera002@hammer.cs.ucr.edu$ echo hello "e no work"  quotes"
+hello "no work quotes"
+fvera002@hammer.cs.ucr.edu$ mdkir    ddir    kdir test
+fvera002@hammer.cs.ucr.edu$ ls -l test;
+total 0
+fvera002@hammer.cs.ucr.edu$ ls
+bin  LICENSE  Makefile	README.md  src	test  tests
+fvera002@hammer.cs.ucr.edu$ mkdir test || echo exists already
+mkdir: cannot create directory `test': File exists
+exists already
+fvera002@hammer.cs.ucr.edu$ 
+fvera002@hammer.cs.ucr.edu$ |
+fvera002@hammer.cs.ucr.edu$ git status && gis t log
+# On branch exec
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	bin/
+#	tests/
+nothing added to commit but untracked files present (use "git add" to track)
+[?1h=commit b7852d843b8aed82b5b6673207b6a50f370f1d04[m
+Author: fvera002 <fernandoverago@hotmail.com>[m
+Date:   Fri Apr 17 19:04:14 2015 -0700[m
+[m
+    Update README.md[m
+    [m
+    fixed \[m
+[m
+commit 494729c86b7953652df33b6fa25a67a012812568[m
+Author: fvera002 <fernandoverago@hotmail.com>[m
+Date:   Fri Apr 17 19:03:39 2015 -0700[m
+[m
+    Update cmd.h[m
+    [m
+    fixed \[m
+[m
+commit 2c7c8df42200ee250d7bc59cdf4f9fe36df27655[m
+Author: fvera002 <fernandoverago@hotmail.com>[m
+Date:   Fri Apr 17 19:03:04 2015 -0700[m
+[m
+    Update main.cpp[m
+    [m
+    fixed \ bug[m
+[m
+commit 7c6e04993502f5fd3b68ebd33d6f27aee1ac6b3d[m
+Author: fvera002 <fernandoverago@hotmail.com>[m
+Date:   Fri Apr 17 18:14:25 2015 -0700[m
+[m
+    Update README.md[m
+    [m
+    new bug[m
+[m
+commit 9f7124f99d8f33cbbaa343ea2e9bba6ecd00d9a0[m
+Author: fvera002 <fernandoverago@hotmail.com>[m
+Date:   Fri Apr 17 17:43:19 2015 -0700[m
+[m
+    Update README.md[m
+    [m
+    corrected ordering. Added new bug[m
+[m
+commit ae3271c430ad5b1e4381aea249604e4253ed6271[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Fri Apr 17 17:30:41 2015 -0700[m
+:[K[K[m
+:[K[K    Update README.md[m
+:[K[K    [m
+:[K[K    deleted 1 false bug and corrected another[m
+:[K[K[m
+:[K[Kcommit f8e4519551c3eddfdd01df0682ff66582a82a92a[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Fri Apr 17 17:23:48 2015 -0700[m
+:[K[K[m
+:[K[K    Update README.md[m
+:[K[K    [m
+:[K[K    added explanation about connectors order of execution[m
+:[K[K[m
+:[K[Kcommit 0b37aed31561a57a2a7340750585dc07e8f2c5eb[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Fri Apr 17 17:00:15 2015 -0700[m
+:[K[K[m
+:[K[K    Update cmd.h[m
+:[K[K    [m
+:[K[K    corrected split function by using boost tokenizer[m
+:[K[K[m
+:[K[Kcommit beb9395bd267bf617f8ad3b9898b8fe98894a193[m
+:[K[KAuthor: Fernando Verago <fernandoverago@hotmail.com>[m
+:[K[KDate:   Fri Apr 17 16:30:21 2015 -0700[m
+:[K[K[m
+:[K[K    corrected bug #### ;;;;[m
+:[K[K[m
+:[K[Kcommit 5f01926bf2b183e7a900a769c27bda8feab39cb7[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Fri Apr 17 13:07:08 2015 -0700[m
+:[K[K[m
+:[K[K    Update README.md[m
+:[K[K    [m
+:[K[K    new bug[m
+:[K[K[m
+:[K[Kcommit 08423aa321675018069eb9bbef5ef0462c6aef5f[m
+:[K[KAuthor: Fernando Verago <fernandoverago@hotmail.com>[m
+:[K[KDate:   Fri Apr 17 12:42:22 2015 -0700[m
+:[K[K[m
+:[K[K    changed main, variables name and commented test[m
+:[K[K[m
+:[K[Kcommit 66ed03d201ff4093bd2f77eb5604eb90cc9c0013[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Thu Apr 16 21:03:51 2015 -0700[m
+:[K[K[m
+:[K[K    Update main.cpp[m
+:[K[K    [m
+:[K[K    added comments to each functions and corrected some error messages[m
+:[K[K[m
+:[K[Kcommit a4607652023eb5317cf9d61feadbb4956fd838fe[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Thu Apr 16 20:58:27 2015 -0700[m
+:[K[K[m
+:[K[K    Update cmd.h[m
+:[K[K    [m
+:[K[K    corrected indentation issues[m
+:[K[K[m
+:[K[Kcommit a6d6af893ac32ef2b5931e43dabe1cd2e87efcbe[m
+:[K[KAuthor: Fernando Verago <fernandoverago@hotmail.com>[m
+:[K[KDate:   Thu Apr 16 17:27:34 2015 -0700[m
+:[K[K[m
+:[K[K    corrected cmd.h and inserted comments describing all functions[m
+:[K[K[m
+:[K[Kcommit de0f0aa948a11fd6ebd1b1491e0beed0ccd7a77d[m
+:[K[KAuthor: Fernando Verago <fernandoverago@hotmail.com>[m
+:[K[KDate:   Thu Apr 16 17:13:19 2015 -0700[m
+:[K[K[m
+:[K[K    corrected Makefile mkdir[m
+:[K[K[m
+:[K[Kcommit d8203a4c59098982c8ccc6a1c6a64e8aca924d0f[m
+:[K[KAuthor: Fernando Verago <fernandoverago@hotmail.com>[m
+:[K[KDate:   Thu Apr 16 17:01:16 2015 -0700[m
+:[K[K[m
+:[K[K    Added Makefile[m
+:[K[K[m
+:[K[Kcommit d4dc8e0cd5a42b0c4f2f7400230826d533d8cded[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Thu Apr 16 15:47:46 2015 -0700[m
+:[K[K[m
+:[K[K    Update README.md[m
+:[K[K    [m
+:[K[K    corrected minor details[m
+:[K[K[m
+:[K[Kcommit a6f152f776ef7a2ee769e018d98d367931a30585[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Thu Apr 16 00:53:08 2015 -0700[m
+:[K[K[m
+:[K[K    Update cmd.h[m
+:[K[K    [m
+:[K[K    Added trim() and adjust constructor and split().[m
+:[K[K[m
+:[K[Kcommit f60bf4cdfc5330dc5dbf5aa23f0741831f1cd030[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Wed Apr 15 23:58:14 2015 -0700[m
+:[K[K[m
+:[K[K    Update README.md[m
+:[K[K    [m
+:[K[K    First draft.[m
+:[K[K[m
+:[K[Kcommit 1b8f1288c1ebd096972ed8201ef02c1ac4b5baab[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Wed Apr 15 21:58:45 2015 -0700[m
+:[K[K[m
+:[K[K    Update main.cpp[m
+:[K[K    [m
+:[K[K    Corrected logic about connectors. Now it (echo a || echo b; echo c) works like linux bash.[m
+:[K[K[m
+:[K[Kcommit eaa8616f5e9d938abd6538d2c1f3e58077da1f68[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Wed Apr 15 16:27:16 2015 -0700[m
+:[K[K[m
+:[K[K    Update README.md[m
+:[K[K    [m
+:[K[K    Added limitations[m
+:[K[K[m
+:[K[Kcommit f008606383a765c99aff9f0fe6d1b06d94237e2b[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Wed Apr 15 16:24:21 2015 -0700[m
+:[K[K[m
+:[K[K    Create cmd.h[m
+:[K[K    [m
+:[K[K    First big commit. Cmd working[m
+:[K[K[m
+:[K[Kcommit 2c38892cf9b5554470849728fcd00297ba7debe9[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Wed Apr 15 16:23:15 2015 -0700[m
+:[K[K[m
+:[K[K    Update main.cpp[m
+:[K[K    [m
+:[K[K    First big commit.[m
+:[K[K[m
+:[K[Kcommit a2c38e6f754b03953cd8b369774b7ea4996e9765[m
+:[K[KAuthor: Fernando Verago <fernandoverago@hotmail.com>[m
+:[K[KDate:   Wed Apr 15 16:13:33 2015 -0700[m
+:[K[K[m
+:[K[K    creating src/main.cpp[m
+:[K[K[m
+:[K[Kcommit dd3a1f5d6bc4f3e7847d7371dbd05facaa67c2cd[m
+:[K[KAuthor: fvera002 <fernandoverago@hotmail.com>[m
+:[K[KDate:   Wed Apr 15 15:52:40 2015 -0700[m
+:[K[K[m
+:[K[K    Initial commit[m
+:[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K[K[7m(END) [m[K[K [K::[Kqq[K[?1l>fvera002@hammer.cs.ucr.edu$ ajlkdfjalsjl || ahdjkahdak || echo ok
+There was an error in execvp(): No such file or directory
+There was an error in execvp(): No such file or directory
+ok
+fvera002@hammer.cs.ucr.edu$ #
+fvera002@hammer.cs.ucr.edu$ ### exit
+fvera002@hammer.cs.ucr.edu$ e exit #comment
+~/cs100/rshell
+fvera002@hammer $ bin/rshell
+fvera002@hammer.cs.ucr.edu$ ls #echo a
+bin  LICENSE  Makefile	README.md  src	test  tests
+fvera002@hammer.cs.ucr.edu$ echo 1;echo 2;echo 3;echo 4;echo 5;echo 6;echo 7;echo 8;echo 9;echo 10;echo 11;echo 12;echo 13;echo 14;echo 15;echo 16;echo 17;echo 18;echo 19;echo 20;echo 21;echo 22;echo 23;echo 24;echo 25;echo 26;echo 27;echo 28;echo 29;echo 30;echo 31;echo 32;echo 33;echo 34;echo 35;echo 36;echo 37;echo 38;echo 39;echo 40;echo 41;echo 42;echo 43;echo 44;echo 45;echo 46;echo 47;echo 48;echo 49;echo 50;echo 51;echo 52;echo 53;echo 54;echo 55;echo 56;echo 57;echo 58;echo 59;echo 60;echo 61;echo 62;echo 63;echo 64;echo 65;echo 66;echo 67;echo 68;echo 69;echo 70;echo 71;echo 72;echo 73;echo 74;echo 75;echo 76;echo 77;echo 78;echo 79;echo 80;echo 81;echo 82;echo 83;echo 84;echo 85;echo 86;echo 87;echo 88;echo 89;echo 90;echo 91;echo 92;echo 93;echo 94;echo 95;echo 96;echo 97;echo 98;echo 99;echo 100;echo 101;echo 102;echo 103;echo 104;echo 105;echo 106;echo 107;echo 108;echo 109;echo 110;echo 111;echo 112;echo 113;echo 114;echo 115;echo 116;echo 117;echo 118;echo 119;echo 120;echo 121;echo 122;echo 123;echo 124;echo 125;echo 126;echo 127;echo 128;echo 129;echo 130;echo 131;echo 132;echo 133;echo 134;echo 135;echo 136;echo 137;echo 138;echo 139;echo 140;echo 141;echo 142;echo 143;echo 144;echo 145;echo 146;echo 147;echo 148;echo 149;echo 150;echo 151;echo 152;echo 153;echo 154;echo 155;echo 156;echo 157;echo 158;echo 159;echo 160;echo 161;echo 162;echo 163;echo 164;echo 165;echo 166;echo 167;echo 168;echo 169;echo 170;echo 171;echo 172;echo 173;echo 174;echo 175;echo 176;echo 177;echo 178;echo 179;echo 180;echo 181;echo 182;echo 183;echo 184;echo 185;echo 186;echo 187;echo 188;echo 189;echo 190;echo 191;echo 192;echo 193;echo 194;echo 195;echo 196;echo 197;echo 198;echo 199;echo 200;echo 201;echo 202;echo 203;echo 204;echo 205;echo 206;echo 207;echo 208;echo 209;echo 210;echo 211;echo 212;echo 213;echo 214;echo 215;echo 216;echo 217;echo 218;echo 219;echo 220;echo 221;echo 222;echo 223;echo 224;echo 225;echo 226;echo 227;echo 228;echo 229;echo 230;echo 231;echo 232;echo 233;echo 234;echo 235;echo 236;echo 237;echo 238;echo 239;echo 240;echo 241;echo 242;echo 243;echo 244;echo 245;echo 246;echo 247;echo 248;echo 249;echo 250;echo 251;echo 252;echo 253;echo 254;echo 255;echo 256;echo 257;echo 258;echo 259;echo 260;echo 261;echo 262;echo 263;echo 264;echo 265;echo 266;echo 267;echo 268;echo 269;echo 270;echo 271;echo 272;echo 273;echo 274;echo 275;echo 276;echo 277;echo 278;echo 279;echo 280;echo 281;echo 282;echo 283;echo 284;echo 285;echo 286;echo 287;echo 288;echo 289;echo 290;echo 291;echo 292;echo 293;echo 294;echo 295;echo 296;echo 297;echo 298;echo 299;echo 300;echo 301;echo 302;echo 303;echo 304;echo 305;echo 306;echo 307;echo 308;echo 309;echo 310;echo 311;echo 312;echo 313;echo 314;echo 315;echo 316;echo 317;echo 318;echo 319;echo 320;echo 321;echo 322;echo 323;echo 324;echo 325;echo 326;echo 327;echo 328;echo 329;echo 330;echo 331;echo 332;echo 333;echo 334;echo 335;echo 336;echo 337;echo 338;echo 339;echo 340;echo 341;echo 342;echo 343;echo 344;echo 345;echo 346;echo 347;echo 348;echo 349;echo 350;echo 351;echo 352;echo 353;echo 354;echo 355;echo 356;echo 357;echo 358;echo 359;echo 360;echo 361;echo 362;echo 363;echo 364;echo 365;echo 366;echo 367;echo 368;echo 369;echo 370;echo 371;echo 372;echo 373;echo 374;echo 375;echo 376;echo 377;echo 378;echo 379;echo 380;echo 381;echo 382;echo 383;echo 384;echo 385;echo 386;echo 387;echo 388;echo 389;echo 390;echo 391;echo 392;echo 393;echo 394;echo 395;echo 396;echo 397;echo 398;echo 399;echo 400;echo 401;echo 402;echo 403;echo 404;echo 405;echo 406;echo 407;echo 408;echo 409;echo 410;echo 411;echo 412;echo 413;echo 414;echo 415;echo 416;echo 417;echo 418;echo 419;echo 420;echo 421;echo 422;echo 423;echo 424;echo 425;echo 426;echo 427;echo 428;echo 429;echo 430;echo 431;echo 432;echo 433;echo 434;echo 435;echo 436;echo 437;echo 438;echo 439;echo 440;echo 441;echo 442;echo 443;echo 444;echo 445;echo 446;echo 447;echo 448;echo 449;echo 450;echo 451;echo 452;echo 453;echo 454;echo 455;echo 456;echo 457;echo 458;echo 459;echo 460;echo 461;echo 462;echo 463;echo 464;echo 465;echo 466;
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+fvera002@hammer.cs.ucr.edu$ echo a || echo b && echo c && echo d
+a
+c
+d
+fvera002@hammer.cs.ucr.edu$ exit    bin/rshell
+fvera002@hammer.cs.ucr.edu$ echo within
+within
+fvera002@hammer.cs.ucr.edu$ exit
+fvera002@hammer.cs.ucr.edu$ echo outside
+outside
+fvera002@hammer.cs.ucr.edu$ exit    make
+mkdir -p bin
+cd bin; g++ ../src/main.cpp -g -Wall -Werror -ansi -pedantic -o rshell
+fvera002@hammer.cs.ucr.edu$ exit
+~/cs100/rshell
+fvera002@hammer $ bin/rshell
+fvera002@hammer.cs.ucr.edu$ echo works
+works
+fvera002@hammer.cs.ucr.edu$ g++     exit
+~/cs100/rshell
+fvera002@hammer $ exit
+exit
+
+Script done on Fri 17 Apr 2015 07:20:29 PM PDT
