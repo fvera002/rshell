@@ -62,12 +62,16 @@ class cmd
         }
         
         // return whether a and b together make a connector
-        bool isConnector(char a, char b)
+        void isConnector(char a, char b, queue<string> &connectors)
         {
-            if(a==';' || b==';') return true;
-            if(a=='|' && b=='|') return true;
-            if(a=='&' && b=='&') return true;
-            return false;
+            string con;
+            if(a==';' || b==';') con = ";";
+            if(a=='|' && b=='|') con = "||";
+            if(a=='&' && b=='&') con = "&&";
+            
+            if(!con.empty()){
+                connectors.push(con);
+            }
         }
         
         // return whether a or b is a comma
@@ -135,19 +139,10 @@ class cmd
             if(input.empty()) return list;
             if(input.size()>2){
                 for(unsigned i =0; i< input.size()-2; ++i){
-                    if(isConnector(input[i], input[i+1])){
-                        string con = input.substr(i , 2);
-                        
-                        if(isComma(input[i], input[i+1])){
-                            con = ";";
-                            ++i;
-                        }
-                        connectors.push(con);
-                    }
+                    isConnector(input[i], input[i+1], connectors);
+                    if(isComma(input[i], input[i+1]))++i;
                 }
             }
-                    
-                    
             
             typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
             boost::char_separator<char> sep("&;|");
