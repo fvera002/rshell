@@ -75,6 +75,7 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     
     // execpv and fork process
     // cout << "_"<< com.toString() << "_"<< endl;
+    // cout << "c " << con << "_" << endl;
     if(com.toString() == "exit") exit(0);
     bool ok = exec(com);
     if(ok){ //SUCESS
@@ -86,12 +87,10 @@ void run(queue<cmd> &commands, queue<string> &connectors)
             connectors.pop();
         }
     } else {//FAIL
-        //if command FAILED and is diff form AND then GO ON
-        if(!connectors.empty() && con != "&&"){ 
+        if(!connectors.empty() && con == "&&"){ 
             connectors.pop();
             commands.pop();
         }
-        //if command FAILED and is diff form AND then GO ON
         else if(!connectors.empty() && ( con == "||" || con == ";")){ 
             connectors.pop();
         }
@@ -141,3 +140,4 @@ int main()
     }
     return 0;
 }
+
