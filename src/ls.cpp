@@ -48,7 +48,7 @@ void print_ls(vector<string> &file_list)
 }
 
 //runs ls or ls -a in the file/directory f
-void ls_path(bool a, char *f)
+void ls_a(bool a, char *f)
 {
     DIR *dirp;
     if(NULL == (dirp = opendir(f))){
@@ -58,7 +58,7 @@ void ls_path(bool a, char *f)
     struct dirent *filespecs;
     errno = 0;
     vector<string> file_list;
-    while(NULL != (filespecs = readdir(dirp))){
+    while((filespecs = readdir(dirp)) != NULL){
         file_list.push_back(filespecs->d_name);
     }
     
@@ -76,30 +76,75 @@ void ls_path(bool a, char *f)
     }
 }
 
-void run_curr(char *p)
+void ls_l(bool a, char *f)
 {
-    p = new char[3];
-    strcpy(p, "./");
+    DIR *dirp;
+    if(NULL == (dirp = opendir(f))){
+        perror("There was an error with opendir(). ");
+        exit(1);
+    }
+    struct dirent *filespecs;
+    errno = 0;
+    vector<string> file_list;
+    while((filespecs = readdir(dirp)) != NULL){
+        file_list.push_back(filespecs->d_name);
+    }
+    sort(file_list.begin(), file_list.end(), compareFileName);
+    
+    FOR(file_list) { 
+        struct stat st;
+        if(stat(file_list[i].c_str(),&st) < 0){
+            perror("There was an error with stat(). ");
+            exit(1);
+        } else {
+            cout << ( (S_ISDIR(st.st_mode)) ? "d" : "-") ;
+            cout << ( (st.st_mode & S_IRUSR) ? "r" : "-");
+            cout << ( (st.st_mode & S_IWUSR) ? "w" : "-");
+            cout << ( (st.st_mode & S_IXUSR) ? "x" : "-");
+            cout << ( (st.st_mode & S_IRGRP) ? "r" : "-");
+            cout << ( (st.st_mode & S_IWGRP) ? "w" : "-");
+            cout << ( (st.st_mode & S_IXGRP) ? "x" : "-");
+            cout << ( (st.st_mode & S_IROTH) ? "r" : "-");
+            cout << ( (st.st_mode & S_IWOTH) ? "w" : "-");
+            cout << ( (st.st_mode & S_IXOTH) ? "x" : "-");
+            cout << " " << file_list[i] << endl;
+        }
+        
+    }
+    
+    if(errno != 0){
+        perror("There was an error with readdir(). ");
+        exit(1);
+    }
+    if(-1 == closedir(dirp)){
+        perror("There was an error with closedir(). ");
+        exit(1);
+    }
+    
+    
+    
+    
+
 }
+
 
 int main(int argc, char** argv)
 {
-    char * path;
     if(argc <= 1){
-        path = new char[3];
-        strcpy(path, "./");
-        ls_path(false, path);
+        char dir[] = "./";
+        ls_a(false, dir);
     }
-    else
-    {
+    else{
         if(argc == 2 && strcmp(argv[1], "-a")==0){
-            run_curr(path);
-            path = new char[3];
-            strcpy(path, "./");
-            ls_path(true, path);
+            char dir[] = "./";
+            ls_a(true, dir);
+        }
+        else if(argc == 2 && strcmp(argv[1], "-l")==0){
+            char dir[] = "./";
+            ls_l(false, dir);
         }
     }
     
-    delete [] path;
+    
     return 0;
 }
