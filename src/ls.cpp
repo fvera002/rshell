@@ -36,7 +36,7 @@ void print_ls_a(vector<string> &file_list)
     if(file_list.empty()) return;
     FOR(file_list){
         if(i == 0) cout<< file_list[i] ;
-        cout<< "  " << file_list[i] ; 
+        else cout<< "  " << file_list[i] ; 
     }
     cout << endl;
 }
@@ -161,7 +161,9 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
             exit(1);
         } else {
             if(S_ISDIR(st.st_mode)){
-                subs.push_back(file_list[i]);
+                if(!flags[0] || file_list[i].at(0) != '.'){
+                    subs.push_back(file_list[i]);
+                }
             }
         }        
     }
@@ -222,11 +224,11 @@ int main(int argc, char** argv)
     if(!flags[1] && !flags[2]){ // [ls -a], or only [ls]
         print_ls_a(file_names);
     }
-    else if(flags[1] && !flags[2]){ // if [ls -l] was passed in 
+    else if(flags[1] && !flags[2]){ // if [ls -l] or [ls -l -a] was passed in 
         // flag -a does not matter since set_file_names() has already taken care of it
         ls_l(file_names);
     }
-    else if(!flags[1] && flags[2]){ // if [ls -R] was passed in 
+    else if(!flags[1] && flags[2]){ // if [ls -R] or [ls -R -a] was passed in 
         // flag -a does not matter since set_file_names() has already taken care of it
         ls_R(file_names, flags, "./");
     }
