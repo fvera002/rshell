@@ -16,6 +16,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <cstring>
+#include <iomanip>
 
 using namespace std;
 
@@ -92,23 +93,23 @@ void print_line(struct stat &st, string &name){
     cout << ( (st.st_mode & S_IWOTH) ? "w" : "-");
     cout << ( (st.st_mode & S_IXOTH) ? "x" : "-");
     
-    cout << " " << st.st_nlink;
+    cout << " " << setw(1) << st.st_nlink;
     
     struct passwd *pw;
     if((pw = getpwuid(st.st_uid))  == NULL){
         perror("There was an error with getpwuid()");
         exit(1);
     }
-    cout << " " << (pw->pw_name); 
+    cout << " "  << (pw->pw_name); 
     
     struct group *g;
     if( ( g = getgrgid(st.st_gid) ) == NULL ) {
         perror("There was an error with getgrgid()");
         exit(1);
     }
-    cout << " " << (g->gr_name); 
+    cout << " "  << (g->gr_name); 
     
-    cout << " " << st.st_size;
+    cout << " "  << setw(5) << st.st_size;
     
     struct tm * time_st = localtime(&st.st_mtime);     
     if (time == NULL){
@@ -120,9 +121,9 @@ void print_line(struct stat &st, string &name){
         perror("There was an error with strftime()");
         exit(1);
     }
-    cout << " " << (buf); 
+    cout << " " << setw(12)<< (buf); 
     
-    cout << " " << name << endl;
+    cout << " "  << name << endl;
     
     
 }
@@ -240,7 +241,7 @@ int main(int argc, char** argv)
     // handles:
     // ls -l
     // ls -l -a
-    else if(flags[1] && !flags[2]){ 
+    else if(flags[1] && !flags[2]){ // if [ls -l] or [ls -l -a] was passed in 
         // flag -a does not matter since set_file_names() has already taken care of it
         ls_l(file_names);
     }
