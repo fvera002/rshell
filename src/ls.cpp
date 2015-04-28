@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <errno.h>
-
 #include <vector>
 #include <string>
 #include <algorithm> 
@@ -139,10 +138,7 @@ void ls_l(vector<string> &file_list)
         } else {
             print_line(st, file_list[i]);
         }
-        
     }
-    
-
 }
 
 void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
@@ -151,7 +147,7 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
     vector<string> subs;
     if(dir == "./") cout << ".:"<< endl;
     else cout << dir << ":"<< endl; 
-    print_ls_a(file_list);
+    if( !flags[1] ) print_ls_a(file_list);
     FOR(file_list) { 
         struct stat st;
         string fl = dir + "/"+ file_list[i];
@@ -164,8 +160,8 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
                 if(!flags[0] || file_list[i].at(0) != '.'){
                     subs.push_back(file_list[i]);
                 }
-                
             }
+            if(flags[1]) print_line(st, file_list[i]);
         }        
     }
     
@@ -187,47 +183,6 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
 
 }
 
-void ls_R_l(vector<string> &file_list, vector<bool> &flags, string dir)
-{
-    if(file_list.empty()) return;
-    vector<string> subs;
-    if(dir == "./") cout << ".:"<< endl;
-    else cout << dir << ":"<< endl; 
-    print_ls_a(file_list);
-    FOR(file_list) { 
-        struct stat st;
-        string fl = dir + "/"+ file_list[i];
-        
-        if(stat(fl.c_str(),&st) < 0){
-            perror("There was an error with stat()");
-            exit(1);
-        } else {
-            if(S_ISDIR(st.st_mode)){
-                if(!flags[0] || file_list[i].at(0) != '.'){
-                    subs.push_back(file_list[i]);
-                }
-            }
-            print_line(st, file_list[i]);
-        }        
-    }
-    
-    FOR(subs){
-        cout <<endl;
-        
-        string fl = subs[i];
-        if(dir == "./") fl = dir + fl;
-        else fl = dir + "/" + fl;
-        
-        char dir2[fl.size()+1];
-        
-        strcpy(dir2,fl.c_str());
-        
-        vector<string> subs2;
-        set_file_names(subs2, flags, dir2);
-        ls_R_l(subs2, flags, dir2);
-    }
-
-}
 
 void alltrue(vector<bool> &flags)
 {
@@ -275,24 +230,29 @@ int main(int argc, char** argv)
     char dir[] ="./";
     set_file_names(file_names, flags, dir);
     
-    
-    if(!flags[1] && !flags[2]){ // [ls -a], or only [ls]
+    // handles:
+    // ls
+    // ls -a
+    if(!flags[1] && !flags[2]){ 
         print_ls_a(file_names);
     }
-    else if(flags[1] && !flags[2]){ // if [ls -l] or [ls -l -a] was passed in 
+    
+    // handles:
+    // ls -l
+    // ls -l -a
+    else if(flags[1] && !flags[2]){ 
         // flag -a does not matter since set_file_names() has already taken care of it
         ls_l(file_names);
     }
-    else if(!flags[1] && flags[2]){ // if [ls -R] or [ls -R -a] was passed in 
-        // flag -a does not matter since set_file_names() has already taken care of it
+    
+    // handles:
+    // ls -R
+    // ls -R -a
+    // ls -R -a -l
+    else if(flags[2]){ 
+        // flag -a does not matter since set_file_names() is taking care of it
         ls_R(file_names, flags, "./");
     }
-    else if(flags[1] && flags[2]){ // if [ls -R -a] or [ls -R -l]was passed in 
-        // flag -a does not matter since set_file_names() has already taken care of it
-        ls_R_l(file_names, flags, "./");
-    }
-    
-    
     
     return 0;
     
