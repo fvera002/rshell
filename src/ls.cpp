@@ -164,6 +164,7 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
                 if(!flags[0] || file_list[i].at(0) != '.'){
                     subs.push_back(file_list[i]);
                 }
+                
             }
         }        
     }
@@ -183,12 +184,60 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
         set_file_names(subs2, flags, dir2);
         ls_R(subs2, flags, dir2);
     }
-    
-    
 
 }
 
-void set_flags(int argc, char** argv, vector<bool> &f){
+void ls_R_l(vector<string> &file_list, vector<bool> &flags, string dir)
+{
+    if(file_list.empty()) return;
+    vector<string> subs;
+    if(dir == "./") cout << ".:"<< endl;
+    else cout << dir << ":"<< endl; 
+    print_ls_a(file_list);
+    FOR(file_list) { 
+        struct stat st;
+        string fl = dir + "/"+ file_list[i];
+        
+        if(stat(fl.c_str(),&st) < 0){
+            perror("There was an error with stat()");
+            exit(1);
+        } else {
+            if(S_ISDIR(st.st_mode)){
+                if(!flags[0] || file_list[i].at(0) != '.'){
+                    subs.push_back(file_list[i]);
+                }
+            }
+            print_line(st, file_list[i]);
+        }        
+    }
+    
+    FOR(subs){
+        cout <<endl;
+        
+        string fl = subs[i];
+        if(dir == "./") fl = dir + fl;
+        else fl = dir + "/" + fl;
+        
+        char dir2[fl.size()+1];
+        
+        strcpy(dir2,fl.c_str());
+        
+        vector<string> subs2;
+        set_file_names(subs2, flags, dir2);
+        ls_R_l(subs2, flags, dir2);
+    }
+
+}
+
+void alltrue(vector<bool> &flags)
+{
+    FOR(flags){
+        flags[i] = true;
+    }
+}
+
+void set_flags(int argc, char** argv, vector<bool> &f)
+{
     // [0] = -a
     // [1] = -l
     // [2] = -R
@@ -204,7 +253,13 @@ void set_flags(int argc, char** argv, vector<bool> &f){
         else if(strcmp(argv[i], "-Rl")==0) f[2] = true, f[1] = true;
         else if(strcmp(argv[i], "-lR")==0) f[1] = true, f[2] = true;
         else if(strcmp(argv[i], "-aR")==0) f[0] = true, f[2] = true;
-        else if(strcmp(argv[i], "-Ra")==0) f[2] = true, f[0] = true; 
+        else if(strcmp(argv[i], "-Ra")==0) f[2] = true, f[0] = true;
+        else if(strcmp(argv[i], "-lRa")==0) alltrue(f);
+        else if(strcmp(argv[i], "-laR")==0) alltrue(f);
+        else if(strcmp(argv[i], "-Rla")==0) alltrue(f);
+        else if(strcmp(argv[i], "-Ral")==0) alltrue(f);
+        else if(strcmp(argv[i], "-aRl")==0) alltrue(f);
+        else if(strcmp(argv[i], "-alR")==0) alltrue(f);
     }
     
 }
@@ -232,8 +287,13 @@ int main(int argc, char** argv)
         // flag -a does not matter since set_file_names() has already taken care of it
         ls_R(file_names, flags, "./");
     }
+    else if(flags[1] && flags[2]){ // if [ls -R -a] or [ls -R -l]was passed in 
+        // flag -a does not matter since set_file_names() has already taken care of it
+        ls_R_l(file_names, flags, "./");
+    }
     
     
     
     return 0;
+    
 }
