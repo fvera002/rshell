@@ -142,8 +142,8 @@ void ls_l(vector<string> &file_list, char * dir)
         string sfile = string(dir) + "/" + file_list[i];
         struct stat st;
         if(stat(sfile.c_str(),&st) < 0){
-            perror("There was an error with stat()");
-            exit(1);
+            perror(string("There was an error with stat(" + sfile + ")").c_str());
+            //exit(1);
         } else {
             print_line(st, file_list[i]);
         }
@@ -162,8 +162,8 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
         string fl = dir + "/"+ file_list[i];
         
         if(stat(fl.c_str(),&st) < 0){
-            perror("There was an error with stat()");
-            exit(1);
+            perror(string("There was an error with stat(" + fl + ")").c_str());
+            //exit(1);
         } else {
             if(S_ISDIR(st.st_mode)){
                 if(!flags[0] || file_list[i].at(0) != '.'){
@@ -292,12 +292,12 @@ void ls_l_op(vector<bool> &flags, vector<string> &op_files)
     FOR(op_files) { 
         struct stat st;
         if(stat(op_files[i].c_str(),&st) < 0){
-            perror("There was an error with stat()");
-            exit(1);
+            perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
+            //exit(1);
         } else {
             if(S_ISDIR(st.st_mode)){
                 vector<string> file_names;
-                cout << op_files[i] << ":"<< endl;
+                cout << endl << op_files[i] << ":"<< endl;
                 string sdir = "./" + op_files[i];
                 const int sz= sdir.size()+1;
                 char dir[sz];
@@ -305,7 +305,7 @@ void ls_l_op(vector<bool> &flags, vector<string> &op_files)
                 set_file_names(file_names, flags, dir);
                 ls_l(file_names, dir);
             }
-            print_line(st, op_files[i]);
+            else print_line(st, op_files[i]);
         } 
     }
 }
