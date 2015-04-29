@@ -21,9 +21,10 @@
 
 // TODO:
 // total 23 when run ls -l
-// op files
+// op files -R
 // formatting ls -a long lists
 // color
+// ERROR: messages
 
 using namespace std;
 
@@ -286,9 +287,49 @@ void no_op_files(vector<bool> &flags)
     }    
 }
 
-void ls_l_op(vector<bool> &flags, vector<string> &op_files)
+void ls_op_files_dir(vector<bool> &flags, vector<string> &op_files)
 {
+    FOR(op_files){
+        cout << endl << op_files[i] << ":"<< endl;
+                    
+        vector<string> file_names;
+        string sdir = "./" + op_files[i];
+        const int sz= sdir.size()+1;
+        char dir[sz];
+        strcpy(dir, op_files[i].c_str());
+        
+        set_file_names(file_names, flags, dir);
+        
+        if (flags[1] && !flags[2]) ls_l(file_names, dir);
+        else if (!flags[1] && !flags[2]) print_ls_a(file_names);
+    }
+}
 
+void ls_op_files_not_dir(vector<bool> &flags, vector<string> &op_files)
+{
+    if (!flags[1] && !flags[2]){
+        print_ls_a(op_files);
+        return;
+    } 
+    FOR(op_files){
+        if (flags[1] && !flags[2]){
+                struct stat st;
+                if(stat(op_files[i].c_str(),&st) < 0){
+                    perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
+                    //exit(1);
+                } else {
+                    print_line(st, op_files[i]);
+                } 
+        } 
+        
+    }
+}
+
+void ls_op_files(vector<bool> &flags, vector<string> &op_files)
+{
+    vector<string> is_dir;
+    vector<string> not_dir;
+    
     FOR(op_files) { 
         struct stat st;
         if(stat(op_files[i].c_str(),&st) < 0){
@@ -296,33 +337,30 @@ void ls_l_op(vector<bool> &flags, vector<string> &op_files)
             //exit(1);
         } else {
             if(S_ISDIR(st.st_mode)){
-                vector<string> file_names;
-                cout << endl << op_files[i] << ":"<< endl;
-                string sdir = "./" + op_files[i];
-                const int sz= sdir.size()+1;
-                char dir[sz];
-                strcpy(dir, op_files[i].c_str());
-                set_file_names(file_names, flags, dir);
-                ls_l(file_names, dir);
+                
+                is_dir.push_back(op_files[i]);
             }
-            else print_line(st, op_files[i]);
+            else {
+                not_dir.push_back(op_files[i]);
+                
+            }
         } 
     }
+    ls_op_files_not_dir(flags, not_dir);
+    ls_op_files_dir(flags, is_dir);
+    
 }
 
 void run_op_files(vector<bool> &flags, vector<string> &op_files)
 {
-    /*cout << "op files: " << endl;
-    FOR(op_files){
-        cout << op_files[i] << endl;
-        
-    }*/
-    
-    // handles:
+
+    // handles everything, except for -R:
+    // ls
+    // ls -a 
     // ls -l
     // ls -l -a
-    if(flags[1] && !flags[2]){
-        ls_l_op(flags, op_files);
+    if( ! flags[2]){
+        ls_op_files(flags, op_files);
     }
 }
 
