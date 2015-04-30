@@ -35,6 +35,8 @@ bool compareFileName(string a, string b) {
     string b1(b);
     a1[0] = char(tolower(a[0]));
     b1[0] = char(tolower(b[0]));
+    if(a1[0] == '.') a1 = a1.substr(1);
+    if(b1[0] == '.') b1 = b1.substr(1);
         
     return a1 < b1;
 }
@@ -88,9 +90,9 @@ void print_line(struct stat &st, string &name){
      *time of last modification, and
      *file/directory name
     */
+    
 
-
-    cout << ( (S_ISDIR(st.st_mode)) ? "d" : "-") ;
+    cout << ( (S_ISDIR(st.st_mode)) ? "d" : S_ISLNK(st.st_mode)? "l" : "-");
     cout << ( (st.st_mode & S_IRUSR) ? "r" : "-");
     cout << ( (st.st_mode & S_IWUSR) ? "w" : "-");
     cout << ( (st.st_mode & S_IXUSR) ? "x" : "-");
@@ -115,7 +117,7 @@ void print_line(struct stat &st, string &name){
         perror("There was an error with getgrgid()");
         exit(1);
     }
-    cout << " "  << (g->gr_name); 
+    cout << " "  << setw(1) << (g->gr_name); 
     
     cout << " "  << setw(5) << st.st_size;
     
@@ -130,23 +132,53 @@ void print_line(struct stat &st, string &name){
         exit(1);
     }
     cout << " " << setw(12)<< (buf); 
+    cout << " " << st.st_blocks ;
     
-    cout << " "  << name << endl;
-    
+    cout << " ";
+    if ((name[0] == '.') && (S_ISLNK(st.st_mode))) {
+        cout << "\033[1;100;36m" << name << "\033[0;00m" << endl;
+    }
+    else if ((name[0] == '.') && S_ISDIR(st.st_mode)) {
+        cout << "\033[1;100;34m" << name << "\033[0;00m" << endl;
+    }
+    else if ((name[0] == '.') && (st.st_mode & S_IXUSR)) {
+        cout << "\033[1;100;32m" << name << "\033[0;00m" << endl;
+    }
+    else if (name[0] == '.') {
+        cout << "\033[1;100;37m" << name << "\033[0;00m" << endl;
+    }
+    if (S_ISLNK(st.st_mode)) {
+        cout << "\033[1;36m" << name << "\033[0;00m" << endl;
+    }
+    else if (S_ISDIR(st.st_mode)) {
+        cout << "\033[1;34m" << name << "\033[0;00m" << endl;
+    }
+    else if (st.st_mode & S_IXUSR) {
+        cout << "\033[1;32m" << name << "\033[0;00m" << endl;
+    }
+    else {
+        cout << name << endl;
+    }
     
 }
 
 void ls_l(vector<string> &file_list, char * dir)
 {
-    
+    bool total;
     FOR(file_list) { 
         string sfile = string(dir) + "/" + file_list[i];
         struct stat st;
-        if(stat(sfile.c_str(),&st) < 0){
+        if(lstat(sfile.c_str(),&st) < 0){
             perror(string("There was an error with stat(" + sfile + ")").c_str());
             //exit(1);
         } else {
+            if(!total){
+                cout << "total " << st.st_blocks <<endl;
+                total =true;
+            }
+            
             print_line(st, file_list[i]);
+            
         }
     }
 }
