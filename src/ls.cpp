@@ -20,10 +20,10 @@
 #include <iomanip>
 
 // TODO:
-// total 23 when run ls -l
+// [ok] total 23 when run ls -l
 // op files -R
-// formatting ls -a long lists
-// color
+// formatting ls -a when there are many files
+// [ok] color
 // ERROR: messages
 
 using namespace std;
@@ -51,7 +51,7 @@ void print_ls_a(vector<string> &file_list)
     cout << endl;
 }
 
-void set_file_names(vector<string> &file_list, vector<bool> &flags, char *dir)
+void setNames(vector<string> &file_list, vector<bool> &flags, char *dir)
 {
     DIR *dirp;
     if(NULL == (dirp = opendir(dir))){
@@ -80,7 +80,7 @@ void set_file_names(vector<string> &file_list, vector<bool> &flags, char *dir)
     }
 }
 
-void print_line(struct stat &st, string &name){
+void printLine(struct stat &st, string &name){
     /*
      *file permissions,
      *number of links,
@@ -127,12 +127,11 @@ void print_line(struct stat &st, string &name){
         exit(1);
     }
     char buf[20];
-    if (strftime (buf,20,"%h %d %R",time_st) == 0){
+    if (strftime(buf,20,"%h %d %R",time_st) == 0){
         perror("There was an error with strftime()");
         exit(1);
     }
     cout << " " << setw(12)<< (buf); 
-    cout << " " << st.st_blocks ;
     
     cout << " ";
     if ((name[0] == '.') && (S_ISLNK(st.st_mode))) {
@@ -147,7 +146,7 @@ void print_line(struct stat &st, string &name){
     else if (name[0] == '.') {
         cout << "\033[1;100;37m" << name << "\033[0;00m" << endl;
     }
-    if (S_ISLNK(st.st_mode)) {
+    else if (S_ISLNK(st.st_mode)) {
         cout << "\033[1;36m" << name << "\033[0;00m" << endl;
     }
     else if (S_ISDIR(st.st_mode)) {
@@ -162,9 +161,27 @@ void print_line(struct stat &st, string &name){
     
 }
 
+struct lsLine{
+    struct stat st;
+    string nm;
+    
+    lsLine(struct stat st1, string name) : st(st1), nm(name) {}
+};
+
+void printLines(vector<lsLine> &lines, long total){
+    total = total != 0 ? total / 1024: 0;
+    cout << "total " << total <<endl;
+    
+    FOR(lines){
+        printLine(lines[i].st, lines[i].nm);
+    }
+}
+
 void ls_l(vector<string> &file_list, char * dir)
 {
-    bool total;
+    vector<lsLine> lines; 
+    
+    long total = 0;
     FOR(file_list) { 
         string sfile = string(dir) + "/" + file_list[i];
         struct stat st;
@@ -172,29 +189,31 @@ void ls_l(vector<string> &file_list, char * dir)
             perror(string("There was an error with stat(" + sfile + ")").c_str());
             //exit(1);
         } else {
-            if(!total){
-                cout << "total " << st.st_blocks <<endl;
-                total =true;
-            }
-            
-            print_line(st, file_list[i]);
-            
+            lines.push_back(lsLine(st, file_list[i]));
+            total += st.st_blocks*512;
         }
     }
+    printLines(lines,total);
 }
 
 void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
 {
     if(file_list.empty()) return;
+    
     vector<string> subs;
+    vector<lsLine> lines;
+    long total = 0;
+    
     if(dir == "./") cout << ".:"<< endl;
     else cout << dir << ":"<< endl; 
+    
     if( !flags[1] ) print_ls_a(file_list);
+    
     FOR(file_list) { 
         struct stat st;
         string fl = dir + "/"+ file_list[i];
         
-        if(stat(fl.c_str(),&st) < 0){
+        if(lstat(fl.c_str(),&st) < 0){
             perror(string("There was an error with stat(" + fl + ")").c_str());
             //exit(1);
         } else {
@@ -203,9 +222,14 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
                     subs.push_back(file_list[i]);
                 }
             }
-            if(flags[1]) print_line(st, file_list[i]);
+            if(flags[1]){
+                lines.push_back(lsLine(st, file_list[i]));
+                total += st.st_blocks*512;
+            } 
         }        
     }
+    
+    printLines(lines,total);
     
     FOR(subs){
         cout <<endl;
@@ -219,21 +243,21 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
         strcpy(dir2,fl.c_str());
         
         vector<string> subs2;
-        set_file_names(subs2, flags, dir2);
+        setNames(subs2, flags, dir2);
         ls_R(subs2, flags, dir2);
     }
 
 }
 
 
-void alltrue(vector<bool> &flags)
+void allTrue(vector<bool> &flags)
 {
     FOR(flags){
         flags[i] = true;
     }
 }
 
-void set_flags(int argc, char** argv, vector<bool> &f)
+void setFlags(int argc, char** argv, vector<bool> &f)
 {
     // [0] = -a
     // [1] = -l
@@ -251,17 +275,17 @@ void set_flags(int argc, char** argv, vector<bool> &f)
         else if(strcmp(argv[i], "-lR")==0) f[1] = true, f[2] = true;
         else if(strcmp(argv[i], "-aR")==0) f[0] = true, f[2] = true;
         else if(strcmp(argv[i], "-Ra")==0) f[2] = true, f[0] = true;
-        else if(strcmp(argv[i], "-lRa")==0) alltrue(f);
-        else if(strcmp(argv[i], "-laR")==0) alltrue(f);
-        else if(strcmp(argv[i], "-Rla")==0) alltrue(f);
-        else if(strcmp(argv[i], "-Ral")==0) alltrue(f);
-        else if(strcmp(argv[i], "-aRl")==0) alltrue(f);
-        else if(strcmp(argv[i], "-alR")==0) alltrue(f);
+        else if(strcmp(argv[i], "-lRa")==0) allTrue(f);
+        else if(strcmp(argv[i], "-laR")==0) allTrue(f);
+        else if(strcmp(argv[i], "-Rla")==0) allTrue(f);
+        else if(strcmp(argv[i], "-Ral")==0) allTrue(f);
+        else if(strcmp(argv[i], "-aRl")==0) allTrue(f);
+        else if(strcmp(argv[i], "-alR")==0) allTrue(f);
     }
     
 }
 
-bool is_flag(char * arg)
+bool isFlag(char * arg)
 {
     return  (strcmp(arg, "-a")==0)
          || (strcmp(arg, "-l")==0)
@@ -280,19 +304,19 @@ bool is_flag(char * arg)
          || (strcmp(arg, "-alR")==0);
 }
 
-void set_files(int argc, char** argv, vector<string> &files)
+void setOpFiles(int argc, char** argv, vector<string> &files)
 {
     for(unsigned i = 1; i< argc; ++i){
-        if( ! is_flag(argv[i])) files.push_back(argv[i]);
+        if( ! isFlag(argv[i])) files.push_back(argv[i]);
     }
     sort(files.begin(), files.end(), compareFileName);
 }
 
-void no_op_files(vector<bool> &flags)
+void noOpFiles(vector<bool> &flags)
 {
     vector<string> file_names;
     char dir[] ="./";
-    set_file_names(file_names, flags, dir);
+    setNames(file_names, flags, dir);
     
     // handles:
     // ls
@@ -305,7 +329,7 @@ void no_op_files(vector<bool> &flags)
     // ls -l
     // ls -l -a
     else if(flags[1] && !flags[2]){ // if [ls -l] or [ls -l -a] was passed in 
-        // flag -a does not matter since set_file_names() has already taken care of it
+        // flag -a does not matter since setNames() has already taken care of it
         ls_l(file_names, dir);
     }
     
@@ -314,30 +338,30 @@ void no_op_files(vector<bool> &flags)
     // ls -R -a
     // ls -R -a -l
     else if(flags[2]){ 
-        // flag -a does not matter since set_file_names() is taking care of it
+        // flag -a does not matter since setNames() is taking care of it
         ls_R(file_names, flags, "./");
     }    
 }
 
-void ls_op_files_dir(vector<bool> &flags, vector<string> &op_files)
+void ls_opFilesDir(vector<bool> &flags, vector<string> &op_files)
 {
     FOR(op_files){
         cout << endl << op_files[i] << ":"<< endl;
-                    
+       
         vector<string> file_names;
         string sdir = "./" + op_files[i];
         const int sz= sdir.size()+1;
         char dir[sz];
         strcpy(dir, op_files[i].c_str());
         
-        set_file_names(file_names, flags, dir);
+        setNames(file_names, flags, dir);
         
         if (flags[1] && !flags[2]) ls_l(file_names, dir);
         else if (!flags[1] && !flags[2]) print_ls_a(file_names);
     }
 }
 
-void ls_op_files_not_dir(vector<bool> &flags, vector<string> &op_files)
+void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
 {
     if (!flags[1] && !flags[2]){
         print_ls_a(op_files);
@@ -346,44 +370,42 @@ void ls_op_files_not_dir(vector<bool> &flags, vector<string> &op_files)
     FOR(op_files){
         if (flags[1] && !flags[2]){
                 struct stat st;
-                if(stat(op_files[i].c_str(),&st) < 0){
+                if(lstat(op_files[i].c_str(),&st) < 0){
                     perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
                     //exit(1);
                 } else {
-                    print_line(st, op_files[i]);
+                    printLine(st, op_files[i]);
                 } 
         } 
         
     }
 }
 
-void ls_op_files(vector<bool> &flags, vector<string> &op_files)
+void ls_opFiles(vector<bool> &flags, vector<string> &op_files)
 {
     vector<string> is_dir;
     vector<string> not_dir;
     
     FOR(op_files) { 
         struct stat st;
-        if(stat(op_files[i].c_str(),&st) < 0){
+        if(lstat(op_files[i].c_str(),&st) < 0){
             perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
             //exit(1);
         } else {
             if(S_ISDIR(st.st_mode)){
-                
                 is_dir.push_back(op_files[i]);
             }
             else {
                 not_dir.push_back(op_files[i]);
-                
             }
         } 
     }
-    ls_op_files_not_dir(flags, not_dir);
-    ls_op_files_dir(flags, is_dir);
+    ls_opFilesNotDir(flags, not_dir);
+    ls_opFilesDir(flags, is_dir);
     
 }
 
-void run_op_files(vector<bool> &flags, vector<string> &op_files)
+void opFiles(vector<bool> &flags, vector<string> &op_files)
 {
 
     // handles everything, except for -R:
@@ -392,7 +414,7 @@ void run_op_files(vector<bool> &flags, vector<string> &op_files)
     // ls -l
     // ls -l -a
     if( ! flags[2]){
-        ls_op_files(flags, op_files);
+        ls_opFiles(flags, op_files);
     }
 }
 
@@ -400,15 +422,15 @@ int main(int argc, char** argv)
 {
     
     vector<bool> flags(3);
-    set_flags(argc, argv, flags);
+    setFlags(argc, argv, flags);
     
     vector<string> op_files;
-    set_files(argc, argv, op_files);
+    setOpFiles(argc, argv, op_files);
     
     if(op_files.empty()){
-        no_op_files(flags);
+        noOpFiles(flags);
     } else {
-        run_op_files(flags, op_files);
+        opFiles(flags, op_files);
     }
     
     
