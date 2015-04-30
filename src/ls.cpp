@@ -21,32 +21,88 @@
 
 // TODO:
 // [ok] total 23 when run ls -l
-// op files -R
+// [ok] op files -R
 // formatting ls -a when there are many files
 // [ok] color
 // ERROR: messages
+// when link ->File/csl/ll.txt
+// ls.cpp and ls2.cpp ordering
 
 using namespace std;
 
 #define FOR(x)  for (unsigned i =0 ; i < (x).size(); ++i) 
 
+struct stElem{
+    struct stat st;
+    string nm;
+    
+    stElem(struct stat st1, string name) : st(st1), nm(name) {}
+};
+
+
 bool compareFileName(string a, string b) {
     string a1(a);
     string b1(b);
-    a1[0] = char(tolower(a[0]));
-    b1[0] = char(tolower(b[0]));
+    
+    FOR(a) a1[i] = char(tolower(a[i]));
+    FOR(b) b1[i] = char(tolower(b[i]));
+    
     if(a1[0] == '.') a1 = a1.substr(1);
     if(b1[0] == '.') b1 = b1.substr(1);
         
     return a1 < b1;
 }
 
+string printColor(string &name, struct stat &st){
+    string ret ="";
+    if ((name[0] == '.') && (S_ISLNK(st.st_mode))) {
+        ret += "\033[1;100;36m" + name +"\033[0;00m";
+    }
+    else if ((name[0] == '.') && S_ISDIR(st.st_mode)) {
+        ret += "\033[1;100;34m" + name +"\033[0;00m";
+    }
+    else if ((name[0] == '.') && (st.st_mode & S_IXUSR)) {
+        ret += "\033[1;100;32m" + name +"\033[0;00m";
+    }
+    else if (name[0] == '.') {
+        ret += "\033[1;100;37m" + name +"\033[0;00m";
+    }
+    else if (S_ISLNK(st.st_mode)) {
+        ret += "\033[1;36m" + name +"\033[0;00m";
+    }
+    else if (S_ISDIR(st.st_mode)) {
+        ret += "\033[1;34m" + name +"\033[0;00m";
+    }
+    else if (st.st_mode & S_IXUSR) {
+        ret += "\033[1;32m" + name +"\033[0;00m";
+    }
+    else {
+        ret += name;
+    }
+    
+    return ret;
+}
+
 void print_ls_a(vector<string> &file_list)
 {
     if(file_list.empty()) return;
     FOR(file_list){
-        if(i == 0) cout<< file_list[i] ;
-        else cout<< "  " << file_list[i] ; 
+        struct stat st;
+        if(lstat(file_list[i].c_str(),&st) < 0){
+            perror(string("There was an error with stat(" + file_list[i] + ")").c_str());
+            //exit(1);
+        } else {
+            string name = file_list[i];
+            size_t last  = file_list[i].find_last_of('/');
+            if( last != string::npos)
+                name = file_list[i].substr(last+1);
+            if(i == 0){
+                 cout << printColor(name, st);
+            }
+            else {
+                cout<< "  " << printColor(name, st);
+            }
+        }
     }
     cout << endl;
 }
@@ -117,9 +173,9 @@ void printLine(struct stat &st, string &name){
         perror("There was an error with getgrgid()");
         exit(1);
     }
-    cout << " "  << setw(1) << (g->gr_name); 
+    cout  <<" "<< setw(1) << (g->gr_name); 
     
-    cout << " "  << setw(5) << st.st_size;
+    cout << setw(5) << st.st_size;
     
     struct tm * time_st = localtime(&st.st_mtime);     
     if (time == NULL){
@@ -133,42 +189,11 @@ void printLine(struct stat &st, string &name){
     }
     cout << " " << setw(12)<< (buf); 
     
-    cout << " ";
-    if ((name[0] == '.') && (S_ISLNK(st.st_mode))) {
-        cout << "\033[1;100;36m" << name << "\033[0;00m" << endl;
-    }
-    else if ((name[0] == '.') && S_ISDIR(st.st_mode)) {
-        cout << "\033[1;100;34m" << name << "\033[0;00m" << endl;
-    }
-    else if ((name[0] == '.') && (st.st_mode & S_IXUSR)) {
-        cout << "\033[1;100;32m" << name << "\033[0;00m" << endl;
-    }
-    else if (name[0] == '.') {
-        cout << "\033[1;100;37m" << name << "\033[0;00m" << endl;
-    }
-    else if (S_ISLNK(st.st_mode)) {
-        cout << "\033[1;36m" << name << "\033[0;00m" << endl;
-    }
-    else if (S_ISDIR(st.st_mode)) {
-        cout << "\033[1;34m" << name << "\033[0;00m" << endl;
-    }
-    else if (st.st_mode & S_IXUSR) {
-        cout << "\033[1;32m" << name << "\033[0;00m" << endl;
-    }
-    else {
-        cout << name << endl;
-    }
+    cout << " "<< printColor(name, st) <<endl;
     
 }
 
-struct lsLine{
-    struct stat st;
-    string nm;
-    
-    lsLine(struct stat st1, string name) : st(st1), nm(name) {}
-};
-
-void printLines(vector<lsLine> &lines, long total){
+void printLines(vector<stElem> &lines, long total){
     total = total != 0 ? total / 1024: 0;
     cout << "total " << total <<endl;
     
@@ -179,7 +204,7 @@ void printLines(vector<lsLine> &lines, long total){
 
 void ls_l(vector<string> &file_list, char * dir)
 {
-    vector<lsLine> lines; 
+    vector<stElem> lines; 
     
     long total = 0;
     FOR(file_list) { 
@@ -189,7 +214,7 @@ void ls_l(vector<string> &file_list, char * dir)
             perror(string("There was an error with stat(" + sfile + ")").c_str());
             //exit(1);
         } else {
-            lines.push_back(lsLine(st, file_list[i]));
+            lines.push_back(stElem(st, file_list[i]));
             total += st.st_blocks*512;
         }
     }
@@ -201,13 +226,13 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
     if(file_list.empty()) return;
     
     vector<string> subs;
-    vector<lsLine> lines;
+    vector<stElem> lines;
     long total = 0;
     
     if(dir == "./") cout << ".:"<< endl;
     else cout << dir << ":"<< endl; 
     
-    if( !flags[1] ) print_ls_a(file_list);
+    vector<string> file_list_A;
     
     FOR(file_list) { 
         struct stat st;
@@ -218,18 +243,18 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
             //exit(1);
         } else {
             if(S_ISDIR(st.st_mode)){
-                if(!flags[0] || file_list[i].at(0) != '.'){
+                if(file_list[i] != "." && file_list[i] != ".."){
                     subs.push_back(file_list[i]);
                 }
             }
             if(flags[1]){
-                lines.push_back(lsLine(st, file_list[i]));
+                lines.push_back(stElem(st, file_list[i]));
                 total += st.st_blocks*512;
-            } 
+            } else file_list_A.push_back(fl);
         }        
     }
-    
-    printLines(lines,total);
+    if( !flags[1] ) print_ls_a(file_list_A);
+    else printLines(lines,total);
     
     FOR(subs){
         cout <<endl;
@@ -345,8 +370,11 @@ void noOpFiles(vector<bool> &flags)
 
 void ls_opFilesDir(vector<bool> &flags, vector<string> &op_files)
 {
+    //vector<string> dirs;
+    
     FOR(op_files){
-        cout << endl << op_files[i] << ":"<< endl;
+        if (!flags[2])cout << endl << op_files[i] << ":"<< endl;
+        if (flags[2])cout<< endl;
        
         vector<string> file_names;
         string sdir = "./" + op_files[i];
@@ -358,17 +386,21 @@ void ls_opFilesDir(vector<bool> &flags, vector<string> &op_files)
         
         if (flags[1] && !flags[2]) ls_l(file_names, dir);
         else if (!flags[1] && !flags[2]) print_ls_a(file_names);
+        else if (flags[2]) ls_R(file_names, flags, dir);
     }
+    
+    //if(flags[2]) ls_opFilesDir(flags, dirs);
 }
 
 void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
 {
-    if (!flags[1] && !flags[2]){
+    if (!flags[1]){
         print_ls_a(op_files);
         return;
     } 
+    
     FOR(op_files){
-        if (flags[1] && !flags[2]){
+        if (flags[1]){
                 struct stat st;
                 if(lstat(op_files[i].c_str(),&st) < 0){
                     perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
@@ -376,16 +408,21 @@ void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
                 } else {
                     printLine(st, op_files[i]);
                 } 
-        } 
-        
+        }        
     }
 }
 
-void ls_opFiles(vector<bool> &flags, vector<string> &op_files)
+
+void opFiles(vector<bool> &flags, vector<string> &op_files)
 {
     vector<string> is_dir;
     vector<string> not_dir;
     
+    // handles everything, except for -R:
+    // ls [op1..files]
+    // ls -a  [op1..files]
+    // ls -l [op1..files]
+    // ls -l -a [op1..files]
     FOR(op_files) { 
         struct stat st;
         if(lstat(op_files[i].c_str(),&st) < 0){
@@ -400,22 +437,11 @@ void ls_opFiles(vector<bool> &flags, vector<string> &op_files)
             }
         } 
     }
-    ls_opFilesNotDir(flags, not_dir);
-    ls_opFilesDir(flags, is_dir);
     
-}
-
-void opFiles(vector<bool> &flags, vector<string> &op_files)
-{
-
-    // handles everything, except for -R:
-    // ls
-    // ls -a 
-    // ls -l
-    // ls -l -a
-    if( ! flags[2]){
-        ls_opFiles(flags, op_files);
-    }
+    ls_opFilesNotDir(flags, not_dir);
+    
+    // ls -l -a -R [op1..files]
+    ls_opFilesDir(flags, is_dir);
 }
 
 int main(int argc, char** argv)
@@ -432,7 +458,6 @@ int main(int argc, char** argv)
     } else {
         opFiles(flags, op_files);
     }
-    
     
     return 0;
     
