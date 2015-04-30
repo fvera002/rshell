@@ -4,7 +4,7 @@ HW0 CS100 Spring 2015
 
 ##Authors and Contributors
 Fernando Donizete Verago Junior
-
+Isadora Maria Mendes de Souza (cp.cpp)
 
 ##General Information
 This is an implementation of a command shell in which users can input either a simple command or multiple commands at a single entry by using connectors. 
@@ -44,6 +44,7 @@ Since `echo a` succeed, `echo b` is not executed. Then `echo c` is run because t
 
 
 ##Installation
+####Installation HW0: rshell
 To be able to install and run the program, it's necessary to clone the repository, run the make command, then finally run rshell that is going to be located in the bin folder. The following commands would do the described steps:
 ```
 $ git clone  https://github.com/fvera002/rshell.git
@@ -68,9 +69,20 @@ It can also be used together with other commands and connectors. For instance:
 
 This last example would run `ls -l`, then `pwd`, so finally it would exit the program. 
 
+####Installation HW1: ls 
+To be able to install and run the program, it's necessary to follow the same steps as before in hw0 regarding cloning the repository, with some differences upon compiling. The following commands would install correctly the ls feature:
+```
+$ git clone  https://github.com/fvera002/rshell.git
+$ cd rshell
+$ git checkout hw1
+$ make ls
+$ bin/ls
+```
+
+
 
 ## Bugs and Limitations
-
+####Bugs HW0: rshell
 * This implementation does not support special characters and their features. It only recognizes commands, the given connectors, and the hashtag `#` for comments. Therefore, quotes, parentheses and other special characters would be considered as part of the argument list. It means that the following command would not behave as "usual" (the same way a linux shell behaves):
 
     `echo "This is a README file" > README.md`
@@ -85,3 +97,7 @@ This last example would run `ls -l`, then `pwd`, so finally it would exit the pr
 
 * It's possible to run a number of commands in a single input; however, there is a limitation of characters accepted depending on the environment. In most of the tests this limit was 4094 characters per entry.
 
+####Bugs HW1: ls
+* Output does not line up exactly as it should when running `ls` in a folder with many files.
+
+* Information regarding the total block of memory is not shown when running `ls -l`
