@@ -7,6 +7,7 @@ Fernando Donizete Verago Junior
 Isadora Maria Mendes de Souza (cp.cpp)
 
 ##General Information
+####HW0: rshell
 This is an implementation of a command shell in which users can input either a simple command or multiple commands at a single entry by using connectors. 
 
 * this is an example of a single command:
@@ -42,6 +43,20 @@ d
 ```
 Since `echo a` succeed, `echo b` is not executed. Then `echo c` is run because the previous command failed. Finally, `echo d` is executed also because `echo c` succeed. 
 
+####HW1: ls
+The ls feature was built in order to behave exactly as GNU implementation does, but with some limitations. This behavior can be seen in the [man page](http://unixhelp.ed.ac.uk/CGI/man-cgi?ls) of ls. The main point that this hw1 ls implementation differs from the actual GNU's ls is that it only supports the flags `-a`, `-l` and `-R`. For example: 
+`ls -a -l -R`
+
+The flags can be placed in different orders and also together:
+`ls -l -a -R` 
+`ls -lRa`
+`ls -al -R`
+
+There is also the case in which you may want to include optional files to your command. This implementation also handles that:
+`ls -l file1.txt file2.doc`
+
+Again, the order in which the flags appear in your command line does not matter:
+`ls file1.txt file2.doc -l`
 
 ##Installation
 ####Installation HW0: rshell
