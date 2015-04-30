@@ -173,9 +173,9 @@ void printLine(struct stat &st, string &name){
         perror("There was an error with getgrgid()");
         exit(1);
     }
-    cout  <<" "<< setw(1) << (g->gr_name); 
+    cout << " " << setw(1) << (g->gr_name); 
     
-    cout << setw(5) << st.st_size;
+    cout << " "  << setw(5) << st.st_size;
     
     struct tm * time_st = localtime(&st.st_mtime);     
     if (time == NULL){
