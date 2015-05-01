@@ -1,18 +1,23 @@
 FLAGS = -g -Wall -Werror -ansi -pedantic
 BIN = bin
 
-all: src/main.cpp src/cmd.h
+all: src/cmd.h
 	mkdir -p $(BIN)
 	cd bin; g++ ../src/main.cpp $(FLAGS) -o rshell
+	g++ ../src/ls.cpp $(FLAGS) -o ls
+	g++ ../src/cp.cpp $(FLAGS) -o cp
 
 rshell: src/cmd.h 
-	mdkir -p $(BIN)
+	mkdir -p $(BIN)
 	cd bin; g++ ../src/main.cpp $(FLAGS) -o rshell
 	
-cp: src/cp.cpp
-	mdkir -p $(BIN)
-	cd bin; g++ ../src/cp.cpp $(FLAGS) -o cp
+ls:
+	mkdir -p $(BIN)
+	cd bin; g++ ../src/ls.cpp $(FLAGS) -o ls
 	
+cp: Timer.h
+	mkdir -p $(BIN)
+	cd bin; g++ ../src/cp.cpp $(FLAGS) -o cp
+
 clean: 
-	cd bin; if [ -a rshell ] ; then rm rshell; fi
-	rmdir bin	
+	rm -rf bin
