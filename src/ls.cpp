@@ -83,6 +83,7 @@ void printLsOnly(vector<string> &file_list)
     FOR(file_list){
         struct stat st;
         if(lstat(file_list[i].c_str(),&st) < 0){
+            cout << __LINE__ << endl;
             perror(string("There was an error with stat(" + file_list[i] + ")").c_str());
             //exit(1);
         } else {
@@ -384,13 +385,19 @@ void opFilesDir(vector<bool> &flags, vector<string> &op_files)
         vector<string> file_names;
         string sdir = "./" + op_files[i];
         
-        char *dir = new char[op_files[i].length()+1];
-        strcpy(dir, op_files[i].c_str());
+        char *dir = new char[sdir.length()+1];
+        strcpy(dir, sdir.c_str());
         
         setNames(file_names, flags, dir);
         
         if (flags[1] && !flags[2]) lsL(file_names, dir);
-        else if (!flags[1] && !flags[2]) printLsOnly(file_names);
+        else if (!flags[1] && !flags[2]){
+            FOR(file_names){
+                file_names[i] = sdir + "/" + file_names[i];
+            }
+            
+            printLsOnly(file_names);
+        }
         else if (flags[2]) lsR(file_names, flags, dir);
         
         delete [] dir;
@@ -402,6 +409,7 @@ void opFilesDir(vector<bool> &flags, vector<string> &op_files)
 // takes care of optional files that are directories
 void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
 {
+    if(op_files.empty())return;
     if (!flags[1]){
         printLsOnly(op_files);
         return;
@@ -411,6 +419,7 @@ void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
         if (flags[1]){
             struct stat st;
             if(lstat(op_files[i].c_str(),&st) < 0){
+                cout << __LINE__ << endl;
                 perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
                 //exit(1);
             } else {
@@ -423,6 +432,7 @@ void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
 // do logic reagarding optional files
 void opFiles(vector<bool> &flags, vector<string> &op_files)
 {
+    if(op_files.empty())return;
     vector<string> is_dir;
     vector<string> not_dir;
     
@@ -435,6 +445,7 @@ void opFiles(vector<bool> &flags, vector<string> &op_files)
         struct stat st;
         if(lstat(op_files[i].c_str(),&st) < 0){
             perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
+    
             //exit(1);
         } else {
             if(S_ISDIR(st.st_mode)){
