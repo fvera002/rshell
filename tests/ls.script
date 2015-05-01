@@ -1,0 +1,2229 @@
+Script started on Fri 01 May 2015 01:23:23 PM PDT
+]0;fvera002@sierra-19:~/rshell[?1034h~/rshell
+
+fvera002@sierra-19 $ l[Kpwd
+/home/csmajs/fvera002/rshell
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ make ls
+mkdir -p bin
+cd bin; g++ ../src/ls.cpp -g -Wall -Werror -ansi -pedantic -o ls
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ b[K# -[K1- Tests with no flags al[Kt all
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls
+[1;34mbin[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls bin/ls
+[1;32mls[0;00m
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ b[K# 1.1 - Optional files[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K# directories as flolde[K[K[K[K[Kolde[K[K[K[K[Koptional file argue[Kments[K
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ binl[K/ls src
+src:
+cmd.h  ls.cpp  main.cpp
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls src bin
+bin:
+[1;32mls[0;00m  [1;32mrshell[0;00m
+
+src:
+cmd.h  ls.cpp  main.cpp
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ touch file1
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ #file as optional fi[K[Kargument
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ #file as optional argument
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[15Ptouch file1bin/ls src bin[K[K[K[K[K[K[Kar[K[Kfile1
+file1
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1#file as optional argument
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[15Ptouch file1[K[K[K[K[K[K[K[K[K[K[Kbin/ls src bin[K file1 bin
+file1
+
+bin:
+[1;32mls[0;00m  [1;32mrshell[0;00m
+
+src:
+cmd.h  ls.cpp  main.cpp
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls src file1 bin[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K#non existent file[K[K[Kile as optional arguy[Kment
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ #non existent file as optional argument
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[19Pbin/ls src file1 bin[K[K[K[K[K[K[K[K[K[K[K[K[Kerror
+There was an error with stat(error): No such file or directory
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls error file1
+There was an error with stat(error): No such file or directory
+file1
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls error file1 src bin
+There was an error with stat(error): No such file or directory
+file1
+
+bin:
+[1;32mls[0;00m  [1;32mrshell[0;00m
+
+src:
+cmd.h  ls.cpp  main.cpp
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ touch file2; touch file3; touch file4; touch file5; touch file6; touch file7; touch file8;  
+touch file9; touch file10; touch file11; touch file12;
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # more than 10 files as argument
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12
+file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # error in between
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # error in betweenbin/ls file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12[C[C[1@ [1@e[1@r[1@r[1@o[C[1@ [1P[1@1[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C err 
+o2
+There was an error with stat(erro1): No such file or directory
+There was an error with stat(erro2): No such file or directory
+file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # - [K[KNow testing [K[K[K[K[K[K[K[K[K[K[K[K[K 2- Tests with the flag -a
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # optional files and[K[K[Kwith -a[K[K[K[K[K[K[K+ flag -a
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # [K[K# nothing changes if the file is not a .[Khidden folder
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ ^C
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1 file2 file3 file4 file5 file6 -a file7 file8 file9 file10 file11 file12
+file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a bin src file1 .git
+file1
+
+bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ mdkir src/t1
+bash: mdkir: command not found
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ mdkir src/t1[1P[1P[1@d[1@k[1P[1P[1@k[1@d
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ mkdir src/t1dk[C[C[C[C[C[C[C[C[Cbin/ls -a bin src file1 .git src/t1
+file1
+
+bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a bin src file1 .git src/t1 erro3[C[1@ [1@e[1@r[1@r[C[C[C[C[C[1@ [1@-[1@a[C[C[C[C[C[C[C[C[C[C[C[1@ [1@e[1@r[1@r[1@o[1@2
+There was an error with stat(err): No such file or directory
+There was an error with stat(erro2): No such file or directory
+There was an error with stat(erro3): No such file or directory
+file1
+
+bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1 file2 file3 file4 file5 no exist file6 file7 file8 file9 file10 file11 file12  
+erro -a src
+There was an error with stat(erro): No such file or directory
+There was an error with stat(exist): No such file or directory
+There was an error with stat(no): No such file or directory
+file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9
+
+src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # 3- Tests with the flag -l and its combinations
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -l
+total 16
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -l file 1[K[K1
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -l file1 src
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+
+src:
+total 28
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -l file1 src erro1
+There was an error with stat(erro1): No such file or directory
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+
+src:
+total 28
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1 file2 file3 file4 file5 file6 -a file7 file8 file9 file10 file11 file12
+file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1 file2 file3 file4 file5 file6 -a file7 file8 file9 file10 file11 file12 -l
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1 file2 file3 file4 file5 file6 -a file7 file8 file9 file10 file11 file12 -l t1
+There was an error with stat(t1): No such file or directory
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls file1 file2 file3 file4 file5 file6 -a file7 file8 file9 file10 file11 file12 -l t1[K[Ksrc 
+ bin
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+
+bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ #mixing up with flag -a
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ /bin ls -a
+bash: /bin: is a directory
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ /bin ls -a[1@/[1P[C[C[C[C[C[C[C[C[C[C -l
+bash: bin/: is a directory
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ ls -a -l[1P[C[C[C[C[C[C[C[C
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a -l[K[K[Kl[K[Kl -a
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -l -a[K[K[Ka
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -la[K[Kal
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -al file1 file2 file3 file4 file5 file6 -a file7 file8 file9 file10 file11 file12 sr 
+c bin erro1 
+There was an error with stat(erro1): No such file or directory
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+
+bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # 4- Tests with the flags[K -R
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ # 4- Tests with the flag -R
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cbin/ls -al file1 file2 file3 file4 file5 file6 -a file7 file8 file9 file10 file11 file12 src
+c bin erro1 [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[KR
+.:
+[1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;32mls[0;00m  [1;32mrshell[0;00m
+
+./src:
+cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+
+./tests:
+exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R file 1[K[K1
+file1
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R file1 src
+file1
+
+
+./src:
+cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R file1 src bin
+file1
+
+
+./bin:
+[1;32mls[0;00m  [1;32mrshell[0;00m
+
+./src:
+cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R file1 src bin erro1
+There was an error with stat(erro1): No such file or directory
+file1
+
+
+./bin:
+[1;32mls[0;00m  [1;32mrshell[0;00m
+
+./src:
+cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a -l -R file1 file2 file3 file4 file5 error1 file6 file7 file8 file9 file10 file11  
+file12 erro2 -a
+There was an error with stat(erro2): No such file or directory
+There was an error with stat(error1): No such file or directory
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ #mixing up flags
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ #mixing up flagsbin/ls -a -l -R file1 file2 file3 file4 file5 error1 file6 file7 file8 file9 file10 file11 f
+file12 erro2 -a[A[C[C[C[C[C[C[C[C[C[C[C[C[C[CR file1 src bin erro1[K
+
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K-Rl
+.:
+total 16
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./src:
+total 28
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+
+./tests:
+total 48
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 24576 May 01 13:45 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ -R[K[Kbin/ls -Rl[K[KlR
+.:
+total 16
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./src:
+total 28
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+
+./tests:
+total 48
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 24576 May 01 13:45 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -l -R
+.:
+total 16
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./src:
+total 28
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+
+./tests:
+total 52
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 28672 May 01 13:46 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R -l
+.:
+total 16
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./src:
+total 28
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+
+./tests:
+total 52
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 28672 May 01 13:46 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -Ra
+.:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+./.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+./.git/branches:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/hooks:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mapplypatch-msg.sample[0;00m  [1;32mcommit-msg.sample[0;00m  [1;32mpost-commit.sample[0;00m  [1;32mpost-receive.sample[0;00m  [1;32mpost-update.sample[0;00m  [1;32mpre-applypatch.sample[0;00m  [1;32mpre-commit.sample[0;00m  [1;32mpre-rebase.sample[0;00m  [1;32mprepare-commit-msg.sample[0;00m  [1;32mupdate.sample[0;00m
+
+./.git/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exclude
+
+./.git/logs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD  [1;34mrefs[0;00m
+
+./.git/logs/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/objects:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34minfo[0;00m  [1;34mpack[0;00m
+
+./.git/objects/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/objects/pack:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m  [1;34mremotes[0;00m  [1;34mtags[0;00m
+
+./.git/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/refs/remotes:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD
+
+./.git/refs/tags:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+./src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./tests:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -aR
+.:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+./.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+./.git/branches:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/hooks:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mapplypatch-msg.sample[0;00m  [1;32mcommit-msg.sample[0;00m  [1;32mpost-commit.sample[0;00m  [1;32mpost-receive.sample[0;00m  [1;32mpost-update.sample[0;00m  [1;32mpre-applypatch.sample[0;00m  [1;32mpre-commit.sample[0;00m  [1;32mpre-rebase.sample[0;00m  [1;32mprepare-commit-msg.sample[0;00m  [1;32mupdate.sample[0;00m
+
+./.git/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exclude
+
+./.git/logs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD  [1;34mrefs[0;00m
+
+./.git/logs/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/objects:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34minfo[0;00m  [1;34mpack[0;00m
+
+./.git/objects/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/objects/pack:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m  [1;34mremotes[0;00m  [1;34mtags[0;00m
+
+./.git/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/refs/remotes:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD
+
+./.git/refs/tags:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+./src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./tests:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a -R
+.:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+./.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+./.git/branches:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/hooks:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mapplypatch-msg.sample[0;00m  [1;32mcommit-msg.sample[0;00m  [1;32mpost-commit.sample[0;00m  [1;32mpost-receive.sample[0;00m  [1;32mpost-update.sample[0;00m  [1;32mpre-applypatch.sample[0;00m  [1;32mpre-commit.sample[0;00m  [1;32mpre-rebase.sample[0;00m  [1;32mprepare-commit-msg.sample[0;00m  [1;32mupdate.sample[0;00m
+
+./.git/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exclude
+
+./.git/logs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD  [1;34mrefs[0;00m
+
+./.git/logs/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/objects:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34minfo[0;00m  [1;34mpack[0;00m
+
+./.git/objects/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/objects/pack:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m  [1;34mremotes[0;00m  [1;34mtags[0;00m
+
+./.git/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/refs/remotes:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD
+
+./.git/refs/tags:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+./src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./tests:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R -a
+.:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+./.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+./.git/branches:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/hooks:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mapplypatch-msg.sample[0;00m  [1;32mcommit-msg.sample[0;00m  [1;32mpost-commit.sample[0;00m  [1;32mpost-receive.sample[0;00m  [1;32mpost-update.sample[0;00m  [1;32mpre-applypatch.sample[0;00m  [1;32mpre-commit.sample[0;00m  [1;32mpre-rebase.sample[0;00m  [1;32mprepare-commit-msg.sample[0;00m  [1;32mupdate.sample[0;00m
+
+./.git/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exclude
+
+./.git/logs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD  [1;34mrefs[0;00m
+
+./.git/logs/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/objects:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34minfo[0;00m  [1;34mpack[0;00m
+
+./.git/objects/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/objects/pack:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m  [1;34mremotes[0;00m  [1;34mtags[0;00m
+
+./.git/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/refs/remotes:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD
+
+./.git/refs/tags:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+./src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./tests:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R -a
+.:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+./.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+./.git/branches:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/hooks:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mapplypatch-msg.sample[0;00m  [1;32mcommit-msg.sample[0;00m  [1;32mpost-commit.sample[0;00m  [1;32mpost-receive.sample[0;00m  [1;32mpost-update.sample[0;00m  [1;32mpre-applypatch.sample[0;00m  [1;32mpre-commit.sample[0;00m  [1;32mpre-rebase.sample[0;00m  [1;32mprepare-commit-msg.sample[0;00m  [1;32mupdate.sample[0;00m
+
+./.git/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exclude
+
+./.git/logs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD  [1;34mrefs[0;00m
+
+./.git/logs/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/objects:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34minfo[0;00m  [1;34mpack[0;00m
+
+./.git/objects/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/objects/pack:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m  [1;34mremotes[0;00m  [1;34mtags[0;00m
+
+./.git/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/refs/remotes:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD
+
+./.git/refs/tags:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+./src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./tests:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R -a
+.:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+./.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+./.git/branches:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/hooks:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mapplypatch-msg.sample[0;00m  [1;32mcommit-msg.sample[0;00m  [1;32mpost-commit.sample[0;00m  [1;32mpost-receive.sample[0;00m  [1;32mpost-update.sample[0;00m  [1;32mpre-applypatch.sample[0;00m  [1;32mpre-commit.sample[0;00m  [1;32mpre-rebase.sample[0;00m  [1;32mprepare-commit-msg.sample[0;00m  [1;32mupdate.sample[0;00m
+
+./.git/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exclude
+
+./.git/logs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD  [1;34mrefs[0;00m
+
+./.git/logs/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/objects:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34minfo[0;00m  [1;34mpack[0;00m
+
+./.git/objects/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/objects/pack:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m  [1;34mremotes[0;00m  [1;34mtags[0;00m
+
+./.git/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/refs/remotes:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD
+
+./.git/refs/tags:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+./src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./tests:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -R -a
+.:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbin[0;00m  file1  file10  file11  file12  file2  file3  file4  file5  file6  file7  file8  file9  [1;100;34m.git[0;00m  LICENSE  Makefile  README.md  [1;34msrc[0;00m  [1;34mtests[0;00m
+
+./bin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mls[0;00m  [1;32mrshell[0;00m
+
+./.git:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mbranches[0;00m  config  description  HEAD  [1;34mhooks[0;00m  index  [1;34minfo[0;00m  [1;34mlogs[0;00m  [1;34mobjects[0;00m  packed-refs  [1;34mrefs[0;00m
+
+./.git/branches:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/hooks:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;32mapplypatch-msg.sample[0;00m  [1;32mcommit-msg.sample[0;00m  [1;32mpost-commit.sample[0;00m  [1;32mpost-receive.sample[0;00m  [1;32mpost-update.sample[0;00m  [1;32mpre-applypatch.sample[0;00m  [1;32mpre-commit.sample[0;00m  [1;32mpre-rebase.sample[0;00m  [1;32mprepare-commit-msg.sample[0;00m  [1;32mupdate.sample[0;00m
+
+./.git/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exclude
+
+./.git/logs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD  [1;34mrefs[0;00m
+
+./.git/logs/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/objects:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34minfo[0;00m  [1;34mpack[0;00m
+
+./.git/objects/info:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./.git/objects/pack:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx  pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34mheads[0;00m  [1;34mremotes[0;00m  [1;34mtags[0;00m
+
+./.git/refs/heads:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  ls
+
+./.git/refs/remotes:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  HEAD
+
+./.git/refs/tags:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./src:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  cmd.h  ls.cpp  main.cpp  [1;34mt1[0;00m
+
+./src/t1:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m
+
+./tests:
+[1;100;34m.[0;00m  [1;100;34m..[0;00m  exec.script  ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -Rla
+.:
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./.git:
+total 20
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mbranches[0;00m
+-rw-------  1 fvera002 csmajs   255 May 01 13:21 config
+-rw-------  1 fvera002 csmajs    73 May 01 13:21 description
+-rw-------  1 fvera002 csmajs    19 May 01 13:21 HEAD
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;34mhooks[0;00m
+-rw-------  1 fvera002 csmajs   560 May 01 13:21 index
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34minfo[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;34mlogs[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;34mobjects[0;00m
+-rw-------  1 fvera002 csmajs   279 May 01 13:21 packed-refs
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/branches:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/hooks:
+total 44
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs   452 May 01 13:21 [1;32mapplypatch-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   896 May 01 13:21 [1;32mcommit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   160 May 01 13:21 [1;32mpost-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs   548 May 01 13:21 [1;32mpost-receive.sample[0;00m
+-rwx------  1 fvera002 csmajs   189 May 01 13:21 [1;32mpost-update.sample[0;00m
+-rwx------  1 fvera002 csmajs   398 May 01 13:21 [1;32mpre-applypatch.sample[0;00m
+-rwx------  1 fvera002 csmajs  1578 May 01 13:21 [1;32mpre-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs  4951 May 01 13:21 [1;32mpre-rebase.sample[0;00m
+-rwx------  1 fvera002 csmajs  1239 May 01 13:21 [1;32mprepare-commit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs  3611 May 01 13:21 [1;32mupdate.sample[0;00m
+
+./.git/info:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   240 May 01 13:21 exclude
+
+./.git/logs:
+total 4
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 HEAD
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/logs/refs:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 ls
+
+./.git/objects:
+total 0
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34minfo[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;34mpack[0;00m
+
+./.git/objects/info:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/objects/pack:
+total 52
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+-r--------  1 fvera002 csmajs  6980 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx
+-r--------  1 fvera002 csmajs 43956 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+total 0
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mremotes[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mtags[0;00m
+
+./.git/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    41 May 01 13:21 ls
+
+./.git/refs/remotes:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    32 May 01 13:21 HEAD
+
+./.git/refs/tags:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+
+./tests:
+total 76
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 53248 May 01 13:46 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -Ral
+.:
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./.git:
+total 20
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mbranches[0;00m
+-rw-------  1 fvera002 csmajs   255 May 01 13:21 config
+-rw-------  1 fvera002 csmajs    73 May 01 13:21 description
+-rw-------  1 fvera002 csmajs    19 May 01 13:21 HEAD
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;34mhooks[0;00m
+-rw-------  1 fvera002 csmajs   560 May 01 13:21 index
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34minfo[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;34mlogs[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;34mobjects[0;00m
+-rw-------  1 fvera002 csmajs   279 May 01 13:21 packed-refs
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/branches:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/hooks:
+total 44
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs   452 May 01 13:21 [1;32mapplypatch-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   896 May 01 13:21 [1;32mcommit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   160 May 01 13:21 [1;32mpost-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs   548 May 01 13:21 [1;32mpost-receive.sample[0;00m
+-rwx------  1 fvera002 csmajs   189 May 01 13:21 [1;32mpost-update.sample[0;00m
+-rwx------  1 fvera002 csmajs   398 May 01 13:21 [1;32mpre-applypatch.sample[0;00m
+-rwx------  1 fvera002 csmajs  1578 May 01 13:21 [1;32mpre-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs  4951 May 01 13:21 [1;32mpre-rebase.sample[0;00m
+-rwx------  1 fvera002 csmajs  1239 May 01 13:21 [1;32mprepare-commit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs  3611 May 01 13:21 [1;32mupdate.sample[0;00m
+
+./.git/info:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   240 May 01 13:21 exclude
+
+./.git/logs:
+total 4
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 HEAD
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/logs/refs:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 ls
+
+./.git/objects:
+total 0
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34minfo[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;34mpack[0;00m
+
+./.git/objects/info:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/objects/pack:
+total 52
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+-r--------  1 fvera002 csmajs  6980 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx
+-r--------  1 fvera002 csmajs 43956 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+total 0
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mremotes[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mtags[0;00m
+
+./.git/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    41 May 01 13:21 ls
+
+./.git/refs/remotes:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    32 May 01 13:21 HEAD
+
+./.git/refs/tags:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+
+./tests:
+total 84
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 61440 May 01 13:46 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -alR
+.:
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./.git:
+total 20
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mbranches[0;00m
+-rw-------  1 fvera002 csmajs   255 May 01 13:21 config
+-rw-------  1 fvera002 csmajs    73 May 01 13:21 description
+-rw-------  1 fvera002 csmajs    19 May 01 13:21 HEAD
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;34mhooks[0;00m
+-rw-------  1 fvera002 csmajs   560 May 01 13:21 index
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34minfo[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;34mlogs[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;34mobjects[0;00m
+-rw-------  1 fvera002 csmajs   279 May 01 13:21 packed-refs
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/branches:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/hooks:
+total 44
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs   452 May 01 13:21 [1;32mapplypatch-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   896 May 01 13:21 [1;32mcommit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   160 May 01 13:21 [1;32mpost-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs   548 May 01 13:21 [1;32mpost-receive.sample[0;00m
+-rwx------  1 fvera002 csmajs   189 May 01 13:21 [1;32mpost-update.sample[0;00m
+-rwx------  1 fvera002 csmajs   398 May 01 13:21 [1;32mpre-applypatch.sample[0;00m
+-rwx------  1 fvera002 csmajs  1578 May 01 13:21 [1;32mpre-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs  4951 May 01 13:21 [1;32mpre-rebase.sample[0;00m
+-rwx------  1 fvera002 csmajs  1239 May 01 13:21 [1;32mprepare-commit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs  3611 May 01 13:21 [1;32mupdate.sample[0;00m
+
+./.git/info:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   240 May 01 13:21 exclude
+
+./.git/logs:
+total 4
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 HEAD
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/logs/refs:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 ls
+
+./.git/objects:
+total 0
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34minfo[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;34mpack[0;00m
+
+./.git/objects/info:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/objects/pack:
+total 52
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+-r--------  1 fvera002 csmajs  6980 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx
+-r--------  1 fvera002 csmajs 43956 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+total 0
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mremotes[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mtags[0;00m
+
+./.git/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    41 May 01 13:21 ls
+
+./.git/refs/remotes:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    32 May 01 13:21 HEAD
+
+./.git/refs/tags:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+
+./tests:
+total 92
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 69632 May 01 13:47 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -aRl
+.:
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./.git:
+total 20
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mbranches[0;00m
+-rw-------  1 fvera002 csmajs   255 May 01 13:21 config
+-rw-------  1 fvera002 csmajs    73 May 01 13:21 description
+-rw-------  1 fvera002 csmajs    19 May 01 13:21 HEAD
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;34mhooks[0;00m
+-rw-------  1 fvera002 csmajs   560 May 01 13:21 index
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34minfo[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;34mlogs[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;34mobjects[0;00m
+-rw-------  1 fvera002 csmajs   279 May 01 13:21 packed-refs
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/branches:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/hooks:
+total 44
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs   452 May 01 13:21 [1;32mapplypatch-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   896 May 01 13:21 [1;32mcommit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   160 May 01 13:21 [1;32mpost-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs   548 May 01 13:21 [1;32mpost-receive.sample[0;00m
+-rwx------  1 fvera002 csmajs   189 May 01 13:21 [1;32mpost-update.sample[0;00m
+-rwx------  1 fvera002 csmajs   398 May 01 13:21 [1;32mpre-applypatch.sample[0;00m
+-rwx------  1 fvera002 csmajs  1578 May 01 13:21 [1;32mpre-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs  4951 May 01 13:21 [1;32mpre-rebase.sample[0;00m
+-rwx------  1 fvera002 csmajs  1239 May 01 13:21 [1;32mprepare-commit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs  3611 May 01 13:21 [1;32mupdate.sample[0;00m
+
+./.git/info:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   240 May 01 13:21 exclude
+
+./.git/logs:
+total 4
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 HEAD
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/logs/refs:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 ls
+
+./.git/objects:
+total 0
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34minfo[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;34mpack[0;00m
+
+./.git/objects/info:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/objects/pack:
+total 52
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+-r--------  1 fvera002 csmajs  6980 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx
+-r--------  1 fvera002 csmajs 43956 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+total 0
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mremotes[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mtags[0;00m
+
+./.git/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    41 May 01 13:21 ls
+
+./.git/refs/remotes:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    32 May 01 13:21 HEAD
+
+./.git/refs/tags:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+
+./tests:
+total 100
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 77824 May 01 13:47 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -laR
+.:
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./.git:
+total 20
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mbranches[0;00m
+-rw-------  1 fvera002 csmajs   255 May 01 13:21 config
+-rw-------  1 fvera002 csmajs    73 May 01 13:21 description
+-rw-------  1 fvera002 csmajs    19 May 01 13:21 HEAD
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;34mhooks[0;00m
+-rw-------  1 fvera002 csmajs   560 May 01 13:21 index
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34minfo[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;34mlogs[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;34mobjects[0;00m
+-rw-------  1 fvera002 csmajs   279 May 01 13:21 packed-refs
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/branches:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/hooks:
+total 44
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs   452 May 01 13:21 [1;32mapplypatch-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   896 May 01 13:21 [1;32mcommit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   160 May 01 13:21 [1;32mpost-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs   548 May 01 13:21 [1;32mpost-receive.sample[0;00m
+-rwx------  1 fvera002 csmajs   189 May 01 13:21 [1;32mpost-update.sample[0;00m
+-rwx------  1 fvera002 csmajs   398 May 01 13:21 [1;32mpre-applypatch.sample[0;00m
+-rwx------  1 fvera002 csmajs  1578 May 01 13:21 [1;32mpre-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs  4951 May 01 13:21 [1;32mpre-rebase.sample[0;00m
+-rwx------  1 fvera002 csmajs  1239 May 01 13:21 [1;32mprepare-commit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs  3611 May 01 13:21 [1;32mupdate.sample[0;00m
+
+./.git/info:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   240 May 01 13:21 exclude
+
+./.git/logs:
+total 4
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 HEAD
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/logs/refs:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 ls
+
+./.git/objects:
+total 0
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34minfo[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;34mpack[0;00m
+
+./.git/objects/info:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/objects/pack:
+total 52
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+-r--------  1 fvera002 csmajs  6980 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx
+-r--------  1 fvera002 csmajs 43956 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+total 0
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mremotes[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mtags[0;00m
+
+./.git/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    41 May 01 13:21 ls
+
+./.git/refs/remotes:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    32 May 01 13:21 HEAD
+
+./.git/refs/tags:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+
+./tests:
+total 108
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 86016 May 01 13:47 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -lRa
+.:
+total 16
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m.[0;00m
+drwx------ 32 fvera002 csmajs   940 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mbin[0;00m
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file10
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file11
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file12
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file2
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file3
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file4
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file5
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file6
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file7
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file8
+-rw-------  1 fvera002 csmajs     0 May 01 13:28 file9
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.git[0;00m
+-rw-------  1 fvera002 csmajs  1473 May 01 13:21 LICENSE
+-rw-------  1 fvera002 csmajs   444 May 01 13:21 Makefile
+-rw-------  1 fvera002 csmajs  4495 May 01 13:21 README.md
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;34msrc[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;34mtests[0;00m
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./.git:
+total 20
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mbranches[0;00m
+-rw-------  1 fvera002 csmajs   255 May 01 13:21 config
+-rw-------  1 fvera002 csmajs    73 May 01 13:21 description
+-rw-------  1 fvera002 csmajs    19 May 01 13:21 HEAD
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;34mhooks[0;00m
+-rw-------  1 fvera002 csmajs   560 May 01 13:21 index
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34minfo[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;34mlogs[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;34mobjects[0;00m
+-rw-------  1 fvera002 csmajs   279 May 01 13:21 packed-refs
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/branches:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/hooks:
+total 44
+drwx------  2 fvera002 csmajs   240 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs   452 May 01 13:21 [1;32mapplypatch-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   896 May 01 13:21 [1;32mcommit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs   160 May 01 13:21 [1;32mpost-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs   548 May 01 13:21 [1;32mpost-receive.sample[0;00m
+-rwx------  1 fvera002 csmajs   189 May 01 13:21 [1;32mpost-update.sample[0;00m
+-rwx------  1 fvera002 csmajs   398 May 01 13:21 [1;32mpre-applypatch.sample[0;00m
+-rwx------  1 fvera002 csmajs  1578 May 01 13:21 [1;32mpre-commit.sample[0;00m
+-rwx------  1 fvera002 csmajs  4951 May 01 13:21 [1;32mpre-rebase.sample[0;00m
+-rwx------  1 fvera002 csmajs  1239 May 01 13:21 [1;32mprepare-commit-msg.sample[0;00m
+-rwx------  1 fvera002 csmajs  3611 May 01 13:21 [1;32mupdate.sample[0;00m
+
+./.git/info:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   240 May 01 13:21 exclude
+
+./.git/logs:
+total 4
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 HEAD
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mrefs[0;00m
+
+./.git/logs/refs:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+
+./.git/logs/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs   198 May 01 13:21 ls
+
+./.git/objects:
+total 0
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34minfo[0;00m
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;34mpack[0;00m
+
+./.git/objects/info:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+
+./.git/objects/pack:
+total 52
+drwx------  2 fvera002 csmajs    80 May 01 13:21 [1;100;34m.[0;00m
+drwx------  4 fvera002 csmajs    80 May 01 13:21 [1;100;34m..[0;00m
+-r--------  1 fvera002 csmajs  6980 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.idx
+-r--------  1 fvera002 csmajs 43956 May 01 13:21 pack-bff0989801d9f29f96cfab3049feb2e684666f9e.pack
+
+./.git/refs:
+total 0
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m.[0;00m
+drwx------  8 fvera002 csmajs   260 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34mheads[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;34mremotes[0;00m
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;34mtags[0;00m
+
+./.git/refs/heads:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    41 May 01 13:21 ls
+
+./.git/refs/remotes:
+total 0
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;34morigin[0;00m
+
+./.git/refs/remotes/origin:
+total 4
+drwx------  2 fvera002 csmajs    60 May 01 13:21 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs    60 May 01 13:21 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs    32 May 01 13:21 HEAD
+
+./.git/refs/tags:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:21 [1;100;34m.[0;00m
+drwx------  5 fvera002 csmajs   100 May 01 13:21 [1;100;34m..[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+
+./tests:
+total 112
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs 22943 May 01 13:21 exec.script
+-rw-------  1 fvera002 csmajs 90112 May 01 13:47 ls.script
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a -l -R bin src
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a -l -R bin src file1
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ ^C
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ bin/ls -a -l -R bin src file1 error
+There was an error with stat(error): No such file or directory
+-rw-------  1 fvera002 csmajs     0 May 01 13:25 file1
+
+
+./bin:
+total 540
+drwx------  2 fvera002 csmajs    80 May 01 13:23 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rwx------  1 fvera002 csmajs 212632 May 01 13:23 [1;32mls[0;00m
+-rwx------  1 fvera002 csmajs 339104 May 01 13:21 [1;32mrshell[0;00m
+
+./src:
+total 28
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m.[0;00m
+drwx------  6 fvera002 csmajs   420 May 01 13:28 [1;100;34m..[0;00m
+-rw-------  1 fvera002 csmajs  4558 May 01 13:21 cmd.h
+-rw-------  1 fvera002 csmajs 13198 May 01 13:21 ls.cpp
+-rw-------  1 fvera002 csmajs  3656 May 01 13:21 main.cpp
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;34mt1[0;00m
+
+./src/t1:
+total 0
+drwx------  2 fvera002 csmajs    40 May 01 13:33 [1;100;34m.[0;00m
+drwx------  3 fvera002 csmajs   120 May 01 13:33 [1;100;34m..[0;00m
+]0;fvera002@sierra-19:~/rshell~/rshell
+
+fvera002@sierra-19 $ exit
+exit
+
+Script done on Fri 01 May 2015 01:48:16 PM PDT
