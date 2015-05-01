@@ -8,7 +8,10 @@ all: src/main.cpp src/cmd.h
 rshell: src/cmd.h 
 	mdkir -p $(BIN)
 	cd bin; g++ ../src/main.cpp $(FLAGS) -o rshell
+	
+ls:
+	mdkir -p $(BIN)
+	cd bin; g++ ../src/main.cpp $(FLAGS) -o ls
 
 clean: 
-	cd bin; if [ -a rshell ] ; then rm rshell; fi
-	rmdir bin	
+	rm -rf bin	
