@@ -98,7 +98,7 @@ void printLsOnly(vector<string> &file_list)
             }
         }
     }
-    cout << endl;
+    cout << flush <<  endl;
 }
 
 // according to flags set names that is going to be run in the current folder
@@ -396,6 +396,7 @@ void opFilesDir(vector<bool> &flags, vector<string> &op_files)
             }
             
             printLsOnly(file_names);
+            cout<<endl;
         }
         else if (flags[2]) lsR(file_names, flags, dir);
         
