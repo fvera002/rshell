@@ -19,19 +19,11 @@
 #include <cstring>
 #include <iomanip>
 
-// TODO:
-// [ok] total 23 when run ls -l
-// [ok] op files -R
-// formatting ls -a when there are many files
-// [ok] color
-// ERROR: messages
-// when link ->File/csl/ll.txt
-// ls.cpp and ls2.cpp ordering
-
 using namespace std;
 
 #define FOR(x)  for (unsigned i =0 ; i < (x).size(); ++i) 
 
+// structure is used to print name and and st is used to give info about that specific file
 struct stElem{
     struct stat st;
     string nm;
@@ -39,7 +31,7 @@ struct stElem{
     stElem(struct stat st1, string name) : st(st1), nm(name) {}
 };
 
-
+// helper function to sort() to make its ordering as close as possible to GNUs
 bool compareFileName(string a, string b) {
     string a1(a);
     string b1(b);
@@ -53,6 +45,7 @@ bool compareFileName(string a, string b) {
     return a1 < b1;
 }
 
+// print name according to its info in st
 string printColor(string &name, struct stat &st){
     string ret ="";
     if ((name[0] == '.') && (S_ISLNK(st.st_mode))) {
@@ -83,7 +76,8 @@ string printColor(string &name, struct stat &st){
     return ret;
 }
 
-void print_ls_a(vector<string> &file_list)
+// print ls without any special formatting no flags -l -f
+void printLsOnly(vector<string> &file_list)
 {
     if(file_list.empty()) return;
     FOR(file_list){
@@ -107,6 +101,7 @@ void print_ls_a(vector<string> &file_list)
     cout << endl;
 }
 
+// according to flags set names that is going to be run in the current folder
 void setNames(vector<string> &file_list, vector<bool> &flags, char *dir)
 {
     DIR *dirp;
@@ -136,6 +131,7 @@ void setNames(vector<string> &file_list, vector<bool> &flags, char *dir)
     }
 }
 
+//print one line of ls -l
 void printLine(struct stat &st, string &name){
     /*
      *file permissions,
@@ -147,7 +143,6 @@ void printLine(struct stat &st, string &name){
      *file/directory name
     */
     
-
     cout << ( (S_ISDIR(st.st_mode)) ? "d" : S_ISLNK(st.st_mode)? "l" : "-");
     cout << ( (st.st_mode & S_IRUSR) ? "r" : "-");
     cout << ( (st.st_mode & S_IWUSR) ? "w" : "-");
@@ -193,6 +188,7 @@ void printLine(struct stat &st, string &name){
     
 }
 
+//print total and all lines of a ls -l command
 void printLines(vector<stElem> &lines, long total){
     total = total != 0 ? total / 1024: 0;
     cout << "total " << total <<endl;
@@ -202,7 +198,8 @@ void printLines(vector<stElem> &lines, long total){
     }
 }
 
-void ls_l(vector<string> &file_list, char * dir)
+// all logic regarding lsL
+void lsL(vector<string> &file_list, char * dir)
 {
     vector<stElem> lines; 
     
@@ -221,7 +218,8 @@ void ls_l(vector<string> &file_list, char * dir)
     printLines(lines,total);
 }
 
-void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
+// all logic regarding ls -R
+void lsR(vector<string> &file_list, vector<bool> &flags, string dir)
 {
     if(file_list.empty()) return;
     
@@ -253,7 +251,7 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
             } else file_list_A.push_back(fl);
         }        
     }
-    if( !flags[1] ) print_ls_a(file_list_A);
+    if( !flags[1] ) printLsOnly(file_list_A);
     else printLines(lines,total);
     
     FOR(subs){
@@ -269,12 +267,12 @@ void ls_R(vector<string> &file_list, vector<bool> &flags, string dir)
         
         vector<string> subs2;
         setNames(subs2, flags, dir2);
-        ls_R(subs2, flags, dir2);
+        lsR(subs2, flags, dir2);
     }
 
 }
 
-
+// set of flags as true
 void allTrue(vector<bool> &flags)
 {
     FOR(flags){
@@ -282,6 +280,8 @@ void allTrue(vector<bool> &flags)
     }
 }
 
+// set each flag according to the args. 
+// Take care of all possible choices
 void setFlags(int argc, char** argv, vector<bool> &f)
 {
     // [0] = -a
@@ -310,6 +310,7 @@ void setFlags(int argc, char** argv, vector<bool> &f)
     
 }
 
+// check whether an arg is a flag
 bool isFlag(char * arg)
 {
     return  (strcmp(arg, "-a")==0)
@@ -329,6 +330,7 @@ bool isFlag(char * arg)
          || (strcmp(arg, "-alR")==0);
 }
 
+// check all args if it's ar optional file put it onto the list
 void setOpFiles(int argc, char** argv, vector<string> &files)
 {
     for(unsigned i = 1; i< argc; ++i){
@@ -337,6 +339,7 @@ void setOpFiles(int argc, char** argv, vector<string> &files)
     sort(files.begin(), files.end(), compareFileName);
 }
 
+// No optional File was passed, do the logic in the current fodler
 void noOpFiles(vector<bool> &flags)
 {
     vector<string> file_names;
@@ -347,7 +350,7 @@ void noOpFiles(vector<bool> &flags)
     // ls
     // ls -a
     if(!flags[1] && !flags[2]){ 
-        print_ls_a(file_names);
+        printLsOnly(file_names);
     }
     
     // handles:
@@ -355,7 +358,7 @@ void noOpFiles(vector<bool> &flags)
     // ls -l -a
     else if(flags[1] && !flags[2]){ // if [ls -l] or [ls -l -a] was passed in 
         // flag -a does not matter since setNames() has already taken care of it
-        ls_l(file_names, dir);
+        lsL(file_names, dir);
     }
     
     // handles:
@@ -364,11 +367,12 @@ void noOpFiles(vector<bool> &flags)
     // ls -R -a -l
     else if(flags[2]){ 
         // flag -a does not matter since setNames() is taking care of it
-        ls_R(file_names, flags, "./");
+        lsR(file_names, flags, "./");
     }    
 }
 
-void ls_opFilesDir(vector<bool> &flags, vector<string> &op_files)
+// takes care of optional files that are directories
+void opFilesDir(vector<bool> &flags, vector<string> &op_files)
 {
     //vector<string> dirs;
     
@@ -384,18 +388,19 @@ void ls_opFilesDir(vector<bool> &flags, vector<string> &op_files)
         
         setNames(file_names, flags, dir);
         
-        if (flags[1] && !flags[2]) ls_l(file_names, dir);
-        else if (!flags[1] && !flags[2]) print_ls_a(file_names);
-        else if (flags[2]) ls_R(file_names, flags, dir);
+        if (flags[1] && !flags[2]) lsL(file_names, dir);
+        else if (!flags[1] && !flags[2]) printLsOnly(file_names);
+        else if (flags[2]) lsR(file_names, flags, dir);
     }
     
-    //if(flags[2]) ls_opFilesDir(flags, dirs);
+    //if(flags[2]) opFilesDir(flags, dirs);
 }
 
+// takes care of optional files that are directories
 void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
 {
     if (!flags[1]){
-        print_ls_a(op_files);
+        printLsOnly(op_files);
         return;
     } 
     
@@ -412,7 +417,7 @@ void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
     }
 }
 
-
+// do logic reagarding optional files
 void opFiles(vector<bool> &flags, vector<string> &op_files)
 {
     vector<string> is_dir;
@@ -441,7 +446,7 @@ void opFiles(vector<bool> &flags, vector<string> &op_files)
     ls_opFilesNotDir(flags, not_dir);
     
     // ls -l -a -R [op1..files]
-    ls_opFilesDir(flags, is_dir);
+    opFilesDir(flags, is_dir);
 }
 
 int main(int argc, char** argv)
