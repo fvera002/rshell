@@ -1,17 +1,16 @@
 FLAGS = -g -Wall -Werror -ansi -pedantic
 BIN = bin
 
-all: src/main.cpp src/cmd.h
-	mkdir -p $(BIN)
-	cd bin; g++ ../src/main.cpp $(FLAGS) -o rshell
+all:
+	rshell
 
 rshell: src/cmd.h 
-	mdkir -p $(BIN)
+	mkdir -p $(BIN)
 	cd bin; g++ ../src/main.cpp $(FLAGS) -o rshell
 	
 ls:
-	mdkir -p $(BIN)
-	cd bin; g++ ../src/main.cpp $(FLAGS) -o ls
+	mkdir -p $(BIN)
+	cd bin; g++ ../src/ls.cpp $(FLAGS) -o ls
 
 clean: 
-	rm -rf bin	
+	rm -rf bin
