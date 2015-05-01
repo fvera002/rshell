@@ -173,7 +173,7 @@ void printLine(struct stat &st, string &name){
     cout << " "  << setw(5) << st.st_size;
     
     struct tm * time_st = localtime(&st.st_mtime);     
-    if (time == NULL){
+    if (time_st == NULL){
         perror("There was an error with localtime()");
         exit(1);
     }
@@ -260,14 +260,15 @@ void lsR(vector<string> &file_list, vector<bool> &flags, string dir)
         string fl = subs[i];
         if(dir == "./") fl = dir + fl;
         else fl = dir + "/" + fl;
-        
-        char dir2[fl.size()+1];
-        
+                
+        char *dir2 = new char[fl.length()+1];
         strcpy(dir2,fl.c_str());
         
         vector<string> subs2;
         setNames(subs2, flags, dir2);
         lsR(subs2, flags, dir2);
+        
+        delete [] dir2;
     }
 
 }
@@ -290,7 +291,7 @@ void setFlags(int argc, char** argv, vector<bool> &f)
     f[0] = false;
     f[1] = false;
     f[2] = false;
-    for(unsigned i = 1; i< argc; ++i){
+    for(int i = 1; i< argc; ++i){
         if(strcmp(argv[i], "-a")==0) f[0] = true;
         else if(strcmp(argv[i], "-l")==0) f[1] = true;
         else if(strcmp(argv[i], "-R")==0) f[2] = true;
@@ -333,7 +334,7 @@ bool isFlag(char * arg)
 // check all args if it's ar optional file put it onto the list
 void setOpFiles(int argc, char** argv, vector<string> &files)
 {
-    for(unsigned i = 1; i< argc; ++i){
+    for(int i = 1; i< argc; ++i){
         if( ! isFlag(argv[i])) files.push_back(argv[i]);
     }
     sort(files.begin(), files.end(), compareFileName);
@@ -382,8 +383,8 @@ void opFilesDir(vector<bool> &flags, vector<string> &op_files)
        
         vector<string> file_names;
         string sdir = "./" + op_files[i];
-        const int sz= sdir.size()+1;
-        char dir[sz];
+        
+        char *dir = new char[op_files[i].length()+1];
         strcpy(dir, op_files[i].c_str());
         
         setNames(file_names, flags, dir);
@@ -391,6 +392,8 @@ void opFilesDir(vector<bool> &flags, vector<string> &op_files)
         if (flags[1] && !flags[2]) lsL(file_names, dir);
         else if (!flags[1] && !flags[2]) printLsOnly(file_names);
         else if (flags[2]) lsR(file_names, flags, dir);
+        
+        delete [] dir;
     }
     
     //if(flags[2]) opFilesDir(flags, dirs);
@@ -406,13 +409,13 @@ void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
     
     FOR(op_files){
         if (flags[1]){
-                struct stat st;
-                if(lstat(op_files[i].c_str(),&st) < 0){
-                    perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
-                    //exit(1);
-                } else {
-                    printLine(st, op_files[i]);
-                } 
+            struct stat st;
+            if(lstat(op_files[i].c_str(),&st) < 0){
+                perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
+                //exit(1);
+            } else {
+                printLine(st, op_files[i]);
+            } 
         }        
     }
 }
