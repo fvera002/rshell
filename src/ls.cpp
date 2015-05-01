@@ -83,7 +83,6 @@ void printLsOnly(vector<string> &file_list)
     FOR(file_list){
         struct stat st;
         if(lstat(file_list[i].c_str(),&st) < 0){
-            cout << __LINE__ << endl;
             perror(string("There was an error with stat(" + file_list[i] + ")").c_str());
             //exit(1);
         } else {
@@ -379,7 +378,7 @@ void opFilesDir(vector<bool> &flags, vector<string> &op_files)
     //vector<string> dirs;
     
     FOR(op_files){
-        if (!flags[2])cout << endl << op_files[i] << ":"<< endl;
+        if (!flags[2])cout << op_files[i] << ":"<< endl;
         if (flags[2])cout<< endl;
        
         vector<string> file_names;
@@ -419,7 +418,6 @@ void ls_opFilesNotDir(vector<bool> &flags, vector<string> &op_files)
         if (flags[1]){
             struct stat st;
             if(lstat(op_files[i].c_str(),&st) < 0){
-                cout << __LINE__ << endl;
                 perror(string("There was an error with stat(" + op_files[i] + ")").c_str());
                 //exit(1);
             } else {
@@ -458,7 +456,7 @@ void opFiles(vector<bool> &flags, vector<string> &op_files)
     }
     
     ls_opFilesNotDir(flags, not_dir);
-    
+    if(!not_dir.empty())cout << endl;
     // ls -l -a -R [op1..files]
     opFilesDir(flags, is_dir);
 }
