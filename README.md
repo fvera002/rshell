@@ -124,4 +124,4 @@ $ bin/ls
 ####Bugs HW1: ls
 * Output does not line up exactly as it should when running `ls` in a folder with many files.
 
-* Information regarding the total block of memory is not shown when running `ls -l`
+* The order in which files are displayed is not matching GNU's implementation when files have similar names, such as `ls.cpp` and `ls2.cpp`. 
