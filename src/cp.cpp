@@ -43,6 +43,10 @@ void exist_error(char * f)
         }
         cerr << "Please, enter an non-existent output file as parameter." <<endl <<endl;
         exit(1);
+    } 
+    else {
+        perror("ERROR: There was an error with stat(). ");
+        exit(1);
     }
 }
 
