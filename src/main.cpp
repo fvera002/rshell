@@ -11,11 +11,56 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <queue>
+
+#include <fcntl.h>
+#include <sys/stat.h>
 using namespace std;
 
 bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
+
+bool redirect(queue<cmd> &commands, queue<string> &connectors)
+{
+    cout << "Redirect called... "<< commands.size() << endl;
+    //if there's no file passed in, do nothing
+    if(commands.size() < 2) return false; 
+    
+    cmd currCmd = commands.front();
+    commands.pop();
+    char * file_name = commands.front().toArray()[0];
+    cout << "Printing into: " << file_name << endl;
+    
+    
+    // 0 = cin
+    // 1 = cout
+    // 2 = cerr
+    int fl;
+    //int stdout = dup(1);
+    if(close(1) == -1){
+        perror("There was an error with close()");
+        exit(1);
+    }
+    
+    else if (fl = open(file_name, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) == -1){
+        perror("There was an error with open()");
+        exit(1);
+    }
+    //from now on everything is going to be printed into the file
+     
+    bool ret = exec(currCmd);
+    
+    if(close(fl) == -1){
+        perror("There was an error with close(). ");
+        exit(1);
+    }
+    
+    if(dup(1) == -1){
+        perror("There was an error with dup()");
+        exit(1);
+    }
+    return ret;
+}
 
 // runs fork and execvp returning true if execvp succeed
 bool exec(cmd c)
@@ -67,6 +112,13 @@ void runPrep(cmd &c)
 void run(queue<cmd> &commands, queue<string> &connectors)
 {
     if(commands.empty()) return;
+    
+    //if the next connector in queue is a redirect output
+    if(connectors.front()== ">"){
+        redirect(commands, connectors);
+        return;
+    } 
+    
     //use the first command "highest priority" 
     string con;
     if(!connectors.empty())con= connectors.front();
