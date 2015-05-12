@@ -66,8 +66,13 @@ class cmd
         {
             string con;
             if(a==';' || b==';') con = ";";
-            if(a=='|' && b=='|') con = "||";
-            if(a=='&' && b=='&') con = "&&";
+            else if(a=='|' && b=='|') con = "||";
+            else if(a=='|' && b!='|') con = "|";
+            else if(a!='|' && b=='|') con = "|";
+            else if(a=='&' && b=='&') con = "&&";
+            else if(a=='>' && b !='>') con = ">";
+            else if(a!='>' && b =='>') con = ">";
+            else if(a=='>' && b =='>') con = ">>";
             
             if(!con.empty()){
                 connectors.push(con);
@@ -145,7 +150,7 @@ class cmd
             }
             
             typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-            boost::char_separator<char> sep("&;|");
+            boost::char_separator<char> sep("&;|>");
             tokenizer tokens(input, sep);
             tokenizer::iterator tok_iter;
             
