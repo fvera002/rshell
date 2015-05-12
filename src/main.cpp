@@ -11,11 +11,68 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <queue>
+
+#include <fcntl.h>
+#include <sys/stat.h>
 using namespace std;
+
+//echo a || echo b && echo c || echo d
+//echo a || echo b && echo c && echo d
+// g++ -g -Wall -Werror -ansi -pedantic main.cpp
 
 bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
+
+bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
+{
+    //if there's no file passed in, do nothing
+    if(commands.size() < 2) return false; 
+    
+    cmd currCmd = commands.front();
+    commands.pop();
+    char * file_name = commands.front().toArray()[0];
+    //cout << "Printing into: " << file_name << endl;
+    
+    
+    // 0 = cin
+    // 1 = cout
+    // 2 = cerr
+    int fl;
+    int stdout = dup(1);
+    
+    if(stdout == -1){
+        perror("There was an error with dup()");
+        exit(1);
+    }
+    
+    if(close(1) == -1){
+        perror("There was an error with close()");
+        exit(1);
+    }
+    fl = open(file_name, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
+    if (fl == -1){
+        perror("There was an error with open()");
+        exit(1);
+    }
+    //from now on everything is going to be printed into the file
+     
+    bool ret = exec(currCmd);
+    
+    if(close(fl) == -1){
+        perror("There was an error with close(). ");
+        exit(1);
+    }
+    
+    if(dup2(stdout, 1) == -1){
+        perror("There was an error with dup2()");
+        exit(1);
+    }
+    
+    if(!commands.empty())commands.pop();
+    if(!connectors.empty())connectors.pop();
+    return ret;
+}
 
 // runs fork and execvp returning true if execvp succeed
 bool exec(cmd c)
@@ -67,6 +124,14 @@ void runPrep(cmd &c)
 void run(queue<cmd> &commands, queue<string> &connectors)
 {
     if(commands.empty()) return;
+    
+    //if the next connector in queue is a redirectOut output
+    if(connectors.front()== ">"){
+        redirectOut(commands, connectors);
+        run(commands, connectors);
+        return;
+    } 
+    
     //use the first command "highest priority" 
     string con;
     if(!connectors.empty())con= connectors.front();
@@ -78,21 +143,23 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     // cout << "c " << con << "_" << endl;
     if(com.toString() == "exit") exit(0);
     bool ok = exec(com);
-    if(ok){ //SUCESS
-        if(!connectors.empty() && con == "||" ){
-            connectors.pop();
-            commands.pop();
+    if(ok){ 
+    //SUCESS
+        if(con == "||" ){
+            if(!connectors.empty())connectors.pop();
+            if(!commands.empty())commands.pop();
         }
-        else if(!connectors.empty() && ( con == "&&" || con == ";")){
-            connectors.pop();
+        else if(con == "&&" || con == ";"){
+            if(!connectors.empty())connectors.pop();
         }
-    } else {//FAIL
-        if(!connectors.empty() && con == "&&"){ 
-            connectors.pop();
-            commands.pop();
+    } else {
+    //FAIL
+        if(con == "&&"){ 
+            if(!connectors.empty())connectors.pop();
+            if(!commands.empty())commands.pop();
         }
-        else if(!connectors.empty() && ( con == "||" || con == ";")){ 
-            connectors.pop();
+        else if(con == "||" || con == ";"){ 
+            if(!connectors.empty())connectors.pop();
         }
     }
     
