@@ -17,8 +17,6 @@
 
 using namespace std;
 
-#define FOR(x) for (unsigned i =0 ; i < (x).size(); ++i) 
-
 //echo a || echo b && echo c || echo d
 //echo a || echo b && echo c && echo d
 // echo aaa > a; echo bbb > b && echo ccc > c
@@ -32,8 +30,84 @@ bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
 
+bool redirectIn(queue<cmd> &commands, queue<string> &connectors, int flags, int fd)
+{
+    //if there's no file passed in, do nothing    
+    if(commands.size() < 2) return false; 
+    
+    cmd currCmd = commands.front();
+    commands.pop();
+    
+    //char * file_name;
+    char * file_name = commands.front().toArray()[0];
+    //cout << "Printing into: " << file_name << endl;
+    
+    int status;
+    int pid = fork();
+    if(pid == -1){//fork’s return value for an error is -1
+        perror("There was an error with fork()");
+        exit(1);//there was an error with fork so exit the program and go back and fix it
+    }
+    else if(pid == 0){//when pid is 0 you are in the child process
+        //This is the child process
+        int fl;
+        int old = dup(fd);
+        bool ret =false;
+        
+        if(old == -1){
+            perror("There was an error with dup()");
+            //exit(1);
+            if(!connectors.empty())connectors.pop();
+            return ret;
+        }
+        
+        if(close(fd) == -1){
+            perror("There was an error with close()");
+            //exit(1);
+            if(!connectors.empty())connectors.pop();
+            return ret;
+        }
+        
+        fl = open(file_name, flags, S_IRUSR|S_IWUSR);
+        if (fl == -1){
+            perror("There was an error with open()");
+            //exit(1);
+        }
+        
+        //if(!commands.empty())commands.pop();
+        if(!connectors.empty())connectors.pop(); 
+        char **argv = currCmd.toArray();  
+        if(-1 == execvp(*argv, argv)){
+            perror("There was an error in execvp()");
+        }
+        if(close(fl) == -1){
+                perror("There was an error with close(). ");
+                //exit(1);
+            }
+        if(dup2(old, 1) == -1){
+            perror("There was an error with dup2()");
+            //exit(1);
+        }
+        exit(1);
+    }
+    //if pid is not 0 then we’re in the parent
+    //parent process
+    else{
+        pid = wait(&status);
+        if(pid == -1){
+            perror("There was an error in wait()");
+            exit(1);
+        }
+        if(WIFEXITED(status)){
+            if(WEXITSTATUS(status) > 0)return false;
+            return true;
+        }
+    }
+    return false; 
+    
+}
 
-bool redirect(queue<cmd> &commands, queue<string> &connectors, bool trunc, int fd)
+bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd)
 {
     //if there's no file passed in, do nothing    
     if(commands.size() < 2) return false; 
@@ -50,38 +124,40 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, bool trunc, int f
     // 2 = cerr
     int fl;
     int old = dup(fd);
+    bool ret =false;
     
     if(old == -1){
         perror("There was an error with dup()");
-        exit(1);
+        //exit(1);
+        if(!connectors.empty())connectors.pop();
+        return ret;
     }
     
     if(close(fd) == -1){
         perror("There was an error with close()");
-        exit(1);
+        //exit(1);
+        if(!connectors.empty())connectors.pop();
+        return ret;
     }
     
-    if(trunc)
-        fl = open(file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR);
-    else 
-        fl = open(file_name, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
-
+    fl = open(file_name, flags, S_IRUSR|S_IWUSR);
     if (fl == -1){
         perror("There was an error with open()");
-        exit(1);
+        //exit(1);
     }
-    //from now on everything is going to be printed into the file
-    //cout << "_"<< currCmd.toString() << "_"<< endl;
-    bool ret = exec(currCmd);
-    
-    if(close(fl) == -1){
-        perror("There was an error with close(). ");
-        exit(1);
+    else {
+        //from now on everything is going to be printed into the file
+        //cout << "_"<< currCmd.toString() << "_"<< endl;
+        ret = exec(currCmd);
+        
+        if(close(fl) == -1){
+            perror("There was an error with close(). ");
+            //exit(1);
+        }
     }
-    
     if(dup2(old, 1) == -1){
         perror("There was an error with dup2()");
-        exit(1);
+        //exit(1);
     }
     
     //if(!commands.empty())commands.pop();
@@ -95,16 +171,20 @@ bool redirectPrep(queue<cmd> &commands, queue<string> &connectors)
     if(!connectors.empty()) con = connectors.front();
     //cout << "--" << con <<endl;
     
+    const int trunc = O_CREAT|O_WRONLY|O_TRUNC;
+    const int append = O_CREAT|O_WRONLY|O_APPEND;
+    const int read = O_CREAT|O_RDONLY;
+    
     if(con == ">" || con == "1>")
-        return redirect(commands, connectors, true, 1); //TRUNC
+        return redirect(commands, connectors, trunc, 1); //TRUNC
     else if(con == ">>" || con == "1>>")
-        return redirect(commands, connectors, false,  1); //APPEND
+        return redirect(commands, connectors, append,  1); //APPEND
     else if(con == "2>")
-        return redirect(commands, connectors, true,  2); //TRUNC
+        return redirect(commands, connectors, trunc,  2); //TRUNC
     else if(con == "2>>")
-        return redirect(commands, connectors, false,  2);//APPEND
+        return redirect(commands, connectors, append,  2);//APPEND
     else if(con == "<")
-        return redirect(commands, connectors, false,  0);//TRUNC
+        return redirectIn(commands, connectors, read,  0);
     
     return false;
 }
