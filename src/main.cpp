@@ -14,12 +14,16 @@
 
 #include <fcntl.h>
 #include <sys/stat.h>
+
 using namespace std;
+
+#define FOR(x) for (unsigned i =0 ; i < (x).size(); ++i) 
 
 //echo a || echo b && echo c || echo d
 //echo a || echo b && echo c && echo d
 // echo aaa > a; echo bbb > b && echo ccc > c
-// echo aaa> a; echo bbb >b && echo ccc> c
+// echo aaa> a; echo bbb > b&& echo ccc> c
+// echo aaa 2>> a is printing 2
 
 
 // g++ -g -Wall -Werror -ansi -pedantic main.cpp
@@ -28,27 +32,26 @@ bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
 
-bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
+
+bool redirect(queue<cmd> &commands, queue<string> &connectors, bool trunc, int fd)
 {
-    //cout << "_red_"<< endl;
-    //if there's no file passed in, do nothing
-    
+    //if there's no file passed in, do nothing    
     if(commands.size() < 2) return false; 
     
     cmd currCmd = commands.front();
     commands.pop();
-    cout << commands.front().toString() <<endl;
+
     char * file_name = commands.front().toArray()[0];
-    cout << "Printing into: " << file_name << endl;
+    //cout << "Printing into: " << file_name << endl;
     
     
     // 0 = cin
     // 1 = cout
     // 2 = cerr
     int fl;
-    int stdout = dup(1);
+    int old = dup(fd);
     
-    if(stdout == -1){
+    if(old == -1){
         perror("There was an error with dup()");
         exit(1);
     }
@@ -57,7 +60,12 @@ bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
         perror("There was an error with close()");
         exit(1);
     }
-    fl = open(file_name, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
+    
+    if(trunc)
+        fl = open(file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR);
+    else 
+        fl = open(file_name, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
+
     if (fl == -1){
         perror("There was an error with open()");
         exit(1);
@@ -71,7 +79,7 @@ bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
         exit(1);
     }
     
-    if(dup2(stdout, 1) == -1){
+    if(dup2(old, 1) == -1){
         perror("There was an error with dup2()");
         exit(1);
     }
@@ -79,6 +87,25 @@ bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
     //if(!commands.empty())commands.pop();
     if(!connectors.empty())connectors.pop();
     return ret;
+}
+
+bool redirectPrep(queue<cmd> &commands, queue<string> &connectors)
+{
+    string con;
+    if(!connectors.empty()) con = connectors.front();
+    
+    if(con == ">" || con == "1>")
+        return redirect(commands, connectors, true, 1); //TRUNC
+    else if(con == ">>" || con == "1>>")
+        return redirect(commands, connectors, false,  1); //APPEND
+    else if(con == "2>")
+        return redirect(commands, connectors, true,  2); //TRUNC
+    else if(con == "2>>")
+        return redirect(commands, connectors, false,  2);//APPEND
+    else if(con == "<")
+        return redirect(commands, connectors, false,  0);//TRUNC
+    
+    return false;
 }
 
 // runs fork and execvp returning true if execvp succeed
@@ -127,6 +154,66 @@ void runPrep(cmd &c)
     run(commands, connectors);
 }
 
+bool isRedirect(string con)
+{
+    FOR(con){
+        if(con[i] == '<') return true;
+        if(con[i] == '>') return true;
+    }
+    return false;
+}
+
+//same logic, however checks before running the command
+void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
+{
+    if(commands.empty()) return;
+    //use the first command "highest priority" 
+    cmd com = commands.front();
+    if(com.toString() == "exit") exit(0);
+    
+    string con;
+    if(!connectors.empty()) con = connectors.front();
+    //cout<<prev;
+    //cout << "2_"<< com.toString() << "_"<< endl;
+    //cout << "2-" << con << "-" << endl;
+    
+    if(!con.empty() && isRedirect(con) ){
+        prev = redirectPrep(commands, connectors);
+    } 
+    
+    bool ok;
+    if(prev){
+    //SUCESS
+        if(con == "||" ){
+            if(!connectors.empty()) connectors.pop();
+            if(!commands.empty()) commands.pop();
+            ok =false;
+        }
+        else if(con == "&&" || con == ";"){
+            if(!connectors.empty())connectors.pop();
+            ok = exec(com);
+            if(!commands.empty()) commands.pop();
+        }
+    }
+    else{
+    //FAIL
+        if(con == "&&"){
+            if(!connectors.empty()) connectors.pop();
+            if(!commands.empty()) commands.pop();
+            ok =false;
+        }
+        else if(con == "||" || con == ";"){
+            if(!connectors.empty()) connectors.pop();
+            ok = exec(com);
+            if(!commands.empty()) commands.pop();
+        }
+    }
+    
+    
+    run2(commands, connectors, ok);
+    return ;
+}
+
 // do the logics of commands, executing execpv when needed 
 // then call run again recursively
 // or exits the program if it's the case
@@ -140,13 +227,13 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     string con;
     if(!connectors.empty())con= connectors.front();
     
-    cout << "_"<< com.toString() << "_"<< endl;
-    cout << "-" << con << "-" << endl;
+    //cout << "_"<< com.toString() << "_"<< endl;
+    //cout << "-" << con << "-" << endl;
     
     bool ok;
-    //if the next connector in queue is a redirectOut output
-    if(!con.empty() && con== ">"){
-        ok = redirectOut(commands, connectors);
+    //if the next connector in queue is a redirect output
+    if(!con.empty() && isRedirect(con) ){
+        ok = redirectPrep(commands, connectors);
     } 
     else {
         ok = exec(com);
@@ -160,22 +247,26 @@ void run(queue<cmd> &commands, queue<string> &connectors)
         if(con == "||" ){
             if(!connectors.empty())connectors.pop();
             if(!commands.empty())commands.pop();
+            run2(commands, connectors, ok);
         }
         else if(con == "&&" || con == ";"){
             if(!connectors.empty())connectors.pop();
+            run(commands, connectors);
         }
-    } else {
+    } 
+    else {
     //FAIL
         if(con == "&&"){ 
             if(!connectors.empty())connectors.pop();
             if(!commands.empty())commands.pop();
+            run2(commands, connectors, ok);
         }
         else if(con == "||" || con == ";"){ 
             if(!connectors.empty())connectors.pop();
+            run(commands, connectors);
         }
     }
     
-    run(commands, connectors);
     return ;
 }
 
@@ -219,4 +310,3 @@ int main()
     }
     return 0;
 }
-
