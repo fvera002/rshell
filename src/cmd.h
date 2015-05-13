@@ -62,7 +62,17 @@ class cmd
         }
         
         // return whether a and b together make a connector
-        void isConnector(char a, char b, queue<string> &connectors)
+        
+        bool isConnector(char a)
+        {
+            return a == ';' ||
+                   a == '|' || 
+                   a == '&' || 
+                   a == '<' || 
+                   a == '>' ;
+        }
+        
+        int isConnector(char a, char b, queue<string> &connectors)
         {
             string con;
             if(a==';' || b==';') con = ";";
@@ -77,17 +87,8 @@ class cmd
             if(!con.empty()){
                 connectors.push(con);
             }
-        }
-        
-        // return whether a or b is a 1 conector of length1
-        bool isConLen1(char a, char b)
-        {
-            if(a==';' || b==';') return true;
-            else if(a=='|' && b!='|') return true;
-            else if(a!='|' && b=='|') return true;
-            else if(a=='>' && b !='>') return true;
-            else if(a!='>' && b =='>') return true;
-            return false;
+            
+            return con.size();
         }
         
         // extract the spaces in the beginning and at the end of str
@@ -147,14 +148,34 @@ class cmd
             queue<cmd> list;
             if(input.empty()) return list;
             if(input.size()>2){
-                for(unsigned i =0; i< input.size()-2; ++i){
-                    isConnector(input[i], input[i+1], connectors);
-                    if(isConLen1(input[i], input[i+1]))++i;
+                int sz = input.size()-2;
+                for(int i =0; i< sz; ++i){
+                    if(isConnector(input[i])){
+                        string con;
+                        if(i+1 < sz && isConnector(input[i+1])){
+                            if(i+2 < sz && isConnector(input[i+2])){
+                                con = input.substr(i, 3);
+                                connectors.push(con);
+                                i += 2;
+                            }
+                            else {
+                                con = input.substr(i, 2);
+                                connectors.push(con);
+                                ++i;
+                            }                                
+                        }
+                        else { 
+                            con = input.substr(i, 1);
+                            if(!trim(con).empty())
+                                connectors.push(con);
+                        }
+                    }
+                    
                 }
             }
             
             typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-            boost::char_separator<char> sep("&;|>");
+            boost::char_separator<char> sep("&;|><");
             tokenizer tokens(input, sep);
             tokenizer::iterator tok_iter;
             
