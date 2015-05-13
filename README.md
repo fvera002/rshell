@@ -3,8 +3,15 @@ HW0 CS100 Spring 2015
 
 
 ##Authors and Contributors
+######Author
+
 Fernando Donizete Verago Junior
+
+######Contributors
+
 Isadora Maria Mendes de Souza (cp.cpp)
+
+Andrew So (rm.cpp and mv.cpp)
 
 ##General Information
 ####HW0: rshell
