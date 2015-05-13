@@ -56,7 +56,7 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, bool trunc, int f
         exit(1);
     }
     
-    if(close(1) == -1){
+    if(close(fd) == -1){
         perror("There was an error with close()");
         exit(1);
     }
@@ -93,6 +93,7 @@ bool redirectPrep(queue<cmd> &commands, queue<string> &connectors)
 {
     string con;
     if(!connectors.empty()) con = connectors.front();
+    //cout << "--" << con <<endl;
     
     if(con == ">" || con == "1>")
         return redirect(commands, connectors, true, 1); //TRUNC
@@ -156,6 +157,7 @@ void runPrep(cmd &c)
 
 bool isRedirect(string con)
 {
+    //cout << "--" << con <<endl;
     FOR(con){
         if(con[i] == '<') return true;
         if(con[i] == '>') return true;
@@ -310,3 +312,4 @@ int main()
     }
     return 0;
 }
+
