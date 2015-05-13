@@ -150,7 +150,7 @@ class cmd
             if(input.size()>2){
                 int sz = input.size()-2;
                 for(int i =0; i< sz; ++i){
-                    if(isConnector(input[i])){
+                    if(isConnector(input[i]) || isdigit(input[i]) ){
                         string con;
                         if(i+1 < sz && isConnector(input[i+1])){
                             if(i+2 < sz && isConnector(input[i+2])){
@@ -165,9 +165,11 @@ class cmd
                             }                                
                         }
                         else { 
-                            con = input.substr(i, 1);
-                            if(!trim(con).empty())
-                                connectors.push(con);
+                            if(! isdigit(input[i])){
+                                con = input.substr(i, 1);
+                                if(!trim(con).empty())
+                                    connectors.push(con);
+                            }
                         }
                     }
                     
