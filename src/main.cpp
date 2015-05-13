@@ -18,6 +18,10 @@ using namespace std;
 
 //echo a || echo b && echo c || echo d
 //echo a || echo b && echo c && echo d
+// echo aaa > a; echo bbb > b && echo ccc > c
+// echo aaa> a; echo bbb >b && echo ccc> c
+
+
 // g++ -g -Wall -Werror -ansi -pedantic main.cpp
 
 bool exec(cmd c);
@@ -26,13 +30,16 @@ void run(queue<cmd> &commands, queue<string> &connectors);
 
 bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
 {
+    //cout << "_red_"<< endl;
     //if there's no file passed in, do nothing
+    
     if(commands.size() < 2) return false; 
     
     cmd currCmd = commands.front();
     commands.pop();
+    cout << commands.front().toString() <<endl;
     char * file_name = commands.front().toArray()[0];
-    //cout << "Printing into: " << file_name << endl;
+    cout << "Printing into: " << file_name << endl;
     
     
     // 0 = cin
@@ -56,7 +63,7 @@ bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
         exit(1);
     }
     //from now on everything is going to be printed into the file
-     
+    //cout << "_"<< currCmd.toString() << "_"<< endl;
     bool ret = exec(currCmd);
     
     if(close(fl) == -1){
@@ -69,7 +76,7 @@ bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
         exit(1);
     }
     
-    if(!commands.empty())commands.pop();
+    //if(!commands.empty())commands.pop();
     if(!connectors.empty())connectors.pop();
     return ret;
 }
@@ -77,6 +84,7 @@ bool redirectOut(queue<cmd> &commands, queue<string> &connectors)
 // runs fork and execvp returning true if execvp succeed
 bool exec(cmd c)
 {
+    //cout<< c.toString() << endl;
     int status;
     int pid = fork();
     if(pid == -1){//fork’s return value for an error is -1
@@ -86,8 +94,9 @@ bool exec(cmd c)
     else if(pid == 0){//when pid is 0 you are in the child process
         //This is the child process 
         char **argv = c.toArray();  
-        if(-1 == execvp(*argv, argv))
+        if(-1 == execvp(*argv, argv)){
             perror("There was an error in execvp()");
+        }
         exit(1);
     }
     //if pid is not 0 then we’re in the parent
@@ -124,25 +133,28 @@ void runPrep(cmd &c)
 void run(queue<cmd> &commands, queue<string> &connectors)
 {
     if(commands.empty()) return;
-    
-    //if the next connector in queue is a redirectOut output
-    if(connectors.front()== ">"){
-        redirectOut(commands, connectors);
-        run(commands, connectors);
-        return;
-    } 
-    
     //use the first command "highest priority" 
+    cmd com = commands.front();
+    if(com.toString() == "exit") exit(0);
+    
     string con;
     if(!connectors.empty())con= connectors.front();
-    cmd com = commands.front();
-    commands.pop();
     
-    // execpv and fork process
-    // cout << "_"<< com.toString() << "_"<< endl;
-    // cout << "c " << con << "_" << endl;
-    if(com.toString() == "exit") exit(0);
-    bool ok = exec(com);
+    cout << "_"<< com.toString() << "_"<< endl;
+    cout << "-" << con << "-" << endl;
+    
+    bool ok;
+    //if the next connector in queue is a redirectOut output
+    if(!con.empty() && con== ">"){
+        ok = redirectOut(commands, connectors);
+    } 
+    else {
+        ok = exec(com);
+    }
+    commands.pop();
+    if(!connectors.empty())con= connectors.front();
+
+    
     if(ok){ 
     //SUCESS
         if(con == "||" ){
