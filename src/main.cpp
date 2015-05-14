@@ -31,42 +31,39 @@ bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
 
-void exec2(cmd c)
+bool exec2(cmd c)
 {
     char **argv = c.toArray();  
     if(-1 == execvp(*argv, argv)){
         perror("There was an error in execvp()");
     }
+    return true;
 }
 
-void piping(vector <cmd> & v) {
+void piping(vector <cmd> &v) {
     int savedIn = dup(0);
     if (savedIn == -1)
         perror("There was an error in dup");
     int savedOut = dup(0);
     if (savedOut == -1)
         perror("There was an error in dup");
-    
-    //string top = c.front();
-    
-    int in ;
-    in = 0;
 
-    int output;
-    output = 1;
+    int in = 0;
+    int output = 1;
     
     int fd[2];
-    size_t i;
-    for (i = 0; i < v.size() - 1; ++i) {
+    
+    //initialize all children expect the last one
+    for (unsigned i = 0; i < v.size() - 1; ++i) {
         if (pipe(fd) == -1)
             perror("There was an error in pipe");
-        size_t pid = fork();
-        size_t q = -1;
+        int pid = fork();
+        int q = -1;
         if (pid == q)
             perror("There was an error in fork");
         if (pid == 0) {
-            if ( in != 0) {
-                if (dup2( in , 0) == -1) {
+            if (in != 0) {
+                if (dup2(in , 0) == -1) {
                     perror("There was an error in dup2 1");
                     return;
                 }
@@ -77,8 +74,10 @@ void piping(vector <cmd> & v) {
                 perror("There was an error in dup2");
             if (close(fd[1]) == -1)
                 perror("There was an error in close");
+                
             exec2(v.at(i));
-            exit(1);
+            
+            exit(1); //avoid zoombies
         } else {
             if (close(fd[1]) == -1)
                 perror("There was an error in close"); in = fd[0];
@@ -86,8 +85,10 @@ void piping(vector <cmd> & v) {
     }
     if (dup2( in , 0) == -1)
         perror("There was an error in dup2 2");
-    size_t pid = fork();
-    size_t q = -1;
+        
+    //now take care of last command
+    int pid = fork();
+    int q = -1;
     if (pid == q)
         perror("There was an error in fork");
     if (pid == 0) {
@@ -100,7 +101,9 @@ void piping(vector <cmd> & v) {
             if (dup2(savedOut, STDOUT_FILENO) == -1)
                 perror("There was an error in dup2");
         }
+        
         exec2(v.at(v.size() - 1));
+        
     } else if (pid > 0){
         if (waitpid(pid, NULL, 0) == -1)
             perror("There was an error in wait");
@@ -233,7 +236,7 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
     else {
         //from now on everything is going to be printed into the file
         //cout << "_"<< currCmd.toString() << "_"<< endl;
-        ret = exec(currCmd);
+        ret = exec2(currCmd);
         
         if(close(fl) == -1){
             perror("There was an error with close(). ");
@@ -512,3 +515,4 @@ int main()
     }
     return 0;
 }
+
