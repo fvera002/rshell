@@ -22,6 +22,7 @@ using namespace std;
 // echo aaa > a; echo bbb > b && echo ccc > c
 // echo aaa> a; echo bbb > b&& echo ccc> c
 // echo aaa 2>> a is printing 2
+// ls -l | head -3 | tail -1 
 
 
 // g++ -g -Wall -Werror -ansi -pedantic main.cpp
@@ -30,80 +31,88 @@ bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
 
-void piping(vector<cmd> & v) {
-    const int PIPE_READ = 0;
-    const int PIPE_WRITE = 1;
-    int fd[2];
-    if(pipe(fd) == -1)//call to pipe, it puts the read end and write end file descriptors in fd
-       perror("There was an error with pipe(). ");
-    
-    int pid = fork();
-    if(pid == -1)//fork’s return value for an error is -1
-    {
-       perror("There was an error with fork(). ");
-       exit(1);//there was an error with fork so exit the program and go back and fix it
+void exec2(cmd c)
+{
+    char **argv = c.toArray();  
+    if(-1 == execvp(*argv, argv)){
+        perror("There was an error in execvp()");
     }
-    else if(pid == 0)//when pid is 0 you are in the first child process
-    {
-       cout<<"This is the first child process ";
-    
-       //write to the pipe
-       if(-1 == dup2(fd[PIPE_WRITE],1))//make stdout the write end of the pipe
-          perror("There was an error with dup2. ");
-       if(-1 == close(fd[PIPE_READ]))//close the read end of the pipe because we're not doing anything with it right now
-          perror("There was an error with close. ");
-    
-       char ** argv = v.at(0).toArray();
-       if(-1 == execvp(argv[0], argv))
-          perror("There was an error in execvp. ");
-    
-    
-       exit(1);  //prevents zombie process
-    }
-    //if pid is not 0 then we’re in the first parent
-    else if(pid > 0) //first parent function
-    {
-       //read end of the pipe
-       int savestdin;
-       if(-1 == (savestdin = dup(0)))//need to restore later or infinite loop
-          perror("There is an error with dup. ");
-       if( -1 == wait(0)) //wait for the child process to finish executing
-          perror("There was an error with wait(). ");
-    
-        
-       int pid2 = fork();
-       if(pid2 == -1)//fork's return value for an error is -1
-       {
-          perror("There was an error with fork(). ");
-          exit(1);//there was an error with fork so exit the program and go back and fix it
-       }
-       else if(pid2 == 0)//when pid2 is 0 you are in the second child process
-       {
-          cout << "This is the second child process ";
-    
-          if(-1 == dup2(fd[PIPE_READ],0))//make stdin the read end of the pipe
-             perror("There was an error with dup2. ");
-          if(-1 == close(fd[PIPE_WRITE])) //close the write end of the pipe because we're not doing anything with it right now
-             perror("There was an error with close. ");
-    
-          char ** argv2 = v.at(1).toArray();
-          if(-1 == execvp(argv2[0], argv2))
-             perror("There was an error in excecvp. ");
-    
-          exit(1); //prevents zombie process
-       }
-       else if(pid2 > 0) //second parent function
-       {
-          if (-1 == close(fd[PIPE_WRITE])) //close the write end of the pipe in the parent so the second child isn't left waiting
-             perror("There was an error with close. ");
-          if(-1 == wait(0)) //wait for the child process to finish executing
-             perror("There was an error with wait(). ");
-       }
-    
-       if(-1 == dup2(savestdin,0))//restore stdin
-          perror("There is an error with dup2. ");
-    }
+}
 
+void piping(vector <cmd> & v) {
+    int savedIn = dup(0);
+    if (savedIn == -1)
+        perror("There was an error in dup");
+    int savedOut = dup(0);
+    if (savedOut == -1)
+        perror("There was an error in dup");
+    
+    //string top = c.front();
+    
+    int in ;
+    in = 0;
+
+    int output;
+    output = 1;
+    
+    int fd[2];
+    size_t i;
+    for (i = 0; i < v.size() - 1; ++i) {
+        if (pipe(fd) == -1)
+            perror("There was an error in pipe");
+        size_t pid = fork();
+        size_t q = -1;
+        if (pid == q)
+            perror("There was an error in fork");
+        if (pid == 0) {
+            if ( in != 0) {
+                if (dup2( in , 0) == -1) {
+                    perror("There was an error in dup2 1");
+                    return;
+                }
+                if (close( in ) == -1)
+                    perror("There was an error in close");
+            }
+            if (dup2(fd[1], 1) == -1)
+                perror("There was an error in dup2");
+            if (close(fd[1]) == -1)
+                perror("There was an error in close");
+            exec2(v.at(i));
+            exit(1);
+        } else {
+            if (close(fd[1]) == -1)
+                perror("There was an error in close"); in = fd[0];
+        }
+    }
+    if (dup2( in , 0) == -1)
+        perror("There was an error in dup2 2");
+    size_t pid = fork();
+    size_t q = -1;
+    if (pid == q)
+        perror("There was an error in fork");
+    if (pid == 0) {
+        if (output != STDOUT_FILENO) {
+            if (dup2(output, 1) == -1)
+                perror("There was an error in dup2 3");
+            if (close(output) == -1)
+                perror("There was an error in closing fd");
+        } else {
+            if (dup2(savedOut, STDOUT_FILENO) == -1)
+                perror("There was an error in dup2");
+        }
+        exec2(v.at(v.size() - 1));
+    } else if (pid > 0){
+        if (waitpid(pid, NULL, 0) == -1)
+            perror("There was an error in wait");
+    }
+    if (dup2(savedOut, 1) == -1)
+        perror("There was an error in dup2");
+    if (dup2(savedIn, 0) == -1)
+        perror("There was an error in dup2");
+    if (close(savedOut) == -1)
+        perror("There was an error in close");
+    if (close(savedIn) == -1)
+        perror("There was an error in close");
 }
 
 bool redirectIn(queue<cmd> &commands, queue<string> &connectors, int flags, int fd)
@@ -321,6 +330,32 @@ bool isRedirect(string con)
     return false;
 }
 
+bool pipesPrep(queue<cmd> &commands, queue<string> &connectors)
+{
+    vector<cmd> pipes;
+    //PUSH first 2 commands
+    if(!commands.empty()) pipes.push_back(commands.front());
+    if(!connectors.empty()) connectors.pop();
+    if(!commands.empty()) commands.pop();
+    
+    if(!commands.empty()) pipes.push_back(commands.front());
+    if(!commands.empty()) commands.pop();
+        
+    while( !connectors.empty() && !commands.empty() && connectors.front() == "|"){
+        
+        if(!commands.empty()) pipes.push_back(commands.front());
+        if(!connectors.empty()) connectors.pop();
+        if(!commands.empty()) commands.pop();
+    }
+    cout << pipes.size() <<endl;
+    FOR(pipes){
+        cout << pipes[i].toString() <<endl;
+    }
+    piping(pipes);
+    return true;
+    
+}
+
 //same logic, however checks before running the command
 void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
 {
@@ -334,12 +369,16 @@ void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
     //cout<<prev;
     //cout << "2_"<< com.toString() << "_"<< endl;
     //cout << "2-" << con << "-" << endl;
-    
+    bool ok;
     if(!con.empty() && isRedirect(con) ){
-        prev = redirectPrep(commands, connectors);
+        ok = redirectPrep(commands, connectors);
+    } 
+    else if(!con.empty() && con == "|" ){
+        ok = pipesPrep(commands, connectors);
+        if(commands.empty()) return;
     } 
     
-    bool ok;
+    
     if(prev){
     //SUCESS
         if(con == "||" ){
@@ -372,27 +411,6 @@ void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
     return ;
 }
 
-bool pipesPrep(queue<cmd> &commands, queue<string> &connectors)
-{
-    vector<cmd> pipes;
-    //PUSH first 2 commands
-    if(!commands.empty()) pipes.push_back(commands.front());
-    if(!connectors.empty()) connectors.pop();
-    if(!commands.empty()) commands.pop();
-    if(!commands.empty()) pipes.push_back(commands.front());
-        
-    while( !connectors.empty() && !commands.empty() && connectors.front() == "|"){
-        
-        if(!commands.empty()) pipes.push_back(commands.front());
-        if(!connectors.empty()) connectors.pop();
-        if(!commands.empty()) commands.pop();
-    }
-    
-    piping(pipes);
-    return true;
-    
-}
-
 // do the logics of commands, executing execpv when needed 
 // then call run again recursively
 // or exits the program if it's the case
@@ -416,6 +434,7 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     } 
     else if(!con.empty() && con == "|" ){
         ok = pipesPrep(commands, connectors);
+        if(commands.empty()) return;
     } 
     else {
         ok = exec(com);
@@ -488,8 +507,8 @@ int main()
         if(st.empty() || st == "#") continue;
         cmd c(st);
         runPrep(c);
-        
+        cout << flush;
+        cin.clear();
     }
     return 0;
 }
-
