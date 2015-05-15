@@ -40,7 +40,8 @@ bool exec2(cmd c)
     return true;
 }
 
-void piping(vector <cmd> &v) {
+bool piping(vector <cmd> &v, char * ff, int flags) {
+    //cout << outt<<  "t1 inico "<< inn << endl;
     int savedIn = dup(0);
     if (savedIn == -1)
         perror("There was an error in dup");
@@ -51,30 +52,37 @@ void piping(vector <cmd> &v) {
     int in = 0;
     int output = 1;
     
+    if(ff != NULL )output = open(ff, flags, S_IRUSR|S_IWUSR);
+    if (output == -1){
+        perror("There was an error with open()");
+        exit(1);
+    }
+    
     int fd[2];
     
     //initialize all children expect the last one
     for (unsigned i = 0; i < v.size() - 1; ++i) {
         if (pipe(fd) == -1)
             perror("There was an error in pipe");
+            
         int pid = fork();
-        int q = -1;
-        if (pid == q)
+        if (pid == -1)
             perror("There was an error in fork");
         if (pid == 0) {
             if (in != 0) {
                 if (dup2(in , 0) == -1) {
                     perror("There was an error in dup2 1");
-                    return;
+                    return false;
                 }
                 if (close( in ) == -1)
                     perror("There was an error in close");
             }
             if (dup2(fd[1], 1) == -1)
                 perror("There was an error in dup2");
+        
             if (close(fd[1]) == -1)
                 perror("There was an error in close");
-                
+ 
             exec2(v.at(i));
             
             exit(1); //avoid zoombies
@@ -116,9 +124,11 @@ void piping(vector <cmd> &v) {
         perror("There was an error in close");
     if (close(savedIn) == -1)
         perror("There was an error in close");
+        
+    return true;
 }
 
-bool redirectIn(queue<cmd> &commands, queue<string> &connectors, int flags, int fd)
+bool redirectIn(queue<cmd> &commands, queue<string> &connectors, int flags, int fd, vector<cmd> pipes)
 {
     //if there's no file passed in, do nothing    
     if(commands.size() < 2) return false; 
@@ -164,10 +174,9 @@ bool redirectIn(queue<cmd> &commands, queue<string> &connectors, int flags, int 
         
         //if(!commands.empty())commands.pop();
         if(!connectors.empty())connectors.pop(); 
-        char **argv = currCmd.toArray();  
-        if(-1 == execvp(*argv, argv)){
-            perror("There was an error in execvp()");
-        }
+        //if(!pipes.empty()) ret = piping(pipes, fl, -1);
+        //else ret = exec2(currCmd);
+        
         if(close(fl) == -1){
                 perror("There was an error with close(). ");
                 //exit(1);
@@ -195,16 +204,18 @@ bool redirectIn(queue<cmd> &commands, queue<string> &connectors, int flags, int 
     
 }
 
-bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd)
+bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd, vector<cmd> pipes)
 {
-    //if there's no file passed in, do nothing    
-    if(commands.size() < 2) return false; 
-    
-    cmd currCmd = commands.front();
-    commands.pop();
+    //if there's no file passed in, do nothing  
+    cmd currCmd;  
+    if(pipes.empty()){
+        if(commands.size() < 2) return false; 
+        currCmd = commands.front();
+        commands.pop();
+    }
 
     char * file_name = commands.front().toArray()[0];
-    //cout << "Printing into: " << file_name << endl;
+    cout << "Printing into: " << file_name << endl;
     
     
     // 0 = cin
@@ -213,6 +224,11 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
     int fl;
     int old = dup(fd);
     bool ret =false;
+    
+    if(!pipes.empty()) {
+        piping(pipes, file_name, flags);
+        return true;        
+    }
     
     if(old == -1){
         perror("There was an error with dup()");
@@ -235,8 +251,8 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
     }
     else {
         //from now on everything is going to be printed into the file
-        //cout << "_"<< currCmd.toString() << "_"<< endl;
-        ret = exec2(currCmd);
+        if(!pipes.empty())
+            ret = exec2(currCmd);
         
         if(close(fl) == -1){
             perror("There was an error with close(). ");
@@ -253,7 +269,7 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
     return ret;
 }
 
-bool redirectPrep(queue<cmd> &commands, queue<string> &connectors)
+bool redirectPrep(queue<cmd> &commands, queue<string> &connectors, vector<cmd> pipes)
 {
     string con;
     if(!connectors.empty()) con = connectors.front();
@@ -264,15 +280,15 @@ bool redirectPrep(queue<cmd> &commands, queue<string> &connectors)
     const int read = O_CREAT|O_RDONLY;
     
     if(con == ">" || con == "1>")
-        return redirect(commands, connectors, trunc, 1); //TRUNC
+        return redirect(commands, connectors, trunc, 1, pipes); //TRUNC
     else if(con == ">>" || con == "1>>")
-        return redirect(commands, connectors, append,  1); //APPEND
+        return redirect(commands, connectors, append,  1, pipes); //APPEND
     else if(con == "2>")
-        return redirect(commands, connectors, trunc,  2); //TRUNC
+        return redirect(commands, connectors, trunc,  2, pipes); //TRUNC
     else if(con == "2>>")
-        return redirect(commands, connectors, append,  2);//APPEND
+        return redirect(commands, connectors, append,  2, pipes);//APPEND
     else if(con == "<")
-        return redirectIn(commands, connectors, read,  0);
+        return redirectIn(commands, connectors, read,  0, pipes);
     
     return false;
 }
@@ -333,7 +349,7 @@ bool isRedirect(string con)
     return false;
 }
 
-bool pipesPrep(queue<cmd> &commands, queue<string> &connectors)
+vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors)
 {
     vector<cmd> pipes;
     //PUSH first 2 commands
@@ -350,12 +366,12 @@ bool pipesPrep(queue<cmd> &commands, queue<string> &connectors)
         if(!connectors.empty()) connectors.pop();
         if(!commands.empty()) commands.pop();
     }
-    cout << pipes.size() <<endl;
     FOR(pipes){
         cout << pipes[i].toString() <<endl;
     }
-    piping(pipes);
-    return true;
+    
+    //piping(pipes);
+    return pipes;
     
 }
 
@@ -373,14 +389,15 @@ void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
     //cout << "2_"<< com.toString() << "_"<< endl;
     //cout << "2-" << con << "-" << endl;
     bool ok;
-    if(!con.empty() && isRedirect(con) ){
-        ok = redirectPrep(commands, connectors);
-    } 
-    else if(!con.empty() && con == "|" ){
-        ok = pipesPrep(commands, connectors);
-        if(commands.empty()) return;
-    } 
     
+    vector<cmd> pipes;
+    if(!con.empty() && con == "|" ){
+        pipes = pipesPrep(commands, connectors);        
+    } 
+    if(!con.empty() && isRedirect(con) ){
+        ok = redirectPrep(commands, connectors, pipes);
+    } 
+    if(commands.empty()) return;
     
     if(prev){
     //SUCESS
@@ -431,17 +448,20 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     //cout << "-" << con << "-" << endl;
     
     bool ok;
+    vector<cmd> pipes;
     //if the next connector in queue is a redirect output
-    if(!con.empty() && isRedirect(con) ){
-        ok = redirectPrep(commands, connectors);
-    } 
-    else if(!con.empty() && con == "|" ){
-        ok = pipesPrep(commands, connectors);
+    if(!con.empty() && con == "|" ){
+        pipes = pipesPrep(commands, connectors); 
         if(commands.empty()) return;
+        if(!connectors.empty())con= connectors.front();      
+    } 
+    if(!con.empty() && isRedirect(con) ){
+        ok = redirectPrep(commands, connectors, pipes);
     } 
     else {
         ok = exec(com);
     }
+    
     commands.pop();
     if(!connectors.empty())con= connectors.front();
 
@@ -515,4 +535,3 @@ int main()
     }
     return 0;
 }
-
