@@ -45,6 +45,7 @@ void run(queue<cmd> &commands, queue<string> &connectors);
 vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors);
 bool isRedirect(string con);
 bool isOutRed(string con);
+int getFlag(string con, int &fd);
 
 bool exec2(cmd c)
 {
@@ -163,7 +164,7 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
     return true;
 }
 
-int open_f(const char * ff, int flags, int fd) 
+int open_f(const char * ff, int flags) 
 {
     int fl;
    
@@ -175,12 +176,12 @@ int open_f(const char * ff, int flags, int fd)
     
     return fl;
 }
-bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<string> out_list)
+bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<string> out_list, vector<string> c_list)
 {
     // 0 = cin
     // 1 = cout
     // 2 = cerr
-    
+    int fd_bkp = fd;
     int old = dup(fd);
     if(old == -1){
         perror("There was an error with dup()");
@@ -198,18 +199,20 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
     bool ret =false;
     
     FOR(out_list){
-        fl= open_f(out_list[i].c_str(), flags, fd);
+        if(i==0)fl= open_f(out_list[i].c_str(), flags);
+        else fl = open_f(out_list[i].c_str(), getFlag(c_list[i-1], fd));
         flist.push_back(fl);
     }
     
 
         
     FOR(flist){
-        if(dup2(flist[i], fd) == -1){
+        if(flist[i]==-1) continue;
+        if(dup2(flist[i], fd_bkp) == -1){
             perror("There was an error with dup2()");
             //exit(1);
         }
-        if(flist[i]==-1) continue;
+        
         if(pipes.empty())
             ret = exec(currCmd);
         if(close(flist[i]) == -1){
@@ -248,18 +251,50 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
         ret = true;        
     }
     else {
-        vector<string> l ;
+        vector<string> l;
+        vector<string> l2;
         l.push_back(file_name);
         while(!connectors.empty() && isOutRed(connectors.front())){
             l.push_back(commands.front().toString());
+            l2.push_back(connectors.front());
             if(!commands.empty())commands.pop();
             if(!connectors.empty())connectors.pop();
         }
-        ret = execRedirect(currCmd, flags, fd, pipes, l);
+        ret = execRedirect(currCmd, flags, fd, pipes, l, l2);
     }
     
     
     return ret;
+}
+
+int getFlag(string con, int &fd)
+{
+    const int trunc = O_CREAT|O_WRONLY|O_TRUNC;
+    const int append = O_CREAT|O_WRONLY|O_APPEND;
+    const int read = O_RDONLY;
+    
+    if(con == ">" || con == "1>"){
+        fd =1;
+        return  trunc;
+    }
+    else if(con == ">>" || con == "1>>"){
+        fd = 1;
+        return  append;
+    }
+    else if(con == "2>"){
+        fd = 2;
+        return  trunc;
+    }
+    else if(con == "2>>"){
+        fd = 2;
+        return  append;
+    }
+    else if(con == "<"){
+        fd = 0;
+        return  read;
+    }
+    fd = -1;
+    return -1;
 }
 
 bool redirectPrep(queue<cmd> &commands, queue<string> &connectors, vector<cmd> pipes)
