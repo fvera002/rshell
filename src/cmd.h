@@ -11,43 +11,14 @@
 #include <boost/tokenizer.hpp>
 using namespace std;
 
+#define FOR(x) for (unsigned i =0 ; i < (x).size(); ++i) 
+
 class cmd
 {
     private:
-        char *buffer;
-        vector<string> v_argList;
-        char **c_argList;
+        vector<string> argList;
         string comment;
         string input;
-        
-        // prints c_argList showing each char
-        void print(int argc)
-        {
-            int i = 0;int j = 0;
-            while(i < argc-1){
-                j=0;
-                while(*(c_argList[i]+j) != '\0'){
-                    printf("arg[%d][%d] : %c\n", i,j,*(c_argList[i]+(j)));
-                    j++;
-                } 
-                i++;
-            }
-        }
-        
-        // split the buffer using space as reference
-        // store each piece in c_argList and v_argList
-        void tokenize()
-        {
-            int argc;
-            char delim[] = " \n";
-            c_argList[0] = strtok(buffer, delim);
-            //v_argList.push(c_argList[0]);
-        
-            for(argc=1; c_argList[argc-1]; argc++){
-                c_argList[argc] = strtok(NULL, delim);
-                v_argList.push_back(c_argList[argc-1]);
-            }
-        }
         
         // extract comment from cmd and save it in comment
         void extComment(string &cmd)
@@ -101,28 +72,47 @@ class cmd
             return str.substr(first, last-first+1);
         }
         
+        void tokenize()
+        {
+            char * pch;
+            char delim[] = " \n";
+
+            pch = strtok (const_cast<char*> (input.c_str()),delim);
+            while (pch != NULL){
+                argList.push_back(pch);
+                pch = strtok (NULL, delim);
+            }
+        }
+        
     public:
 
         // constructor
         // initialize members
         // extract comments
         // split/tokenize
+        cmd()
+        {}
+        
         cmd(string command)
         {
             extComment(command);
             input = trim(command);
-            buffer = new char[command.size()+1];
-            c_argList = new char* [command.size()+1];
-            strcpy(buffer, command.c_str());
             
             tokenize();
-            //print();
+            print();
         }
         
         // return the c_string version of the command
         char** toArray()
         {
-            return c_argList;
+            char ** ret = new char* [argList.size()+1];
+            
+            FOR(argList){
+                ret[i] = new char[argList.at(i).length()+1];
+                strcpy(ret[i], argList.at(i).c_str());
+            }
+            ret[argList.size()] = NULL;
+            return ret;
         }
         
         // return the string version of the command
@@ -134,8 +124,8 @@ class cmd
         // print commands separeted by _ to check blank spaces
         void print()
         {
-            for(unsigned i=0; i< v_argList.size(); ++i){
-                cout << v_argList.at(i) << "_";
+            for(unsigned i=0; i< argList.size(); ++i){
+                cout << argList.at(i) << "_";
             }
             cout <<endl;
         }
@@ -148,27 +138,28 @@ class cmd
             queue<cmd> list;
             if(input.empty()) return list;
             if(input.size()>2){
-                int sz = input.size()-2;
-                for(int i =0; i< sz; ++i){
+                unsigned sz = input.size();
+                FOR(input){
                     if(isConnector(input[i]) || isdigit(input[i]) ){
                         string con;
                         if(i+1 < sz && isConnector(input[i+1])){
                             if(i+2 < sz && isConnector(input[i+2])){
                                 con = input.substr(i, 3);
                                 connectors.push(con);
+                                if(isdigit(input[i])) input.erase(input.begin() + i);
                                 i += 2;
                             }
                             else {
                                 con = input.substr(i, 2);
                                 connectors.push(con);
+                                if(isdigit(input[i])) input.erase(input.begin() + i);
                                 ++i;
                             }                                
                         }
                         else { 
-                            if(! isdigit(input[i])){
+                            if(isdigit(input[i]) == 0){ //not digit
                                 con = input.substr(i, 1);
-                                if(!trim(con).empty())
-                                    connectors.push(con);
+                                connectors.push(con);
                             }
                         }
                     }
