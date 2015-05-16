@@ -25,10 +25,12 @@ using namespace std;
 // ls -l | head -3 | tail -1 > lal
 // ls -l | head -3 | tail -1 >> lal
 // echo a && echo b || echo c > out
+//./a.out > filea12 > t123
 
 
 //TO DO
 // ./a.out < filea12 > t123
+// echo a > a1 >> a2 2> a3
 // echo a && echo b || echo c > out
 // ls -l | head -3 | tail -1 >> oiu ; echo aaa
 // ./a.out < filea12 | tr A-Z a-z | tee newOutputFile1 | tr a-z A-Z > newOutputFile2
@@ -41,6 +43,8 @@ bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
 vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors);
+bool isRedirect(string con);
+bool isOutRed(string con);
 
 bool exec2(cmd c)
 {
@@ -159,50 +163,61 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
     return true;
 }
 
-bool execRedirect(cmd currCmd, const char * ff, int flags, int fd, vector<cmd> pipes)
+int open_f(const char * ff, int flags, int fd) 
+{
+    int fl;
+   
+    fl = open(ff, flags, S_IRUSR|S_IWUSR);
+    if (fl == -1){
+        perror("There was an error with open()");
+        //exit(1);
+    }
+    
+    return fl;
+}
+bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<string> out_list)
 {
     // 0 = cin
     // 1 = cout
     // 2 = cerr
     
-    int savedIn = dup(0);
-    if (savedIn == -1)
-        perror("There was an error in dup");
-    int savedOut = dup(1);
-    if (savedOut == -1)
-        perror("There was an error in dup");
-        
-    int fl;
     int old = dup(fd);
-    bool ret =false;
-    
     if(old == -1){
         perror("There was an error with dup()");
         //exit(1);
         return false;
-    }
-    
+    } 
     if(close(fd) == -1){
         perror("There was an error with close()");
         //exit(1);
         return false;
     }
     
-    fl = open(ff, flags, S_IRUSR|S_IWUSR);
-    if (fl == -1){
-        perror("There was an error with open()");
-        //exit(1);
+    vector<int> flist;
+    int fl;
+    bool ret =false;
+    
+    FOR(out_list){
+        fl= open_f(out_list[i].c_str(), flags, fd);
+        flist.push_back(fl);
     }
-    else {
-        //from now on everything is going to be printed into the file
+    
+
+        
+    FOR(flist){
+        if(dup2(flist[i], fd) == -1){
+            perror("There was an error with dup2()");
+            //exit(1);
+        }
+        if(flist[i]==-1) continue;
         if(pipes.empty())
             ret = exec(currCmd);
-        
-        if(close(fl) == -1){
+        if(close(flist[i]) == -1){
             perror("There was an error with close(). ");
             //exit(1);
         }
     }
+    
     if(dup2(old, fd) == -1){
         perror("There was an error with dup2()");
         //exit(1);
@@ -213,7 +228,7 @@ bool execRedirect(cmd currCmd, const char * ff, int flags, int fd, vector<cmd> p
     
 }
 
-bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd, vector<cmd> pipes)
+bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd, vector<cmd> &pipes)
 {
     //if there's no file passed in, do nothing  
     cmd currCmd;  
@@ -224,6 +239,8 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
     }
 
     string file_name = commands.front().toString();
+    if(!commands.empty())commands.pop();
+    if(!connectors.empty())connectors.pop();
     //cout << "Printing into: " << file_name << endl;
     bool ret =false;
     if(!pipes.empty()) {
@@ -231,11 +248,17 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
         ret = true;        
     }
     else {
-        ret = execRedirect(currCmd, file_name.c_str(), flags, fd, pipes);
+        vector<string> l ;
+        l.push_back(file_name);
+        while(!connectors.empty() && isOutRed(connectors.front())){
+            l.push_back(commands.front().toString());
+            if(!commands.empty())commands.pop();
+            if(!connectors.empty())connectors.pop();
+        }
+        ret = execRedirect(currCmd, flags, fd, pipes, l);
     }
     
-    if(!commands.empty())commands.pop();
-    if(!connectors.empty())connectors.pop();
+    
     return ret;
 }
 
@@ -314,6 +337,15 @@ bool isRedirect(string con)
     //cout << "--" << con <<endl;
     FOR(con){
         if(con[i] == '<') return true;
+        if(con[i] == '>') return true;
+    }
+    return false;
+}
+
+bool isOutRed(string con)
+{
+    //cout << "--" << con <<endl;
+    FOR(con){
         if(con[i] == '>') return true;
     }
     return false;
