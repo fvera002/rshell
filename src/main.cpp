@@ -23,11 +23,18 @@ using namespace std;
 // echo aaa> a; echo bbb > b&& echo ccc> chead -
 // ls -l | head -3 | tail -1 
 // ls -l | head -3 | tail -1 > lal
+// echo a && echo b || echo c > out
+
+
+//TO DO
 // ./a.out < filea12 > t123
+// echo a && echo b || echo c > out
+// ls -l | head -3 | tail -1 > oiu ; echo aaa
 // ./a.out < filea12 | tr A-Z a-z | tee newOutputFile1 | tr a-z A-Z > newOutputFile2
 
 
 // g++ -g -Wall -Werror -ansi -pedantic main.cpp
+// valgrind --tool=memcheck --leak-check=full ./t
 
 bool exec(cmd c);
 void runPrep(cmd &c);
@@ -46,11 +53,13 @@ bool exec2(cmd c)
 
 bool piping(vector <cmd> &v, char * ff1, char * ff2, int flags1, int flags2) {
     //cout  <<  "t1 inico : "<< ff << f_in <<endl;
+    /*
     cout << 11111111 <<endl;
     FOR(v){
         cout<< v[i].toString() <<endl;
     }
     cout << 222222 <<endl;
+    */
     
     int savedIn = dup(0);
     if (savedIn == -1)
@@ -63,7 +72,7 @@ bool piping(vector <cmd> &v, char * ff1, char * ff2, int flags1, int flags2) {
     int output = 1;
     
     if(ff1 != NULL){
-        cout << 6666666 << ff1 << endl;
+        //cout << 6666666 << ff1 << endl;
         in = open(ff1, flags1, S_IRUSR | S_IWUSR);
         if (in == -1) {
             perror("There was an error with open()");
@@ -71,7 +80,7 @@ bool piping(vector <cmd> &v, char * ff1, char * ff2, int flags1, int flags2) {
         }
     }
     if(ff2 != NULL ){
-        cout << 7777 << ff2 << endl;
+        //cout << 7777 << ff2 << endl;
         output = open(ff2, flags2, S_IRUSR|S_IWUSR);
         if (output == -1){
             perror("There was an error with open()");
@@ -149,46 +158,36 @@ bool piping(vector <cmd> &v, char * ff1, char * ff2, int flags1, int flags2) {
     return true;
 }
 
-bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd, vector<cmd> pipes)
+bool execRedirect(cmd currCmd, char * ff, int flags, int fd, vector<cmd> pipes)
 {
-    //if there's no file passed in, do nothing  
-    cmd currCmd;  
-    if(pipes.empty()){
-        if(commands.size() < 2) return false; 
-        currCmd = commands.front();
-        commands.pop();
-    }
-
-    char * file_name = commands.front().toArray()[0];
-    //cout << "Printing into: " << file_name << endl;
-    
     // 0 = cin
     // 1 = cout
     // 2 = cerr
+    
+    int savedIn = dup(0);
+    if (savedIn == -1)
+        perror("There was an error in dup");
+    int savedOut = dup(1);
+    if (savedOut == -1)
+        perror("There was an error in dup");
+        
     int fl;
     int old = dup(fd);
     bool ret =false;
     
-    if(!pipes.empty()) {
-        piping(pipes, NULL, file_name, 0, flags);
-        return true;        
-    }
-    
     if(old == -1){
         perror("There was an error with dup()");
         //exit(1);
-        if(!connectors.empty())connectors.pop();
-        return ret;
+        return false;
     }
     
     if(close(fd) == -1){
         perror("There was an error with close()");
         //exit(1);
-        if(!connectors.empty())connectors.pop();
-        return ret;
+        return false;
     }
     
-    fl = open(file_name, flags, S_IRUSR|S_IWUSR);
+    fl = open(ff, flags, S_IRUSR|S_IWUSR);
     if (fl == -1){
         perror("There was an error with open()");
         //exit(1);
@@ -206,6 +205,32 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
     if(dup2(old, fd) == -1){
         perror("There was an error with dup2()");
         //exit(1);
+    }
+    
+
+    return ret;
+    
+}
+
+bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd, vector<cmd> pipes)
+{
+    //if there's no file passed in, do nothing  
+    cmd currCmd;  
+    if(pipes.empty()){
+        if(commands.size() < 2) return false; 
+        currCmd = commands.front();
+        commands.pop();
+    }
+
+    char * file_name = commands.front().toArray()[0];
+    //cout << "Printing into: " << file_name << endl;
+    bool ret =false;
+    if(!pipes.empty()) {
+        piping(pipes, NULL, file_name, 0, flags);
+        ret = true;        
+    }
+    else {
+        ret = execRedirect(currCmd, file_name, flags, fd, pipes);
     }
     
     if(!commands.empty())commands.pop();
@@ -309,9 +334,6 @@ vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors)
         if(!commands.empty()) pipes.push_back(commands.front());
         if(!connectors.empty()) connectors.pop();
         if(!commands.empty()) commands.pop();
-    }
-    FOR(pipes){
-        cout << pipes[i].toString() <<endl;
     }
     
     //piping(pipes);
@@ -468,6 +490,25 @@ string getPrompt(){
 // within functions are responsible for exiting the program
 int main()
 {
+    cmd d("echo a");
+    cmd d1("echo a test a adak t");
+    cmd c("echo a && echo b || echo c > out");
+    
+    queue<cmd> commands;
+    queue<string> connectors;
+    
+    //split commands using connectors an put them onto a queue
+    commands = c.split(connectors);
+    while(!commands.empty()){
+        cout << commands.front().toString() <<endl;
+        commands.pop();
+    }
+    cmd b("ls -l -a");
+    char **a = b.toArray();
+    if(execvp(*a,a)== -1){
+        perror("test");
+    }
+    /*
     while(true){
         cout << getPrompt();
         string st;
@@ -479,6 +520,7 @@ int main()
         cout << flush;
         cin.clear();
     }
+    */
     return 0;
 }
 
