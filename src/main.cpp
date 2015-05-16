@@ -23,13 +23,14 @@ using namespace std;
 // echo aaa> a; echo bbb > b&& echo ccc> chead -
 // ls -l | head -3 | tail -1 
 // ls -l | head -3 | tail -1 > lal
+// ls -l | head -3 | tail -1 >> lal
 // echo a && echo b || echo c > out
 
 
 //TO DO
 // ./a.out < filea12 > t123
 // echo a && echo b || echo c > out
-// ls -l | head -3 | tail -1 > oiu ; echo aaa
+// ls -l | head -3 | tail -1 >> oiu ; echo aaa
 // ./a.out < filea12 | tr A-Z a-z | tee newOutputFile1 | tr a-z A-Z > newOutputFile2
 
 
@@ -51,7 +52,7 @@ bool exec2(cmd c)
     return true;
 }
 
-bool piping(vector <cmd> &v, char * ff1, char * ff2, int flags1, int flags2) {
+bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int flags2) {
     //cout  <<  "t1 inico : "<< ff << f_in <<endl;
     /*
     cout << 11111111 <<endl;
@@ -158,7 +159,7 @@ bool piping(vector <cmd> &v, char * ff1, char * ff2, int flags1, int flags2) {
     return true;
 }
 
-bool execRedirect(cmd currCmd, char * ff, int flags, int fd, vector<cmd> pipes)
+bool execRedirect(cmd currCmd, const char * ff, int flags, int fd, vector<cmd> pipes)
 {
     // 0 = cin
     // 1 = cout
@@ -222,15 +223,15 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
         commands.pop();
     }
 
-    char * file_name = commands.front().toArray()[0];
+    string file_name = commands.front().toString();
     //cout << "Printing into: " << file_name << endl;
     bool ret =false;
     if(!pipes.empty()) {
-        piping(pipes, NULL, file_name, 0, flags);
+        piping(pipes, NULL, file_name.c_str(), 0, flags);
         ret = true;        
     }
     else {
-        ret = execRedirect(currCmd, file_name, flags, fd, pipes);
+        ret = execRedirect(currCmd, file_name.c_str(), flags, fd, pipes);
     }
     
     if(!commands.empty())commands.pop();
@@ -490,25 +491,7 @@ string getPrompt(){
 // within functions are responsible for exiting the program
 int main()
 {
-    cmd d("echo a");
-    cmd d1("echo a test a adak t");
-    cmd c("echo a && echo b || echo c > out");
-    
-    queue<cmd> commands;
-    queue<string> connectors;
-    
-    //split commands using connectors an put them onto a queue
-    commands = c.split(connectors);
-    while(!commands.empty()){
-        cout << commands.front().toString() <<endl;
-        commands.pop();
-    }
-    cmd b("ls -l -a");
-    char **a = b.toArray();
-    if(execvp(*a,a)== -1){
-        perror("test");
-    }
-    /*
+
     while(true){
         cout << getPrompt();
         string st;
@@ -520,7 +503,7 @@ int main()
         cout << flush;
         cin.clear();
     }
-    */
+    
     return 0;
 }
 
