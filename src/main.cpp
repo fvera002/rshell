@@ -219,8 +219,8 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
         }
         
         if(flist.size() == 1) ret = exec(currCmd);
-        else if(fd_bkp == 0 && i==0 && flist.size() ==2) ret = exec(currCmd);
-        else if (fd_bkp != 0 && flist.size()> 1 && i == flist.size()-1 ) ret = exec(currCmd);
+        else if(fd_bkp == 0 && i==0 && flist.size() > 1) ret = exec(currCmd);
+        //else if (fd_bkp != 0 && flist.size()> 1 && i == flist.size()-1 ) ret = exec(currCmd);
         //else if( ! (fd_bkp == 0 && c_list.size() > 0 && isOutRed(c_list[0]) && i==1) )
         //    ret = exec(currCmd);
         
@@ -595,3 +595,4 @@ int main()
     //*/
     return 0;
 }
+
