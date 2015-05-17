@@ -114,7 +114,7 @@ class cmd
             return ret;
         }
         
-        // return the string version of the command
+        // return the string version of the comman
         string toString()
         {
             return input;
