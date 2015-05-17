@@ -17,27 +17,7 @@
 
 using namespace std;
 
-//echo a || echo b && echo c || echo d
-//echo a || echo b && echo c && echo d
-// echo aaa > a; echo bbb > b && echo ccc > c
-// echo aaa> a; echo bbb > b&& echo ccc> chead -
-// ls -l | head -3 | tail -1 
-// ls -l | head -3 | tail -1 > lal
-// ls -l | head -3 | tail -1 >> lal
-// echo a && echo b || echo c > out
-//./a.out > filea12 > t123
 
-
-//TO DO
-// ./a.out < filea12 > t123
-// echo a > a1 >> a2 2> a3
-// echo a && echo b || echo c > out
-// ls -l | head -3 | tail -1 >> oiu ; echo aaa
-// ./a.out < filea12 | tr A-Z a-z | tee newOutputFile1 | tr a-z A-Z > newOutputFile2
-
-
-// g++ -g -Wall -Werror -ansi -pedantic main.cpp
-// valgrind --tool=memcheck --leak-check=full ./t
 
 bool exec(cmd c);
 void runPrep(cmd &c);
@@ -54,7 +34,30 @@ bool exec2(cmd c)
         cout << c.toString() << ": ";
         perror(string(c.toString() + ": There was an error in execvp()").c_str());
     }
+    cout << flush;
     return true;
+}
+
+void bkpIO(int &in, int &out)
+{
+    in = dup(0);
+    if (in == -1)
+        perror("There was an error in dup");
+    out = dup(1);
+    if (out == -1)
+        perror("There was an error in dup");
+}
+
+void restoreIO(int &savedIn, int &savedOut)
+{
+    if (dup2(savedOut, 1) == -1)
+        perror("There was an error in dup2");
+    if (dup2(savedIn, 0) == -1)
+        perror("There was an error in dup2");
+    if (close(savedOut) == -1)
+        perror("There was an error in close");
+    if (close(savedIn) == -1)
+        perror("There was an error in close");
 }
 
 bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int flags2) {
@@ -67,12 +70,8 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
     cout << 222222 <<endl;
     */
     
-    int savedIn = dup(0);
-    if (savedIn == -1)
-        perror("There was an error in dup");
-    int savedOut = dup(1);
-    if (savedOut == -1)
-        perror("There was an error in dup");
+    int savedIn,savedOut;
+    bkpIO(savedIn,savedOut);
 
     int in = 0;
     int output = 1;
@@ -152,14 +151,7 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
         if (waitpid(pid, NULL, 0) == -1)
             perror("There was an error in wait");
     }
-    if (dup2(savedOut, 1) == -1)
-        perror("There was an error in dup2");
-    if (dup2(savedIn, 0) == -1)
-        perror("There was an error in dup2");
-    if (close(savedOut) == -1)
-        perror("There was an error in close");
-    if (close(savedIn) == -1)
-        perror("There was an error in close");
+    restoreIO(savedIn, savedOut);
         
     return true;
 }
@@ -181,17 +173,37 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
     // 0 = cin
     // 1 = cout
     // 2 = cerr
-    int fd_bkp = fd;
-    int old = dup(fd);
-    if(old == -1){
-        perror("There was an error with dup()");
-        //exit(1);
+    
+    if(pipes.size() > 0){
+        vector<cmd> newpipes;
+        newpipes.push_back(currCmd);
+        newpipes.insert( newpipes.end(), pipes.begin(), pipes.end() );
+        string f1= out_list[0];
+        if(out_list.size() >1){
+            string f2= out_list[1];
+            cout << "_____________ newpipes: " <<endl;
+            PCMDS(newpipes);
+            cout << "_____________ f1: "<< f1 <<endl;
+            cout << "_____________ f2: "<< f2 <<endl;
+            return piping(newpipes, f1.c_str(), f2.c_str(), getFlag("<", fd), getFlag(c_list.front(),fd));
+        }
         return false;
-    } 
+
+    }
+    int fd_bkp = fd;
+    int savedIn,savedOut;
+    bkpIO(savedIn,savedOut); 
     if(close(fd) == -1){
         perror("There was an error with close()");
         //exit(1);
         return false;
+    }
+    if(fd == 0 && c_list.size() > 0 && isOutRed(c_list[0])){
+        getFlag(c_list[0], fd);
+        if(close(fd) == -1){
+            perror("There was an error with close()");
+            return false;
+        }
     }
     
     vector<int> flist;
@@ -213,18 +225,18 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
             //exit(1);
         }
         
-        if(pipes.empty())
+        if(i == 0)
             ret = exec(currCmd);
+        else if( ! (fd_bkp == 0 && c_list.size() > 0 && isOutRed(c_list[0]) && i==1) )
+            ret = exec(currCmd);
+        
         if(close(flist[i]) == -1){
             perror("There was an error with close(). ");
             //exit(1);
         }
     }
     
-    if(dup2(old, fd) == -1){
-        perror("There was an error with dup2()");
-        //exit(1);
-    }
+    restoreIO(savedIn, savedOut);
     
 
     return ret;
@@ -239,6 +251,7 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
         if(commands.size() < 2) return false; 
         currCmd = commands.front();
         commands.pop();
+       
     }
 
     string file_name = commands.front().toString();
@@ -246,22 +259,31 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
     if(!connectors.empty())connectors.pop();
     //cout << "Printing into: " << file_name << endl;
     bool ret =false;
+        
     if(!pipes.empty()) {
         piping(pipes, NULL, file_name.c_str(), 0, flags);
-        ret = true;        
+        return true;
     }
-    else {
-        vector<string> l;
-        vector<string> l2;
-        l.push_back(file_name);
-        while(!connectors.empty() && isOutRed(connectors.front())){
-            l.push_back(commands.front().toString());
-            l2.push_back(connectors.front());
-            if(!commands.empty())commands.pop();
+    if( (!commands.empty()) && (!connectors.empty()) ){
+        string c2 = connectors.front();
+        if(c2 == "|"){
             if(!connectors.empty())connectors.pop();
+            pipes =  pipesPrep(commands,connectors);
         }
-        ret = execRedirect(currCmd, flags, fd, pipes, l, l2);
     }
+    //cout << "pipes before: " << endl;
+    //PCMDS(pipes);
+    vector<string> l;
+    vector<string> l2;
+    l.push_back(file_name);
+    while(!connectors.empty() && isOutRed(connectors.front())){
+        if(!commands.empty()) l.push_back(commands.front().toString());
+        l2.push_back(connectors.front());
+        if(!commands.empty())commands.pop();
+        if(!connectors.empty())connectors.pop();
+    }
+    ret = execRedirect(currCmd, flags, fd, pipes, l, l2);
+    
     
     
     return ret;
@@ -352,6 +374,7 @@ bool exec(cmd c)
             return true;
         }
     }
+    cout<<flush;
     return false; 
 }
 
@@ -526,7 +549,7 @@ void run(queue<cmd> &commands, queue<string> &connectors)
             run(commands, connectors);
         }
     }
-    
+    cout<<flush;
     return ;
 }
 
@@ -558,7 +581,25 @@ string getPrompt(){
 // within functions are responsible for exiting the program
 int main()
 {
-
+    /*
+    string f1 = "existingInputFile";
+    string f2 = "newOutputFile2";
+    cmd d("cat | tr A-Z a-z | tee newOutputFile1 | tr a-z A-Z");
+    
+    queue<cmd> commands;
+    queue<string> connectors;
+    
+    //split commands using connectors an put them onto a queue
+    commands = d.split(connectors);
+    vector<cmd> pp= pipesPrep(commands, connectors);
+    
+    const int trunc = O_CREAT|O_WRONLY|O_TRUNC;
+    //const int append = O_CREAT|O_WRONLY|O_APPEND;
+    const int read = O_RDONLY;
+    
+    piping(pp, f1.c_str(), f2.c_str(), read, trunc);
+    
+    */
     while(true){
         cout << getPrompt();
         string st;
@@ -570,7 +611,7 @@ int main()
         cout << flush;
         cin.clear();
     }
-    
+    //*/
     return 0;
 }
 
