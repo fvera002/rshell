@@ -12,6 +12,8 @@
 using namespace std;
 
 #define FOR(x) for (unsigned i =0 ; i < (x).size(); ++i) 
+#define PVEC(x) FOR(x) { cout << x[i] << endl ; } 
+#define PCMDS(x) FOR(x) { cout << x[i].toString() << endl ; } 
 
 class cmd
 {
@@ -43,25 +45,6 @@ class cmd
                    a == '>' ;
         }
         
-        int isConnector(char a, char b, queue<string> &connectors)
-        {
-            string con;
-            if(a==';' || b==';') con = ";";
-            else if(a=='|' && b=='|') con = "||";
-            else if(a=='|' && b!='|') con = "|";
-            else if(a!='|' && b=='|') con = "|";
-            else if(a=='&' && b=='&') con = "&&";
-            else if(a=='>' && b !='>') con = ">";
-            else if(a!='>' && b =='>') con = ">";
-            else if(a=='>' && b =='>') con = ">>";
-            
-            if(!con.empty()){
-                connectors.push(con);
-            }
-            
-            return con.size();
-        }
-        
         // extract the spaces in the beginning and at the end of str
         string trim(string const& str)
         {
@@ -74,14 +57,18 @@ class cmd
         
         void tokenize()
         {
+            
             char * pch;
             char delim[] = " \n";
-
-            pch = strtok (const_cast<char*> (input.c_str()),delim);
+            char *aux = new char[input.length()+1];
+            strcpy(aux, input.c_str());
+            pch = strtok (aux,delim);
             while (pch != NULL){
                 argList.push_back(pch);
                 pch = strtok (NULL, delim);
             }
+            
+            if(aux != NULL) delete aux;
         }
         
     public:
@@ -89,7 +76,7 @@ class cmd
         // constructor
         // initialize members
         // extract comments
-        // split/tokenize
+        // tokenize
         cmd()
         {}
         
@@ -99,19 +86,21 @@ class cmd
             input = trim(command);
             
             tokenize();
-            print();
+            //print();
         }
         
         // return the c_string version of the command
+        // this function generates memory leak
+        // however if called inside child processes it's ok
         char** toArray()
         {
             char ** ret = new char* [argList.size()+1];
-            
             FOR(argList){
                 ret[i] = new char[argList.at(i).length()+1];
                 strcpy(ret[i], argList.at(i).c_str());
             }
             ret[argList.size()] = NULL;
+            
             return ret;
         }
         
@@ -124,7 +113,7 @@ class cmd
         // print commands separeted by _ to check blank spaces
         void print()
         {
-            for(unsigned i=0; i< argList.size(); ++i){
+            FOR(argList){
                 cout << argList.at(i) << "_";
             }
             cout <<endl;
