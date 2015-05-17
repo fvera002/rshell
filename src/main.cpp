@@ -86,7 +86,7 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
     int fd[2];
     vector<int> ids;
     //initialize all children expect the last one
-    FOR(v) {
+    for (unsigned i = 0; i < v.size() - 1; ++i) {
         if (pipe(fd) == -1)
             perror("There was an error in pipe");
             
@@ -157,7 +157,7 @@ int open_f(const char * ff, int flags)
     fl = open(ff, flags, S_IRUSR|S_IWUSR);
     if (fl == -1){
         perror("There was an error with open()");
-        //exit(1);
+        return -1;
     }
     
     return fl;
@@ -168,8 +168,20 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
     // 0 = cin
     // 1 = cout
     // 2 = cerr
-    
-    if(pipes.size() > 0){
+    if(fd == 999){
+        cmd aux("echo " + out_list[0]);
+        vector<cmd> newpipes;
+        newpipes.push_back(aux);
+        newpipes.push_back(currCmd);
+        newpipes.insert( newpipes.end(), pipes.begin(), pipes.end() );
+        if(out_list.size() > 1) {
+            string f = out_list[out_list.size()-1];
+            int fl = getFlag( (c_list[c_list.size()-1]) , fd ); 
+            return piping(newpipes, NULL, f.c_str(), 0, fl);
+        }
+        return piping(newpipes, NULL, NULL, 0, 0);
+    }
+    else if(pipes.size() > 0){
         vector<cmd> newpipes;
         newpipes.push_back(currCmd);
         newpipes.insert( newpipes.end(), pipes.begin(), pipes.end() );
@@ -179,20 +191,21 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
             return piping(newpipes, f1.c_str(), f2.c_str(), getFlag("<", fd), getFlag(c_list.front(),fd));
         }
         return false;
-
     }
+    
     int fd_bkp = fd;
     int savedIn,savedOut;
     bkpIO(savedIn,savedOut); 
     if(close(fd) == -1){
         perror("There was an error with close()");
-        //exit(1);
+        restoreIO(savedIn, savedOut);
         return false;
     }
     if(fd == 0 && c_list.size() > 0 && isOutRed(c_list[0])){
         getFlag(c_list[0], fd);
         if(close(fd) == -1){
             perror("There was an error with close()");
+            restoreIO(savedIn, savedOut);
             return false;
         }
     }
@@ -202,17 +215,19 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
     bool ret =false;
     
     FOR(out_list){
+        if(i ==0 )continue;
         if(i==0)fl= open_f(out_list[i].c_str(), flags);
         else fl = open_f(out_list[i].c_str(), getFlag(c_list[i-1], fd));
+        if(fl == -1){
+            restoreIO(savedIn, savedOut);
+            return false;
+        } 
         flist.push_back(fl);
     }
     
     
+    
     FOR(flist){
-        
-        if(flist[i]==-1) continue;
-        
-        
         if(dup2(flist[i], fd_bkp) == -1){
             perror("There was an error with dup2()");
             //exit(1);
@@ -220,11 +235,11 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
         
         if(flist.size() == 1) ret = exec(currCmd);
         else if(fd_bkp == 0 && i==0 && flist.size() > 1) ret = exec(currCmd);
-        //else if (fd_bkp != 0 && flist.size()> 1 && i == flist.size()-1 ) ret = exec(currCmd);
-        //else if( ! (fd_bkp == 0 && c_list.size() > 0 && isOutRed(c_list[0]) && i==1) )
-        //    ret = exec(currCmd);
+        else if(fd_bkp == 0 && flist.size() > 1 && i== flist.size() -1) ret = exec(currCmd);
+        else if(fd_bkp > 0 && i== flist.size() -1)ret = exec(currCmd);
+        //else if(i== flist.size() -1)ret = exec(currCmd);
         
-        if(i != 0 ){
+        if(fd_bkp == 0 && i != 0 ){
             if( close(flist[i]) == -1){
                 perror("There was an error with close(). ");
                 //exit(1);
@@ -232,7 +247,7 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
         }
     }
         
-    if( close(flist[0]) == -1){
+    if( fd_bkp == 0 && close(flist[0]) == -1){
         perror("There was an error with close(). ");
         //exit(1);
     }
@@ -253,7 +268,7 @@ bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd
         commands.pop();
        
     }
-
+    
     string file_name = commands.front().toString();
     if(!commands.empty())commands.pop();
     if(!connectors.empty())connectors.pop();
@@ -323,13 +338,15 @@ bool redirectPrep(queue<cmd> &commands, queue<string> &connectors, vector<cmd> p
 {
     string con;
     if(!connectors.empty()) con = connectors.front();
-    //cout << "--" << con <<endl;
+    
     
     const int trunc = O_CREAT|O_WRONLY|O_TRUNC;
     const int append = O_CREAT|O_WRONLY|O_APPEND;
     const int read = O_RDONLY;
     
-    if(con == ">" || con == "1>")
+    if(con=="<<<")
+        return redirect(commands, connectors, 999, 999, pipes);
+    else if(con == ">" || con == "1>")
         return redirect(commands, connectors, trunc, 1, pipes); //TRUNC
     else if(con == ">>" || con == "1>>")
         return redirect(commands, connectors, append,  1, pipes); //APPEND
@@ -595,4 +612,3 @@ int main()
     //*/
     return 0;
 }
-
