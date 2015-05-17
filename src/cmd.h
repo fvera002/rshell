@@ -33,6 +33,14 @@ class cmd
                 comment.replace(0, found+1, "");
             }
         }
+        void extQuotes(string &cmd)
+        {
+            size_t found;
+            found = cmd.find("\"");
+            if(found !=string::npos){
+                cmd.replace(found, 1, "");
+            }
+        }
         
         // return whether a and b together make a connector
         
@@ -83,9 +91,11 @@ class cmd
         cmd(string command)
         {
             extComment(command);
+            extQuotes(command);
             input = trim(command);
             
             tokenize();
+            
             //print();
         }
         
