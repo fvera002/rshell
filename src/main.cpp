@@ -368,7 +368,7 @@ bool exec(cmd c)
     //cout<< c.toString() << endl;
     int status;
     int pid = fork();
-    if(pid == -1){//fork’s return value for an error is -1
+    if(pid == -1){//fork?s return value for an error is -1
         perror("There was an error with fork()");
         exit(1);//there was an error with fork so exit the program and go back and fix it
     }
@@ -380,7 +380,7 @@ bool exec(cmd c)
         }
         exit(1);
     }
-    //if pid is not 0 then we’re in the parent
+    //if pid is not 0 then we?re in the parent
     //parent process
     else{
         pid = wait(&status);
