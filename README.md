@@ -86,7 +86,7 @@ This last command would run `ls -laR | grep Makefile` and redirect its output to
 
 Just like bash, when chaining multiple redirection commands together (e.g. `echo test > f1 > f2 > f3`), even though  rshell will create, open and close all files in the chain, only the last one will contain the output (i.e. only `f3` will contain `test`). 
 
-However, when mixing up input and output redirection (e.g. `./a.out < inputFile > output1 > output2`), rshell has a different aproach. It echos out to the first output file in the chain (i.e. `output1`).
+However, when mixing up multiple input redirections with other input/output redirectins (e.g. `./a.out < inputFile > output1 > output2`), rshell has a different aproach from Unix bash implementation. It echos out to the first output file in the chain (i.e. `output1`).
 
 
 ##Installation
@@ -160,4 +160,4 @@ $ bin/rshell
 
 
 ####Bugs HW2: rshell piping. 
-* Chaining multiple output redirections with input redirection does not match behavior that UNIX bash does. Further explanation about this is found above on the overview. 
+* Chaining multiple input redirections does not match UNIX bash behavior. Further explanation about this is found above on the overview section. 
