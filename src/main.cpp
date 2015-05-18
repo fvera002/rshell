@@ -14,71 +14,373 @@
 
 #include <fcntl.h>
 #include <sys/stat.h>
+
 using namespace std;
+
+
 
 bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
+vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors);
+bool isRedirect(string con);
+bool isOutRed(string con);
+int getFlag(string con, int &fd);
 
-bool redirect(queue<cmd> &commands, queue<string> &connectors)
+bool exec2(cmd c)
 {
-    cout << "Redirect called... "<< commands.size() << endl;
-    //if there's no file passed in, do nothing
-    if(commands.size() < 2) return false; 
+    char **argv = c.toArray();  
+    if(-1 == execvp(*argv, argv)){
+        cout << c.toString() << ": ";
+        perror(string(c.toString() + ": There was an error in execvp()").c_str());
+    }
+    cout << flush;
+    return true;
+}
+
+void bkpIO(int &in, int &out)
+{
+    in = dup(0);
+    if (in == -1)
+        perror("There was an error in dup");
+    out = dup(1);
+    if (out == -1)
+        perror("There was an error in dup");
+}
+
+void restoreIO(int &savedIn, int &savedOut)
+{
+    if (dup2(savedOut, 1) == -1)
+        perror("There was an error in dup2");
+    if (dup2(savedIn, 0) == -1)
+        perror("There was an error in dup2");
+    if (close(savedOut) == -1)
+        perror("There was an error in close");
+    if (close(savedIn) == -1)
+        perror("There was an error in close");
+}
+
+bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int flags2) {
     
-    cmd currCmd = commands.front();
-    commands.pop();
-    char * file_name = commands.front().toArray()[0];
-    cout << "Printing into: " << file_name << endl;
+    int savedIn,savedOut;
+    bkpIO(savedIn,savedOut);
+
+    int in = 0;
+    int output = 1;
     
+    if(ff1 != NULL){
+        in = open(ff1, flags1, S_IRUSR | S_IWUSR);
+        if (in == -1) {
+            perror("There was an error with open()");
+            //exit(1);
+        }
+    }
+    if(ff2 != NULL ){
+        output = open(ff2, flags2, S_IRUSR|S_IWUSR);
+        if (output == -1){
+            perror("There was an error with open()");
+            //exit(1);
+        }
+    }
     
+    int fd[2];
+    vector<int> ids;
+    //initialize all children expect the last one
+    for (unsigned i = 0; i < v.size() - 1; ++i) {
+        if (pipe(fd) == -1)
+            perror("There was an error in pipe");
+            
+        int pid = fork();
+        if (pid == -1)
+            perror("There was an error in fork");
+        ids.push_back(pid);
+        if (pid == 0) {
+            if (in != 0) {
+                if (dup2(in , 0) == -1) {
+                    perror("There was an error in dup2 1");
+                    return false;
+                }
+                //if (close( in ) == -1)
+                //    perror("There was an error in close");
+            }
+            if (dup2(fd[1], 1) == -1)
+                perror("There was an error in dup2");
+        
+            if (close(fd[1]) == -1)
+                perror("There was an error in close");
+ 
+            exec2(v.at(i));
+            
+            exit(1); //avoid zoombies
+        } else {
+            if (close(fd[1]) == -1)
+                perror("There was an error in close"); in = fd[0];
+        }
+    }
+    if (dup2( in , 0) == -1)
+        perror("There was an error in dup2 2");
+        
+    //now take care of last command
+    int pid = fork();
+    int q = -1;
+    if (pid == q)
+        perror("There was an error in fork");
+    ids.push_back(pid);
+    if (pid == 0) {
+        if (output != STDOUT_FILENO) {
+            if (dup2(output, 1) == -1)
+                perror("There was an error in dup2 3");
+            if (close(output) == -1)
+                perror("There was an error in closing fd");
+        } else {
+            if (dup2(savedOut, STDOUT_FILENO) == -1)
+                perror("There was an error in dup2");
+        }
+        
+        exec2(v.at(v.size() - 1));
+        
+    } else if (pid > 0){
+        FOR(ids) {
+            if (waitpid(ids[i], NULL, 0) == -1)
+                perror("There was an error in wait");
+        }
+    }
+    restoreIO(savedIn, savedOut);
+    cout<< flush;
+    return true;
+}
+
+int open_f(const char * ff, int flags) 
+{
+    int fl;
+   
+    fl = open(ff, flags, S_IRUSR|S_IWUSR);
+    if (fl == -1){
+        perror("There was an error with open()");
+        return -1;
+    }
+    
+    return fl;
+}
+
+bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<string> out_list, vector<string> c_list)
+{
     // 0 = cin
     // 1 = cout
     // 2 = cerr
-    int fl;
-    //int stdout = dup(1);
-    if(close(1) == -1){
+    if(fd == 999){
+        cmd aux("echo " + out_list[0]);
+        vector<cmd> newpipes;
+        newpipes.push_back(aux);
+        newpipes.push_back(currCmd);
+        newpipes.insert( newpipes.end(), pipes.begin(), pipes.end() );
+        if(out_list.size() > 1) {
+            string f = out_list[out_list.size()-1];
+            int fl = getFlag( (c_list[c_list.size()-1]) , fd ); 
+            return piping(newpipes, NULL, f.c_str(), 0, fl);
+        }
+        return piping(newpipes, NULL, NULL, 0, 0);
+    }
+    else if(pipes.size() > 0){
+        vector<cmd> newpipes;
+        newpipes.push_back(currCmd);
+        newpipes.insert( newpipes.end(), pipes.begin(), pipes.end() );
+        string f1= out_list[0];
+        if(out_list.size() >1){
+            string f2= out_list[out_list.size()-1];
+            return piping(newpipes, f1.c_str(), f2.c_str(), getFlag("<", fd), getFlag(c_list.front(),fd));
+        }
+        return false;
+    }
+    
+    int fd_bkp = fd;
+    int savedIn,savedOut;
+    bkpIO(savedIn,savedOut); 
+    if(close(fd) == -1){
         perror("There was an error with close()");
-        exit(1);
+        restoreIO(savedIn, savedOut);
+        return false;
+    }
+    if(fd == 0 && c_list.size() > 0 && isOutRed(c_list[0])){
+        getFlag(c_list[0], fd);
+        if(close(fd) == -1){
+            perror("There was an error with close()");
+            restoreIO(savedIn, savedOut);
+            return false;
+        }
     }
     
-    else if (fl = open(file_name, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) == -1){
-        perror("There was an error with open()");
-        exit(1);
-    }
-    //from now on everything is going to be printed into the file
-     
-    bool ret = exec(currCmd);
+    vector<int> flist;
+    int fl;
+    bool ret =false;
     
-    if(close(fl) == -1){
+    FOR(out_list){
+        if(i==0)fl= open_f(out_list[i].c_str(), flags);
+        else fl = open_f(out_list[i].c_str(), getFlag(c_list[i-1], fd));
+        if(fl == -1){
+            restoreIO(savedIn, savedOut);
+            return false;
+        } 
+        flist.push_back(fl);
+    }
+    
+    
+    bool ran =false;
+    FOR(flist){
+        if(dup2(flist[i], fd_bkp) == -1){
+            perror("There was an error with dup2()");
+            //exit(1);
+        }
+        
+        if( ((flist.size() == 1) 
+            || (fd_bkp == 0 && i==0 && flist.size() > 1) 
+            || (fd_bkp == 0 && flist.size() > 1 && i== flist.size() -1)
+            || (fd_bkp > 0 && i== flist.size() -1))
+            && !ran ){
+            ret = exec(currCmd);
+            ran = true;
+        }
+        
+        if(fd_bkp == 0 && i != 0 ){
+            if( close(flist[i]) == -1){
+                perror("There was an error with close(). ");
+                //exit(1);
+            }
+        }
+    }
+        
+    if( fd_bkp == 0 && close(flist[0]) == -1){
         perror("There was an error with close(). ");
-        exit(1);
+        //exit(1);
+    }
+
+    restoreIO(savedIn, savedOut);
+
+    return ret;
+    
+}
+
+bool redirect(queue<cmd> &commands, queue<string> &connectors, int flags, int fd, vector<cmd> &pipes)
+{
+    //if there's no file passed in, do nothing  
+    cmd currCmd;  
+    if(pipes.empty()){
+        if(commands.size() < 2) return false; 
+        currCmd = commands.front();
+        commands.pop();
+       
     }
     
-    if(dup(1) == -1){
-        perror("There was an error with dup()");
-        exit(1);
+    string file_name = commands.front().toString();
+    if(!commands.empty())commands.pop();
+    if(!connectors.empty())connectors.pop();
+    //cout << "Printing into: " << file_name << endl;
+    bool ret =false;
+        
+    if(!pipes.empty()) {
+        piping(pipes, NULL, file_name.c_str(), 0, flags);
+        return true;
     }
+    if( (!commands.empty()) && (!connectors.empty()) ){
+        string c2 = connectors.front();
+        if(c2 == "|"){
+            if(!connectors.empty())connectors.pop();
+            pipes =  pipesPrep(commands,connectors);
+        }
+    }
+    //cout << "pipes before: " << endl;
+    //PCMDS(pipes);
+    vector<string> l;
+    vector<string> l2;
+    l.push_back(file_name);
+    while(!connectors.empty() && isOutRed(connectors.front())){
+        if(!commands.empty()) l.push_back(commands.front().toString());
+        l2.push_back(connectors.front());
+        if(!commands.empty())commands.pop();
+        if(!connectors.empty())connectors.pop();
+    }
+    ret = execRedirect(currCmd, flags, fd, pipes, l, l2);
+    
+    
+    
     return ret;
+}
+
+int getFlag(string con, int &fd)
+{
+    const int trunc = O_CREAT|O_WRONLY|O_TRUNC;
+    const int append = O_CREAT|O_WRONLY|O_APPEND;
+    const int read = O_RDONLY;
+    
+    if(con == ">" || con == "1>"){
+        fd =1;
+        return  trunc;
+    }
+    else if(con == ">>" || con == "1>>"){
+        fd = 1;
+        return  append;
+    }
+    else if(con == "2>"){
+        fd = 2;
+        return  trunc;
+    }
+    else if(con == "2>>"){
+        fd = 2;
+        return  append;
+    }
+    else if(con == "<"){
+        fd = 0;
+        return  read;
+    }
+    fd = -1;
+    return -1;
+}
+
+bool redirectPrep(queue<cmd> &commands, queue<string> &connectors, vector<cmd> pipes)
+{
+    string con;
+    if(!connectors.empty()) con = connectors.front();
+    
+    
+    const int trunc = O_CREAT|O_WRONLY|O_TRUNC;
+    const int append = O_CREAT|O_WRONLY|O_APPEND;
+    const int read = O_RDONLY;
+    
+    if(con=="<<<")
+        return redirect(commands, connectors, 999, 999, pipes);
+    else if(con == ">" || con == "1>")
+        return redirect(commands, connectors, trunc, 1, pipes); //TRUNC
+    else if(con == ">>" || con == "1>>")
+        return redirect(commands, connectors, append,  1, pipes); //APPEND
+    else if(con == "2>")
+        return redirect(commands, connectors, trunc,  2, pipes); //TRUNC
+    else if(con == "2>>")
+        return redirect(commands, connectors, append,  2, pipes);//APPEND
+    else if(con == "<")
+        return  redirect(commands, connectors, read,  0, pipes);//READ
+    
+    return false;
 }
 
 // runs fork and execvp returning true if execvp succeed
 bool exec(cmd c)
 {
+    //cout<< c.toString() << endl;
     int status;
     int pid = fork();
-    if(pid == -1){//fork’s return value for an error is -1
+    if(pid == -1){//fork?s return value for an error is -1
         perror("There was an error with fork()");
         exit(1);//there was an error with fork so exit the program and go back and fix it
     }
     else if(pid == 0){//when pid is 0 you are in the child process
         //This is the child process 
         char **argv = c.toArray();  
-        if(-1 == execvp(*argv, argv))
-            perror("There was an error in execvp()");
+        if(-1 == execvp(*argv, argv)){
+            perror(string(c.toString() + ": There was an error in execvp()").c_str());
+        }
         exit(1);
     }
-    //if pid is not 0 then we’re in the parent
+    //if pid is not 0 then we?re in the parent
     //parent process
     else{
         pid = wait(&status);
@@ -91,6 +393,7 @@ bool exec(cmd c)
             return true;
         }
     }
+    cout<<flush;
     return false; 
 }
 
@@ -106,49 +409,166 @@ void runPrep(cmd &c)
     run(commands, connectors);
 }
 
+bool isRedirect(string con)
+{
+    //cout << "--" << con <<endl;
+    FOR(con){
+        if(con[i] == '<') return true;
+        if(con[i] == '>') return true;
+    }
+    return false;
+}
+
+bool isOutRed(string con)
+{
+    //cout << "--" << con <<endl;
+    FOR(con){
+        if(con[i] == '>') return true;
+    }
+    return false;
+}
+
+vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors)
+{
+    vector<cmd> pipes;
+    //PUSH first 2 commands
+    if(!commands.empty()) pipes.push_back(commands.front());
+    if(!connectors.empty()) connectors.pop();
+    if(!commands.empty()) commands.pop();
+    
+    if(!commands.empty()) pipes.push_back(commands.front());
+    if(!commands.empty()) commands.pop();
+        
+    while( !connectors.empty() && !commands.empty() && connectors.front() == "|"){
+        
+        if(!commands.empty()) pipes.push_back(commands.front());
+        if(!connectors.empty()) connectors.pop();
+        if(!commands.empty()) commands.pop();
+    }
+    
+    //piping(pipes);
+    return pipes;
+    
+}
+
+//same logic, however checks before running the command
+void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
+{
+    if(commands.empty()) return;
+    //use the first command "highest priority" 
+    cmd com = commands.front();
+    if(com.toString() == "exit") exit(0);
+    
+    string con;
+    if(!connectors.empty()) con = connectors.front();
+    //cout<<prev;
+    //cout << "2_"<< com.toString() << "_"<< endl;
+    //cout << "2-" << con << "-" << endl;
+    bool ok;
+    
+    vector<cmd> pipes;
+    if(!con.empty() && con == "|" ){
+        pipes = pipesPrep(commands, connectors); 
+        if(!connectors.empty()) con = connectors.front();       
+    } 
+    if(!con.empty() && isRedirect(con) ){
+        ok = redirectPrep(commands, connectors, pipes);
+    } 
+    if(commands.empty()) return;
+    
+    if(prev){
+    //SUCESS
+        if(con == "||" ){
+            if(!connectors.empty()) connectors.pop();
+            if(!commands.empty()) commands.pop();
+            ok =false;
+        }
+        else if(con == "&&" || con == ";"){
+            if(!connectors.empty())connectors.pop();
+            ok = exec(com);
+            if(!commands.empty()) commands.pop();
+        }
+    }
+    else{
+    //FAIL
+        if(con == "&&"){
+            if(!connectors.empty()) connectors.pop();
+            if(!commands.empty()) commands.pop();
+            ok =false;
+        }
+        else if(con == "||" || con == ";"){
+            if(!connectors.empty()) connectors.pop();
+            ok = exec(com);
+            if(!commands.empty()) commands.pop();
+        }
+    }
+    
+    
+    run2(commands, connectors, ok);
+    return ;
+}
+
 // do the logics of commands, executing execpv when needed 
 // then call run again recursively
 // or exits the program if it's the case
 void run(queue<cmd> &commands, queue<string> &connectors)
 {
     if(commands.empty()) return;
-    
-    //if the next connector in queue is a redirect output
-    if(connectors.front()== ">"){
-        redirect(commands, connectors);
-        return;
-    } 
-    
     //use the first command "highest priority" 
+    cmd com = commands.front();
+    if(com.toString() == "exit") exit(0);
+    
     string con;
     if(!connectors.empty())con= connectors.front();
-    cmd com = commands.front();
-    commands.pop();
     
-    // execpv and fork process
-    // cout << "_"<< com.toString() << "_"<< endl;
-    // cout << "c " << con << "_" << endl;
-    if(com.toString() == "exit") exit(0);
-    bool ok = exec(com);
-    if(ok){ //SUCESS
-        if(!connectors.empty() && con == "||" ){
-            connectors.pop();
-            commands.pop();
+    //cout << "_"<< com.toString() << "_"<< endl;
+    //cout << "-" << con << "-" << endl;
+    
+    bool ok;
+    vector<cmd> pipes;
+    //if the next connector in queue is a redirect output
+    if(!con.empty() && con == "|" ){
+        pipes = pipesPrep(commands, connectors);
+         if(!connectors.empty()) con = connectors.front(); 
+    } 
+    if(!con.empty() && isRedirect(con) ){
+        ok = redirectPrep(commands, connectors, pipes);
+    } 
+    else if(!pipes.empty()) ok = piping(pipes, NULL, NULL, 0, 0);
+    else {
+        ok = exec(com);
+        commands.pop();
+    }
+    if(commands.empty()) return;
+    if(!connectors.empty())con= connectors.front(); 
+    
+
+    
+    if(ok){ 
+    //SUCESS
+        if(con == "||" ){
+            if(!connectors.empty())connectors.pop();
+            if(!commands.empty())commands.pop();
+            run2(commands, connectors, ok);
         }
-        else if(!connectors.empty() && ( con == "&&" || con == ";")){
-            connectors.pop();
+        else if(con == "&&" || con == ";"){
+            if(!connectors.empty())connectors.pop();
+            run(commands, connectors);
         }
-    } else {//FAIL
-        if(!connectors.empty() && con == "&&"){ 
-            connectors.pop();
-            commands.pop();
+    } 
+    else {
+    //FAIL
+        if(con == "&&"){ 
+            if(!connectors.empty())connectors.pop();
+            if(!commands.empty())commands.pop();
+            run2(commands, connectors, ok);
         }
-        else if(!connectors.empty() && ( con == "||" || con == ";")){ 
-            connectors.pop();
+        else if(con == "||" || con == ";"){ 
+            if(!connectors.empty())connectors.pop();
+            run(commands, connectors);
         }
     }
-    
-    run(commands, connectors);
+    cout<<flush;
     return ;
 }
 
@@ -188,8 +608,9 @@ int main()
         if(st.empty() || st == "#") continue;
         cmd c(st);
         runPrep(c);
-        
+        cout << flush;
+        cin.clear();
     }
+    //*/
     return 0;
 }
-

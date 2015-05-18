@@ -3,8 +3,15 @@ HW0 CS100 Spring 2015
 
 
 ##Authors and Contributors
+######Author
+
 Fernando Donizete Verago Junior
+
+######Contributors
+
 Isadora Maria Mendes de Souza (cp.cpp)
+
+Andrew So (rm.cpp and mv.cpp)
 
 ##General Information
 ####HW0: rshell
@@ -67,6 +74,21 @@ Again, the order in which the flags appear in your command line does not matter:
 `ls file1.txt file2.doc -l`
 
 
+####HW2: rshell piping
+The first version of rshell was not able to handle piping and I/O reirection. Now that these features are available, commands like `ls -l > files.txt` and `ls -laR | grep Makefile` will work just like an UNIX bash implementation. 
+
+Also, these commands can be mixed up together:
+
+`ls -laR | grep Makefile > ls_make.txt` 
+
+This last command would run `ls -laR | grep Makefile` and redirect its output to the file `ls_make.txt`.
+
+
+Just like bash, when chaining multiple redirection commands together (e.g. `echo test > f1 > f2 > f3`), even though  rshell will create, open and close all files in the chain, only the last one will contain the output (i.e. only `f3` will contain `test`). 
+
+However, when mixing up multiple input redirections with other input/output redirectins (e.g. `./a.out < inputFile > output1 > output2`), rshell has a different aproach from Unix bash implementation. It echos out to the first output file in the chain (i.e. `output1`).
+
+
 ##Installation
 ####Installation HW0: rshell
 To be able to install and run the program, it's necessary to clone the repository, run the make command, then finally run rshell that is going to be located in the bin folder. The following commands would do the described steps:
@@ -103,6 +125,16 @@ $ make ls
 $ bin/ls
 ```
 
+####Installation HW2: rshell piping
+Since this version just adds new features to the first homework, the installation process is basically the same, except for the version that will to be checked out. Now,  `hw2` needs to be checked out instead of `hw1`. So, the steps will look like this: 
+
+```
+$ git clone  https://github.com/fvera002/rshell.git
+$ cd rshell
+$ git checkout hw2
+$ make
+$ bin/rshell
+```
 
 
 ## Bugs and Limitations
@@ -125,3 +157,7 @@ $ bin/ls
 * Output does not line up exactly as it should when running `ls` in a folder with many files.
 
 * The order in which files are displayed is not matching GNU's implementation when files have similar names, such as `ls.cpp` and `ls2.cpp`. 
+
+
+####Bugs HW2: rshell piping. 
+* Chaining multiple input redirections does not match UNIX bash behavior. Further explanation about this is found above on the overview section. 

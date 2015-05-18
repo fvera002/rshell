@@ -1,0 +1,223 @@
+Script started on Sun 17 May 2015 11:18:39 PM PDT
+~
+
+fvera002@hammer $ cd rshell
+~/rshell
+
+fvera002@hammer $ make
+mkdir -p bin
+cd bin; g++ ../src/main.cpp -g -Wall -Werror -ansi -pedantic -o rshell
+mkdir -p bin
+cd bin; g++ ../src/ls.cpp -g -Wall -Werror -ansi -pedantic -o ls
+~/rshell
+
+fvera002@hammer $ bin/rshell
+fvera002@hammer.cs.ucr.edu$ # testing typos
+fvera002@hammer.cs.ucr.edu$ >
+fvera002@hammer.cs.ucr.edu$ < file> 
+fvera002@hammer.cs.ucr.edu$ > file
+fvera002@hammer.cs.ucr.edu$ ..
+..: There was an error in execvp(): Permission denied
+fvera002@hammer.cs.ucr.edu$ #testing input
+fvera002@hammer.cs.ucr.edu$ ./in
+Please enter an integer value: 5
+The value you entered is 5
+ and its double is 10.
+fvera002@hammer.cs.ucr.edu$ ./in < a        cat a14
+14
+fvera002@hammer.cs.ucr.edu$ ./in < a14
+Please enter an integer value: The value you entered is 14
+ and its double is 28.
+fvera002@hammer.cs.ucr.edu$ ./in<a14
+Please enter an integer value: The value you entered is 14
+ and its double is 28.
+fvera002@hammer.cs.ucr.edu$ cat < testt ando cat        ing cat with                  a14
+14
+fvera002@hammer.cs.ucr.edu$ # testing extra point input <<<
+fvera002@hammer.cs.ucr.edu$ cat <  <<<    "testing extra credit part1"
+testing extra credit part1
+fvera002@hammer.cs.ucr.edu$ ./in <<< "16"
+Please enter an integer value: The value you entered is 16
+ and its double is 32.
+fvera002@hammer.cs.ucr.edu$ ./in  <<<16
+Please enter an integer value: The value you entered is 16
+ and its double is 32.
+fvera002@hammer.cs.ucr.edu$ #possible error with input
+fvera002@hammer.cs.ucr.edu$ ./in < bin/rshell #busy file
+Please enter an integer value: The value you entered is 0
+ and its double is 0.
+fvera002@hammer.cs.ucr.edu$ # since it wa  is READ ONLY permission, there is no error message in the a last command
+fvera002@hammer.cs.ucr.edu$ # now an existing file
+fvera002@hammer.cs.ucr.edu$ ./in < nonexistin  
+There was an error with open(): No such file or directory
+fvera002@hammer.cs.ucr.edu$ # now testint g output redirection
+fvera002@hammer.cs.ucr.edu$ echo test 1 output > f1
+fvera002@hammer.cs.ucr.edu$ cat f1
+test 1 output
+fvera002@hammer.cs.ucr.edu$ echo withoug t spaces>f1 2
+fvera002@hammer.cs.ucr.edu$ cat f2
+without spaces
+fvera002@hammer.cs.ucr.edu$ echo appe         ##  output redirection appending ing to a file
+fvera002@hammer.cs.ucr.edu$ echo appending into test 1 ouput >> f1
+fvera002@hammer.cs.ucr.edu$ cat f1
+test 1 output
+appending into test 1 ouput
+fvera002@hammer.cs.ucr.edu$ echo aap  pprending       ending wihtou    thout spaces>>f2
+fvera002@hammer.cs.ucr.edu$ cat f2
+without spaces
+appending without spaces
+fvera002@hammer.cs.ucr.edu$ lss > f3
+lss: There was an error in execvp(): No such file or directory
+fvera002@hammer.cs.ucr.edu$ ls > f3
+fvera002@hammer.cs.ucr.edu$ cat f3
+a14
+abc
+bin
+error2.cpp
+error2.cpp~
+error.cpp
+existingInputFile
+f1
+f2
+f3
+in
+LICENSE
+Makefile
+README.md
+src
+tests
+tin.cpp
+fvera002@hammer.cs.ucr.edu$ @ # now testing extra credit 2 file descriptors
+fvera002@hammer.cs.ucr.edu$ g++ error.cpp > log_e  
+error.cpp: In function ‘int main()’:
+error.cpp:7: error: ‘cout’ was not declared in this scope
+error.cpp:8: error: ‘cin’ was not declared in this scope
+error.cpp:9: error: ‘endl’ was not declared in this scope
+fvera002@hammer.cs.ucr.edu$ # now doing it right since stderror was used
+fvera002@hammer.cs.ucr.edu$ g++ error.coo  pp 2> log    log
+fvera002@hammer.cs.ucr.edu$ cat log
+error.cpp: In function ‘int main()’:
+error.cpp:7: error: ‘cout’ was not declared in this scope
+error.cpp:8: error: ‘cin’ was not declared in this scope
+error.cpp:9: error: ‘endl’ was not declared in this scope
+fvera002@hammer.cs.ucr.edu$ echo appending error 2 coming up 1>  > log
+fvera002@hammer.cs.ucr.edu$ cat log
+error.cpp: In function ‘int main()’:
+error.cpp:7: error: ‘cout’ was not declared in this scope
+error.cpp:8: error: ‘cin’ was not declared in this scope
+error.cpp:9: error: ‘endl’ was not declared in this scope
+appending error 2 coming up
+fvera002@hammer.cs.ucr.edu$ g++ error2.cpp 2>> log
+fvera002@hammer.cs.ucr.edu$ cat log
+error.cpp: In function ‘int main()’:
+error.cpp:7: error: ‘cout’ was not declared in this scope
+error.cpp:8: error: ‘cin’ was not declared in this scope
+error.cpp:9: error: ‘endl’ was not declared in this scope
+appending error 2 coming up
+error2.cpp:1:20: warning: extra tokens at end of #include directive
+error2.cpp: In function ‘int main()’:
+error2.cpp:10: error: expected ‘;’ before ‘cout’
+fvera002@hammer.cs.ucr.edu$ echo a append      file descriptors last test 1> a f4 3
+fvera002@hammer.cs.ucr.edu$ cat f3
+file descriptors last test
+fvera002@hammer.cs.ucr.edu$ # now mixing up input and output redirection
+fvera002@hammer.cs.ucr.edu$ cat <       caat  t < f3 > f4
+fvera002@hammer.cs.ucr.edu$ cat f4
+file descriptors last test
+fvera002@hammer.cs.ucr.edu$ ./in <      echo    ./in < a14 > f5
+fvera002@hammer.cs.ucr.edu$ echo f5
+f5
+fvera002@hammer.cs.ucr.edu$ cat f5
+Please enter an integer value: The value you entered is 14
+ and its double is 28.
+fvera002@hammer.cs.ucr.edu$ ./in <<< "22" >  >f6
+fvera002@hammer.cs.ucr.edu$ cat f6
+Please enter an integer value: The value you entered is 22
+ and its double is 44.
+fvera002@hammer.cs.ucr.edu$ ./in <<< 11 >  f6    f6
+fvera002@hammer.cs.ucr.edu$ cat f6
+Please enter an integer value: The value you entered is 11
+ and its double is 22.
+fvera002@hammer.cs.ucr.edu$ ./in    echo 14    90 > f5
+fvera002@hammer.cs.ucr.edu$ ./in<f5  >      f5 >> f6   f6
+fvera002@hammer.cs.ucr.edu$ ./t   cat f6
+Please enter an integer value: The value you entered is 11
+ and its double is 22.
+Please enter an integer value: The value you entered is 90
+ and its double is 180.
+fvera002@hammer.cs.ucr.edu$ #busy file error
+fvera002@hammer.cs.ucr.edu$ echo      ./in > f4 5    < f5 > bin/rshell
+fvera002@hammer.cs.ucr.edu$ echo    cat   ./in < f5 > non        non exit     exist
+fvera002@hammer.cs.ucr.edu$ ls
+a14  error2.cpp   existingInputFile  f3  f6	  log	     src
+abc  error2.cpp~  f1		     f4  in	  Makefile   tests
+bin  error.cpp	  f2		     f5  LICENSE  README.md  tin.cpp
+fvera002@hammer.cs.ucr.edu$ #now mixing up             w testing pipeng   ing
+fvera002@hammer.cs.ucr.edu$ ls -l | grep Mke  akefile
+-rw------- 1 fvera002 csmajs  447 May 17 12:19 Makefile
+fvera002@hammer.cs.ucr.edu$ ls -l \ | head -3
+total 68
+-rw------- 1 fvera002 csmajs    3 May 17 22:31 a14
+-rw------- 1 fvera002 csmajs   15 May 17 22:12 abc
+fvera002@hammer.cs.ucr.edu$ ls -l | head   -3 | tail -1
+-rw------- 1 fvera002 csmajs   15 May 17 22:12 abc
+fvera002@hammer.cs.ucr.edu$ #mixing up piping and output
+fvera002@hammer.cs.ucr.edu$ ./in <<< 12  | tr A-Z a-z | tee f1 | tr a-z A-Z > f2
+fvera002@hammer.cs.ucr.edu$ ccc  at f2
+PLEASE ENTER AN INTEGER VALUE: THE VALUE YOU ENTERED IS 12
+ AND ITS DOUBLE IS 24.
+fvera002@hammer.cs.ucr.edu$ ls -l | head -3 | tail -1 > f3
+fvera002@hammer.cs.ucr.edu$ cat f3
+-rw------- 1 fvera002 csmajs   15 May 17 22:12 abc
+fvera002@hammer.cs.ucr.edu$ cat abc
+H
+G
+A
+D
+F
+B
+C
+Efvera002@hammer.cs.ucr.edu$ ./in <<< 12  | tr A-Z a-z | tee f1 | tr a-z A-Z > f2                                   
+fvera002@hammer.cs.ucr.edu$ ./in <<< 12  | tr A-Z a-z | tee f1 | tr a-z A-Z > f2                                                    ./in <<< 12  | tr A-Z a-z | tee f1 | tr a-z A-Z > f2                                                    cat abc | tr A-Z a-z | sort > f4
+fvera002@hammer.cs.ucr.edu$ cat f4
+a
+b
+c
+d
+e
+f
+g
+h
+fvera002@hammer.cs.ucr.edu$ mixing up evertyhin     ything together                             # all together
+fvera002@hammer.cs.ucr.edu$ cat < existingInputFile | tr A-Z a-z | tee file1 | tr a-z A-Z > f9
+fvera002@hammer.cs.ucr.edu$ cat f9
+THIS IS A EXISTING FILE THAT IS GOING TO BE USED TO CREATE
+A NEW FILE WITH THIS CONTENT, BUT UPPER CASED.
+LAST LINE.
+fvera002@hammer.cs.ucr.edu$ cat existingInputFile
+This is a existing file that is going to be used to create
+a new file with this content, but upper cased.
+Last Line.
+fvera002@hammer.cs.ucr.edu$ cat < existingInputFile | tr A-Z a-z | tee file1 | tr a-z A-Z > f9 ; echo ended printing
+ended printing
+fvera002@hammer.cs.ucr.edu$ cat 9 f     #chaining multiple input and output together does not match bash behavior, but it's explained on the README file how it works since it was not determined by the hw spce  ecs. 
+fvera002@hammer.cs.ucr.edu$ cat <       echo aa > f1 > f2 > ff 3
+fvera002@hammer.cs.ucr.edu$ cat f1
+fvera002@hammer.cs.ucr.edu$ cat f2
+fvera002@hammer.cs.ucr.edu$ cat f3
+aa
+fvera002@hammer.cs.ucr.edu$ ./ain   in <<< 11   << 2  < 22 <<< 33 #onyl  ly the first according to README
+Please enter an integer value: The value you entered is 11
+ and its double is 22.
+fvera002@hammer.cs.ucr.edu$ ps
+  PID TTY          TIME CMD
+20461 pts/46   00:00:00 bash
+20517 pts/46   00:00:00 rshell
+34788 pts/46   00:00:00 ps
+fvera002@hammer.cs.ucr.edu$ exit
+~/rshell
+
+fvera002@hammer $ exit
+exit
+
+Script done on Sun 17 May 2015 11:49:03 PM PDT
