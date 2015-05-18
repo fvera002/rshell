@@ -215,7 +215,6 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
     bool ret =false;
     
     FOR(out_list){
-        if(i ==0 )continue;
         if(i==0)fl= open_f(out_list[i].c_str(), flags);
         else fl = open_f(out_list[i].c_str(), getFlag(c_list[i-1], fd));
         if(fl == -1){
@@ -226,18 +225,21 @@ bool execRedirect(cmd currCmd, int flags, int fd, vector<cmd> &pipes, vector<str
     }
     
     
-    
+    bool ran =false;
     FOR(flist){
         if(dup2(flist[i], fd_bkp) == -1){
             perror("There was an error with dup2()");
             //exit(1);
         }
         
-        if(flist.size() == 1) ret = exec(currCmd);
-        else if(fd_bkp == 0 && i==0 && flist.size() > 1) ret = exec(currCmd);
-        else if(fd_bkp == 0 && flist.size() > 1 && i== flist.size() -1) ret = exec(currCmd);
-        else if(fd_bkp > 0 && i== flist.size() -1)ret = exec(currCmd);
-        //else if(i== flist.size() -1)ret = exec(currCmd);
+        if( ((flist.size() == 1) 
+            || (fd_bkp == 0 && i==0 && flist.size() > 1) 
+            || (fd_bkp == 0 && flist.size() > 1 && i== flist.size() -1)
+            || (fd_bkp > 0 && i== flist.size() -1))
+            && !ran ){
+            ret = exec(currCmd);
+            ran = true;
+        }
         
         if(fd_bkp == 0 && i != 0 ){
             if( close(flist[i]) == -1){
@@ -609,7 +611,6 @@ int main()
         cout << flush;
         cin.clear();
     }
-    
+    //*/
     return 0;
 }
-
