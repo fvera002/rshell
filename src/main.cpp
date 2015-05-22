@@ -14,6 +14,7 @@
 
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 using namespace std;
 
@@ -595,11 +596,23 @@ string getPrompt(){
 
 }
 
+void handlerInt(int x)
+{
+    if (x == SIGINT) {
+        cout << endl;
+    }
+}
+
 // main program
 // get input until in a infinite loop
 // within functions are responsible for exiting the program
-int main()
-{
+
+
+int main() {
+    if (signal(SIGINT, handlerInt) == SIG_ERR) {
+        perror("There was an error in signal()");
+        exit(1);
+    }
     while(true){
         cout << getPrompt();
         string st;
