@@ -18,7 +18,7 @@
 
 using namespace std;
 
-
+void handleInt(int x);
 
 bool exec(cmd c);
 void runPrep(cmd &c);
@@ -375,6 +375,7 @@ bool exec(cmd c)
     }
     else if(pid == 0){//when pid is 0 you are in the child process
         //This is the child process 
+        
         char **argv = c.toArray();  
         if(-1 == execvp(*argv, argv)){
             perror(string(c.toString() + ": There was an error in execvp()").c_str());
@@ -385,6 +386,7 @@ bool exec(cmd c)
     //parent process
     else{
         pid = wait(&status);
+        
         if(pid == -1){
             perror("There was an error in wait()");
             exit(1);
@@ -509,6 +511,53 @@ void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
     return ;
 }
 
+bool builtInCD(cmd c)
+{
+    vector<string> clist = c.toVector();
+    string path;
+    if(clist.size() == 1){
+        path = getenv("HOME");
+    }
+    else if(clist.size() == 2){
+        if(clist.at(1)== "-")  path = getenv("OLDPWD");
+        else path = clist.at(1);
+    }
+    const char *pwd0 = "PWD";
+    char *pwd = getenv(pwd0);
+    if(pwd==NULL){
+        perror("There was an error in getenv");
+        return false;
+    }
+    
+    if(chdir(path.c_str()) == -1){
+        perror(string(path +" There was an error in chdir").c_str());
+        return false;
+    }
+    char path2[128];
+    char *path3  = getcwd(path2,128);
+    if(path3==NULL){
+        perror("There was an error in getcwd");
+    }
+    if(setenv(pwd0, path3, 1) == -1){
+        perror("There was an error in setenv");
+        return false;
+    }
+    const char *oldpwd0 = "OLDPWD";
+    if(setenv(oldpwd0, pwd, 1) == -1){
+        perror("There was an error in setenv");
+        return false;
+    }
+    
+    
+    char *pwd2 = getenv(pwd0);
+    char *oldpwd2 = getenv(oldpwd0);
+    
+    cout << "curr: " << pwd2 << endl;
+    cout << "old: " << oldpwd2 << endl;
+    
+    return true;
+}
+
 // do the logics of commands, executing execpv when needed 
 // then call run again recursively
 // or exits the program if it's the case
@@ -518,6 +567,12 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     //use the first command "highest priority" 
     cmd com = commands.front();
     if(com.toString() == "exit") exit(0);
+    if(com.toVector().at(0) == "cd"){
+        bool r = builtInCD(com);
+        commands.pop();
+        run2(commands, connectors, r);
+        return;
+    }
     
     string con;
     if(!connectors.empty())con= connectors.front();
@@ -576,15 +631,16 @@ void run(queue<cmd> &commands, queue<string> &connectors)
 // returns a string with user and machine name
 string getPrompt(){
     char machine[128];
+    char dir[128];
     string user;
     string prompt;
     
     struct passwd *pw  = getpwuid(getuid());
     int host = gethostname(machine,128);
-    
-    if(pw != NULL && host != -1){
+    char *pwd = getcwd(dir, 128);
+    if(pw != NULL && host != -1 && pwd != NULL){
         user = pw->pw_name;
-        prompt = user + "@" + string(machine)  + "$ ";
+        prompt = user + "@" + string(machine) + ": " + string(pwd)  + " $ ";
     } else{
         prompt = "$ ";
         if(pw == NULL)
@@ -596,13 +652,11 @@ string getPrompt(){
 
 }
 
-
 void handleInt(int x)
 {
-    cout<< flush;
-    cout << endl;
-    cout<< flush;
+    cout<<endl;
 }
+
 
 // main program
 // get input until in a infinite loop
