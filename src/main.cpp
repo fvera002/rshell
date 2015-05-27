@@ -596,24 +596,30 @@ string getPrompt(){
 
 }
 
-void handlerInt(int x)
+
+void handleInt(int x)
 {
-    if (x == SIGINT) {
-        cout << endl;
-    }
+    cout<< flush;
+    cout << endl;
+    cout<< flush;
 }
 
 // main program
 // get input until in a infinite loop
 // within functions are responsible for exiting the program
-
-
 int main() {
-    if (signal(SIGINT, handlerInt) == SIG_ERR) {
-        perror("There was an error in signal()");
+    
+    struct sigaction sa;
+    sa.sa_handler = handleInt;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART; //Restart
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        perror("There was an error in sigaction()");
         exit(1);
     }
     while(true){
+        cout << flush;
+        cin.clear();
         cout << getPrompt();
         string st;
         getline (cin,st);
