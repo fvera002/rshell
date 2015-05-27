@@ -18,8 +18,11 @@
 
 using namespace std;
 
-void handleInt(int x);
+//to do:
+// cd - ; cd -
 
+
+void handleInt(int x);
 bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
@@ -27,6 +30,7 @@ vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors);
 bool isRedirect(string con);
 bool isOutRed(string con);
 int getFlag(string con, int &fd);
+bool builtInCD(cmd c);
 
 bool exec2(cmd c)
 {
@@ -461,7 +465,12 @@ void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
     //use the first command "highest priority" 
     cmd com = commands.front();
     if(com.toString() == "exit") exit(0);
-    
+    if(com.toVector().at(0) == "cd"){
+        bool r = builtInCD(com);
+        commands.pop();
+        run2(commands, connectors, r);
+        return;
+    }
     string con;
     if(!connectors.empty()) con = connectors.front();
     //cout<<prev;
@@ -548,12 +557,12 @@ bool builtInCD(cmd c)
         return false;
     }
     
-    
+    /*
     char *pwd2 = getenv(pwd0);
     char *oldpwd2 = getenv(oldpwd0);
-    
     cout << "curr: " << pwd2 << endl;
     cout << "old: " << oldpwd2 << endl;
+    */
     
     return true;
 }
@@ -654,7 +663,10 @@ string getPrompt(){
 
 void handleInt(int x)
 {
+    cin.clear();
     cout<<endl;
+    cin.clear();
+    cout<<flush;
 }
 
 
@@ -672,7 +684,6 @@ int main() {
         exit(1);
     }
     while(true){
-        cout << flush;
         cin.clear();
         cout << getPrompt();
         string st;
