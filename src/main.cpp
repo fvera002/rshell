@@ -31,6 +31,7 @@ bool isRedirect(string con);
 bool isOutRed(string con);
 int getFlag(string con, int &fd);
 bool builtInCD(cmd c);
+string replaceHome(string curr);
 
 bool exec2(cmd c)
 {
@@ -564,6 +565,11 @@ bool builtInCD(cmd c)
     cout << "old: " << oldpwd2 << endl;
     */
     
+    char *pwd2 = getenv("PWD");
+    if(pwd2==NULL){
+        perror("There was an error in getenv");
+    } else  cout << pwd2 << endl;
+    
     return true;
 }
 
@@ -637,6 +643,25 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     return ;
 }
 
+string replaceHome(string curr)
+{
+    string ret = curr;
+    char *hm = getenv("HOME");
+    if(hm==NULL){
+        perror("There was an error in getenv");
+        return ret;
+    }
+    string home = hm;
+    size_t found;
+    found = curr.find(home);
+    if(found !=string::npos){
+        ret.replace(found, home.size()-found, "");
+        ret = "~" + ret;
+    }
+    
+    return ret;
+}
+
 // returns a string with user and machine name
 string getPrompt(){
     char machine[128];
@@ -649,7 +674,7 @@ string getPrompt(){
     char *pwd = getcwd(dir, 128);
     if(pw != NULL && host != -1 && pwd != NULL){
         user = pw->pw_name;
-        prompt = user + "@" + string(machine) + ": " + string(pwd)  + " $ ";
+        prompt = user + "@" + string(machine) + ": " + replaceHome(pwd)  + " $ ";
     } else{
         prompt = "$ ";
         if(pw == NULL)
