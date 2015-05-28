@@ -19,9 +19,9 @@
 using namespace std;
 
 //to do:
-// cd - ; cd -
+// cat then ^C
 
-
+void handleIntTerm(int x);
 void handleInt(int x);
 bool exec(cmd c);
 void runPrep(cmd &c);
@@ -380,7 +380,14 @@ bool exec(cmd c)
     }
     else if(pid == 0){//when pid is 0 you are in the child process
         //This is the child process 
-        
+        struct sigaction sa;
+        sa.sa_handler = handleIntTerm;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
         char **argv = c.toArray();  
         if(-1 == execvp(*argv, argv)){
             perror(string(c.toString() + ": There was an error in execvp()").c_str());
@@ -390,6 +397,14 @@ bool exec(cmd c)
     //if pid is not 0 then we?re in the parent
     //parent process
     else{
+        struct sigaction sa;
+        sa.sa_handler = handleInt;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
         pid = wait(&status);
         
         if(pid == -1){
@@ -688,10 +703,26 @@ string getPrompt(){
 
 void handleInt(int x)
 {
-    cin.clear();
     cout<<endl;
-    cin.clear();
     cout<<flush;
+}
+
+void handleIntTerm(int x)
+{
+    cout<<endl<<flush;
+    cin.clear();
+    if(raise(SIGKILL) != 0){
+        perror("There was an error in raise()");
+        //exit(1);
+    }
+}
+
+void handleStop(int x)
+{
+    if(raise(SIGSTOP) != 0){
+        perror("There was an error in raise()");
+        //exit(1);
+    }
 }
 
 
@@ -699,11 +730,10 @@ void handleInt(int x)
 // get input until in a infinite loop
 // within functions are responsible for exiting the program
 int main() {
-    
     struct sigaction sa;
     sa.sa_handler = handleInt;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_RESTART; //Restart
+    //sa.sa_flags = SA_RESTART; //Restart
     if (sigaction(SIGINT, &sa, NULL) == -1) {
         perror("There was an error in sigaction()");
         exit(1);
