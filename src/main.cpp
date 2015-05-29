@@ -11,14 +11,14 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <queue>
-
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 using namespace std;
 
-
-
+void handleIntTerm(int x);
+void handleInt(int x);
 bool exec(cmd c);
 void runPrep(cmd &c);
 void run(queue<cmd> &commands, queue<string> &connectors);
@@ -26,6 +26,8 @@ vector<cmd> pipesPrep(queue<cmd> &commands, queue<string> &connectors);
 bool isRedirect(string con);
 bool isOutRed(string con);
 int getFlag(string con, int &fd);
+bool builtInCD(cmd c);
+string replaceHome(string curr);
 
 bool exec2(cmd c)
 {
@@ -95,6 +97,15 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
             perror("There was an error in fork");
         ids.push_back(pid);
         if (pid == 0) {
+            //This is the child process 
+            struct sigaction sa;
+            sa.sa_handler = handleIntTerm;
+            sigemptyset(&sa.sa_mask);
+            sa.sa_flags = SA_RESTART; //Restart
+            if (sigaction(SIGINT, &sa, NULL) == -1) {
+                perror("There was an error in sigaction()");
+                exit(1);
+            }
             if (in != 0) {
                 if (dup2(in , 0) == -1) {
                     perror("There was an error in dup2 1");
@@ -140,6 +151,15 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
         exec2(v.at(v.size() - 1));
         
     } else if (pid > 0){
+        //parent process
+        struct sigaction sa;
+        sa.sa_handler = handleInt;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
         FOR(ids) {
             if (waitpid(ids[i], NULL, 0) == -1)
                 perror("There was an error in wait");
@@ -374,6 +394,14 @@ bool exec(cmd c)
     }
     else if(pid == 0){//when pid is 0 you are in the child process
         //This is the child process 
+        struct sigaction sa;
+        sa.sa_handler = handleIntTerm;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
         char **argv = c.toArray();  
         if(-1 == execvp(*argv, argv)){
             perror(string(c.toString() + ": There was an error in execvp()").c_str());
@@ -381,9 +409,18 @@ bool exec(cmd c)
         exit(1);
     }
     //if pid is not 0 then we?re in the parent
-    //parent process
     else{
+        //parent process
+        struct sigaction sa;
+        sa.sa_handler = handleInt;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
         pid = wait(&status);
+        
         if(pid == -1){
             perror("There was an error in wait()");
             exit(1);
@@ -458,7 +495,12 @@ void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
     //use the first command "highest priority" 
     cmd com = commands.front();
     if(com.toString() == "exit") exit(0);
-    
+    if(com.toVector().at(0) == "cd"){
+        bool r = builtInCD(com);
+        commands.pop();
+        run2(commands, connectors, r);
+        return;
+    }
     string con;
     if(!connectors.empty()) con = connectors.front();
     //cout<<prev;
@@ -508,6 +550,61 @@ void run2(queue<cmd> &commands, queue<string> &connectors, bool &prev)
     return ;
 }
 
+bool builtInCD(cmd c)
+{
+    vector<string> clist = c.toVector();
+    string path;
+    // cd
+    if(clist.size() == 1){
+        path = getenv("HOME");
+    }
+    else if(clist.size() == 2){
+        // cd -
+        if(clist.at(1)== "-")  path = getenv("OLDPWD");
+        // cd <PATH>
+        else path = clist.at(1);
+    }
+    const char *pwd0 = "PWD";
+    char *pwd = getenv(pwd0);
+    if(pwd==NULL){
+        perror("There was an error in getenv");
+        return false;
+    }
+    
+    if(chdir(path.c_str()) == -1){
+        perror(string(path +" There was an error in chdir").c_str());
+        return false;
+    }
+    char path2[128];
+    char *path3  = getcwd(path2,128);
+    if(path3==NULL){
+        perror("There was an error in getcwd");
+    }
+    if(setenv(pwd0, path3, 1) == -1){
+        perror("There was an error in setenv");
+        return false;
+    }
+    const char *oldpwd0 = "OLDPWD";
+    if(setenv(oldpwd0, pwd, 1) == -1){
+        perror("There was an error in setenv");
+        return false;
+    }
+    
+    /*
+    char *pwd2 = getenv(pwd0);
+    char *oldpwd2 = getenv(oldpwd0);
+    cout << "curr: " << pwd2 << endl;
+    cout << "old: " << oldpwd2 << endl;
+    */
+    
+    char *pwd2 = getenv("PWD");
+    if(pwd2==NULL){
+        perror("There was an error in getenv");
+    } else  cout << pwd2 << endl;
+    
+    return true;
+}
+
 // do the logics of commands, executing execpv when needed 
 // then call run again recursively
 // or exits the program if it's the case
@@ -517,6 +614,12 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     //use the first command "highest priority" 
     cmd com = commands.front();
     if(com.toString() == "exit") exit(0);
+    if(com.toVector().at(0) == "cd"){
+        bool r = builtInCD(com);
+        commands.pop();
+        run2(commands, connectors, r);
+        return;
+    }
     
     string con;
     if(!connectors.empty())con= connectors.front();
@@ -572,18 +675,38 @@ void run(queue<cmd> &commands, queue<string> &connectors)
     return ;
 }
 
+string replaceHome(string curr)
+{
+    string ret = curr;
+    char *hm = getenv("HOME");
+    if(hm==NULL){
+        perror("There was an error in getenv");
+        return ret;
+    }
+    string home = hm;
+    size_t found;
+    found = curr.find(home);
+    if(found !=string::npos){
+        ret.replace(found, home.size()-found, "");
+        ret = "~" + ret;
+    }
+    
+    return ret;
+}
+
 // returns a string with user and machine name
 string getPrompt(){
     char machine[128];
+    char dir[128];
     string user;
     string prompt;
     
     struct passwd *pw  = getpwuid(getuid());
     int host = gethostname(machine,128);
-    
-    if(pw != NULL && host != -1){
+    char *pwd = getcwd(dir, 128);
+    if(pw != NULL && host != -1 && pwd != NULL){
         user = pw->pw_name;
-        prompt = user + "@" + string(machine)  + "$ ";
+        prompt = user + "@" + string(machine) + ": " + replaceHome(pwd)  + " $ ";
     } else{
         prompt = "$ ";
         if(pw == NULL)
@@ -595,12 +718,50 @@ string getPrompt(){
 
 }
 
+void handleStop(int x)
+{
+    if(raise(SIGSTOP) != 0){
+        perror("There was an error in raise()");
+        //exit(1);
+    }
+}
+
+void handleInt(int x)
+{
+    if(x==SIGINT){
+        cout<<endl;
+        cout<<flush;
+    }
+}
+
+void handleIntTerm(int x)
+{
+    if(x==SIGINT){
+        cout<<endl<<flush;
+        cin.clear();
+        if(raise(SIGINT) != 0){
+            perror("There was an error in raise()");
+            //exit(1);
+        }
+    }
+}
+
+
 // main program
 // get input until in a infinite loop
 // within functions are responsible for exiting the program
-int main()
-{
+int main() {
+   
     while(true){
+        struct sigaction sa;
+        sa.sa_handler = handleInt;
+        sigemptyset(&sa.sa_mask);
+        //sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
+        cin.clear();
         cout << getPrompt();
         string st;
         getline (cin,st);
@@ -611,6 +772,5 @@ int main()
         cout << flush;
         cin.clear();
     }
-    //*/
     return 0;
 }

@@ -89,21 +89,35 @@ Just like bash, when chaining multiple redirection commands together (e.g. `echo
 However, when mixing up multiple input redirections with other input/output redirectins (e.g. `./a.out < inputFile > output1 > output2`), rshell has a different aproach from Unix bash implementation. It echos out to the first output file in the chain (i.e. `output1`).
 
 
+####HW3: rshell signals and cd command
+This version implements the feature to handle `^C` signals from the user so that rshell does not exit; instead, it send the SIGINT signal to the foreground process. It means that if you run a program through rshell that goes into a infite loop, now you are able to interrupt this program by pressing `^C` (aka. control key + C). 
+
+Additionally, now rshell is able to run the cd command in various forms. 
+
+* `cd` by itself changes the current working directory to the `HOME` directory. 
+* `cd <PATH>` changes the current working directory to the desired `PATH`. 
+* `cd -` changes the current working directory to the previous working directory. 
+
+
+For example, if I am working on `~/dir1` , then I run `cd wdir2/wdir3`, I will be at `~/dir1/wdir2/wdir3`. Then if I run `cd -` it will take me back to the previous directory I was at, which is `~/dir1`. 
+
+
 ##Installation
 ####Installation HW0: rshell
-To be able to install and run the program, it's necessary to clone the repository, run the make command, then finally run rshell that is going to be located in the bin folder. The following commands would do the described steps:
+To be able to install and run the program, it's necessary to clone the repository, run the make command, then finally run rshell that is going to be located in the bin folder. It means that for each homework the following commands would run the needed executable, just differing in the commented part:
+
 ```
 $ git clone  https://github.com/fvera002/rshell.git
 $ cd rshell
-$ git checkout hw0
+$ git checkout hwn  #replace n by de desired homework number (e.g. hw0, hw1...)
 $ make
-$ bin/rshell
+$ bin/rshell        #for hw1 instead of rshell the desired file would be bin/ls
 ```
 
 
 Upon running, the program will display a prompt waiting for an entry:
 
-`logged_user@machine_name123$`
+`logged_user@machine_name123 ~path/from/home/directory $`
 
 The same prompt will be displayed every time the program is done executing commands. There is a built in command that can be used to quit the program:
 
@@ -113,38 +127,11 @@ It can also be used together with other commands and connectors. For instance:
 
 `ls -l ; pwd; exit`
 
-This last example would run `ls -l`, then `pwd`, so finally it would exit the program. 
-
-####Installation HW1: ls 
-To be able to install and run the program, it's necessary to follow the same steps as before in hw0 regarding cloning the repository, with some differences upon compiling. The following commands would install correctly the ls feature:
-```
-$ git clone  https://github.com/fvera002/rshell.git
-$ cd rshell
-$ git checkout hw1
-$ make ls
-$ bin/ls
-```
-
-####Installation HW2: rshell piping
-Since this version just adds new features to the first homework, the installation process is basically the same, except for the version that will to be checked out. Now,  `hw2` needs to be checked out instead of `hw1`. So, the steps will look like this: 
-
-```
-$ git clone  https://github.com/fvera002/rshell.git
-$ cd rshell
-$ git checkout hw2
-$ make
-$ bin/rshell
-```
+Therefore, this last example would run `ls -l`, then `pwd`, so finally it would exit the program. 
 
 
 ## Bugs and Limitations
 ####Bugs HW0: rshell
-* This implementation does not support special characters and their features. It only recognizes commands, the given connectors, and the hashtag `#` for comments. Therefore, quotes, parentheses and other special characters would be considered as part of the argument list. It means that the following command would not behave as "usual" (the same way a linux shell behaves):
-
-    `echo "This is a README file" > README.md`
-
-    Instead, it would echo exactly what was written: `"This is a README file" > README.md`
-
 * Running `bin/rshell` by redirecting its input would not work properly. 
     ```
     Do not run:

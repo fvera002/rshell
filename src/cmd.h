@@ -120,6 +120,11 @@ class cmd
             return input;
         }
         
+        vector<string> toVector()
+        {
+            return argList;
+        }
+        
         // print commands separeted by _ to check blank spaces
         void print()
         {

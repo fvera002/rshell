@@ -1,0 +1,302 @@
+Script started on Thu May 28 23:37:01 2015
+~
+fvera002@well $ cd rshell
+~/rshell
+fvera002@well $ make
+mkdir -p bin
+cd bin; g++ ../src/main.cpp -g -Wall -Werror -ansi -pedantic -o rshell
+mkdir -p bin
+cd bin; g++ ../src/ls.cpp -g -Wall -Werror -ansi -pedantic -o ls
+~/rshell
+fvera002@well $ bin/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ # 1  . Testing cd <PATH>
+fvera002@well.cs.ucr.edu: ~/rshell $ cd  ls  cd src
+/home/csmajs/fvera002/rshell/src
+fvera002@well.cs.ucr.edu: ~/rshell/src $ ls
+Timer.h  cmd.h	cp.cpp	ls.cpp	main.cpp  mv.cpp  rm.cpp
+fvera002@well.cs.ucr.edu: ~/rshell/src $ cd ../..
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ ls
+-S	   a.out  cs012  index.html	  rshell    ttt
+Desktop    assg1  cs061  list.txt	  test	    ucr-cs100
+Downloads  assn5  cs100  redirect.script  test.cpp
+fvera002@well.cs.ucr.edu: ~ $ cd rshell/bin
+/home/csmajs/fvera002/rshell/bin
+fvera002@well.cs.ucr.edu: ~/rshell/bin $ ls
+ls  rshell
+fvera002@well.cs.ucr.edu: ~/rshell/bin $ dc  cd ..
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ cd  # testing cd <PATH> ech   with connectors
+fvera002@well.cs.ucr.edu: ~/rshell $ echo a; cd src
+a
+/home/csmajs/fvera002/rshell/src
+fvera002@well.cs.ucr.edu: ~/rshell/src $ cd .. ;    ;cd   cd src; ls                 ; ls ; cddd     cd .. ;    ;cdsr   src; ls
+Timer.h  cmd.h	cp.cpp	ls.cpp	main.cpp  mv.cpp  rm.cpp
+/home/csmajs/fvera002/rshell
+/home/csmajs/fvera002/rshell/src
+Timer.h  cmd.h	cp.cpp	ls.cpp	main.cpp  mv.cpp  rm.cpp
+fvera002@well.cs.ucr.edu: ~/rshell/src $ ls  cdd       mkdir tes   dirTest
+fvera002@well.cs.ucr.edu: ~/rshell/src $ cd dirTest || ls
+/home/csmajs/fvera002/rshell/src/dirTest
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ echo a> newfile
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ cd  cd ..
+/home/csmajs/fvera002/rshell/src
+fvera002@well.cs.ucr.edu: ~/rshell/src $ cd d dirTest || ls
+/home/csmajs/fvera002/rshell/src/dirTest
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ cd ..
+/home/csmajs/fvera002/rshell/src
+fvera002@well.cs.ucr.edu: ~/rshell/src $ cd dirTest && ls
+/home/csmajs/fvera002/rshell/src/dirTest
+newfile
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ cd ../..
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ # 2 testing cd (go to home directory)
+fvera002@well.cs.ucr.edu: ~/rshell $ cd
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ pwd
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ cd
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ cd
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ ls
+-S	   a.out  cs012  index.html	  rshell    ttt
+Desktop    assg1  cs061  list.txt	  test	    ucr-cs100
+Downloads  assn5  cs100  redirect.script  test.cpp
+fvera002@well.cs.ucr.edu: ~ $ cd rshell
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ #   cd; echo done
+/home/csmajs/fvera002
+done
+fvera002@well.cs.ucr.edu: ~ $ # cd rshell/src/dirTest
+/home/csmajs/fvera002/rshell/src/dirTest
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $  cd   echo ls; echo    cd; pwd
+ls
+/home/csmajs/fvera002
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ cd rshell
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ # 3 testing cd -
+fvera002@well.cs.ucr.edu: ~/rshell $ cd src
+/home/csmajs/fvera002/rshell/src
+fvera002@well.cs.ucr.edu: ~/rshell/src $ cd -
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ pwd
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ cd -
+/home/csmajs/fvera002/rshell/src
+fvera002@well.cs.ucr.edu: ~/rshell/src $ pwd
+/home/csmajs/fvera002/rshell/src
+fvera002@well.cs.ucr.edu: ~/rshell/src $ cd -
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ pwd
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ src   cd src/       # all toh gether now
+fvera002@well.cs.ucr.edu: ~/rshell $ cd pw  src/dirTest; pwd; cd  ; pwd; cd -; pwd
+/home/csmajs/fvera002/rshell/src/dirTest
+/home/csmajs/fvera002/rshell/src/dirTest
+/home/csmajs/fvera002
+/home/csmajs/fvera002
+/home/csmajs/fvera002/rshell/src/dirTest
+/home/csmajs/fvera002/rshell/src/dirTest
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ cd -
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ pwd
+/home/csmajs/fvera002
+fvera002@well.cs.ucr.edu: ~ $ cd -
+/home/csmajs/fvera002/rshell/src/dirTest
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ # now   4. Testing Singa   gnal
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ # when I press control C + C it does           os es appear im my terminal, I hope i   it apperars    ars in the script
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ cat
+
+
+
+
+adas
+adas
+ad
+ad
+
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ cat
+
+
+
+
+
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ ps
+  PID TTY          TIME CMD
+12261 pts/93   00:00:00 bash
+12327 pts/93   00:00:00 rshell
+14848 pts/93   00:00:00 ps
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ 
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ ps
+  PID TTY          TIME CMD
+12261 pts/93   00:00:00 bash
+12327 pts/93   00:00:00 rshell
+14865 pts/93   00:00:00 ps
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $ anoth     # testing infinite loop
+fvera002@well.cs.ucr.edu: ~/rshell/src/dirTest $  cd   cd ../..
+/home/csmajs/fvera002/rshell
+fvera002@well.cs.ucr.edu: ~/rshell $ cat test.cpp
+#include <iostream>
+using namespace std;
+
+int main ()
+{
+    while(1);
+    return 0;
+}
+fvera002@well.cs.ucr.edu: ~/rshell $ g++ test.cpp
+fvera002@well.cs.ucr.edu: ~/rshell $ ./a.out
+
+
+fvera002@well.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+12261 pts/93   00:00:00 bash
+12327 pts/93   00:00:00 rshell
+15086 pts/93   00:00:00 ps
+fvera002@well.cs.ucr.edu: ~/rshell $ 
+fvera002@well.cs.ucr.edu: ~/rshell $ #testing piping and signals
+fvera002@well.cs.ucr.edu: ~/rshell $ cat | grep test
+test
+test
+
+sdhjadhkjahdkj
+tet stjakldjalk
+testjakldjalk
+
+fvera002@well.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+12261 pts/93   00:00:00 bash
+12327 pts/93   00:00:00 rshell
+15208 pts/93   00:00:00 ps
+fvera002@well.cs.ucr.edu: ~/rshell $ echo a      # connectors
+fvera002@well.cs.ucr.edu: ~/rshell $ echo a; cat
+a
+
+fvera002@well.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+12261 pts/93   00:00:00 bash
+12327 pts/93   00:00:00 rshell
+15258 pts/93   00:00:00 ps
+fvera002@well.cs.ucr.edu: ~/rshell $ #Well I hope this covers evert ything and also the second    nd extra credit wi hich cab n be seen in exery propmt   mt pt. 
+fvera002@well.cs.ucr.edu: ~/rshell $ exit
+~/rshell
+fvera002@well $ exit
+exit
+
+Script done on Thu May 28 23:54:35 2015
+Script started on Fri 29 May 2015 01:38:31 PM PDT
+~
+fvera002@hammer $ #testing appending
+~
+fvera002@hammer $ exit
+exit
+
+Script done on Fri 29 May 2015 01:38:38 PM PDT
+Script started on Fri 29 May 2015 01:38:59 PM PDT
+~
+fvera002@hammer $ cd rshell
+~/rshell
+fvera002@hammer $ make
+mkdir -p bin
+cd bin; g++ ../src/main.cpp -g -Wall -Werror -ansi -pedantic -o rshell
+mkdir -p bin
+cd bin; g++ ../src/ls.cpp -g -Wall -Werror -ansi -pedantic -o ls
+~/rshell
+fvera002@hammer $ bin/rshell
+fvera002@hammer.cs.ucr.edu: ~/rshell $ @ #res    A I am p appre  ending to this script since, the ^C singl   gnal was not being captured because       in the script since     because I was running in the well server. 
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # n  s  so nbo  ow, retestiung   ng ^C command
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+40824 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cat
+test
+test
+test2
+test2
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+40857 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ sleep 10
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+40917 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ 
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # #testing a infinite loop
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cat test.cpp
+#include <iostream>
+using namespace std;
+
+int main ()
+{
+    while(1);
+    return 0;
+}
+fvera002@hammer.cs.ucr.edu: ~/rshell $ g++ test.cpp
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ./a.out
+
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+41010 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # test pipen  ing
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cat | grwep   e[ p test
+no matc       does not matches
+test matches
+test matches
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+41068 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # now addind   g one   test to the cd part
+fvera002@hammer.cs.ucr.edu: ~/rshell $ @ # tt esting absolute path
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cd /home/csmajs/fvera002/rshell/src
+/home/csmajs/fvera002/rshell/src
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ pwd
+/home/csmajs/fvera002/rshell/src
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ # non existing directory
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ ^[[A    cd  ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ c ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+41303 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ cd    ls
+cmd.h  cp.cpp  ls.cpp  main.cpp  mv.cpp  rm.cpp  Timer.h
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ cd nonexit st
+nonexist There was an error in chdir: No such file or directory
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ cd home/csmajs/fvera002/rshell                           /home        cd /home/csmajs/fvera002/rshell/src/nonexist
+/home/csmajs/fvera002/rshell/src/nonexist There was an error in chdir: No such file or directory
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ pwd
+/home/csmajs/fvera002/rshell/src
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ #the end
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ exit
+~/rshell
+fvera002@hammer $ exit
+exit
+
+Script done on Fri 29 May 2015 01:44:13 PM PDT
