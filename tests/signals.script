@@ -193,3 +193,110 @@ fvera002@well $ exit
 exit
 
 Script done on Thu May 28 23:54:35 2015
+Script started on Fri 29 May 2015 01:38:31 PM PDT
+~
+fvera002@hammer $ #testing appending
+~
+fvera002@hammer $ exit
+exit
+
+Script done on Fri 29 May 2015 01:38:38 PM PDT
+Script started on Fri 29 May 2015 01:38:59 PM PDT
+~
+fvera002@hammer $ cd rshell
+~/rshell
+fvera002@hammer $ make
+mkdir -p bin
+cd bin; g++ ../src/main.cpp -g -Wall -Werror -ansi -pedantic -o rshell
+mkdir -p bin
+cd bin; g++ ../src/ls.cpp -g -Wall -Werror -ansi -pedantic -o ls
+~/rshell
+fvera002@hammer $ bin/rshell
+fvera002@hammer.cs.ucr.edu: ~/rshell $ @ #res    A I am p appre  ending to this script since, the ^C singl   gnal was not being captured because       in the script since     because I was running in the well server. 
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # n  s  so nbo  ow, retestiung   ng ^C command
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+40824 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cat
+test
+test
+test2
+test2
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+40857 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ sleep 10
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+40917 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ 
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # #testing a infinite loop
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cat test.cpp
+#include <iostream>
+using namespace std;
+
+int main ()
+{
+    while(1);
+    return 0;
+}
+fvera002@hammer.cs.ucr.edu: ~/rshell $ g++ test.cpp
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ./a.out
+
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+41010 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # test pipen  ing
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cat | grwep   e[ p test
+no matc       does not matches
+test matches
+test matches
+^C
+fvera002@hammer.cs.ucr.edu: ~/rshell $ ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+41068 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell $ # now addind   g one   test to the cd part
+fvera002@hammer.cs.ucr.edu: ~/rshell $ @ # tt esting absolute path
+fvera002@hammer.cs.ucr.edu: ~/rshell $ cd /home/csmajs/fvera002/rshell/src
+/home/csmajs/fvera002/rshell/src
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ pwd
+/home/csmajs/fvera002/rshell/src
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ # non existing directory
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ ^[[A    cd  ^C
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ c ps
+  PID TTY          TIME CMD
+40678 pts/38   00:00:00 bash
+40703 pts/38   00:00:00 rshell
+41303 pts/38   00:00:00 ps
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ cd    ls
+cmd.h  cp.cpp  ls.cpp  main.cpp  mv.cpp  rm.cpp  Timer.h
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ cd nonexit st
+nonexist There was an error in chdir: No such file or directory
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ cd home/csmajs/fvera002/rshell                           /home        cd /home/csmajs/fvera002/rshell/src/nonexist
+/home/csmajs/fvera002/rshell/src/nonexist There was an error in chdir: No such file or directory
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ pwd
+/home/csmajs/fvera002/rshell/src
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ #the end
+fvera002@hammer.cs.ucr.edu: ~/rshell/src $ exit
+~/rshell
+fvera002@hammer $ exit
+exit
+
+Script done on Fri 29 May 2015 01:44:13 PM PDT
