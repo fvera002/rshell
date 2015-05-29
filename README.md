@@ -132,12 +132,6 @@ Therefore, this last example would run `ls -l`, then `pwd`, so finally it would 
 
 ## Bugs and Limitations
 ####Bugs HW0: rshell
-* This implementation does not support special characters and their features. It only recognizes commands, the given connectors, and the hashtag `#` for comments. Therefore, quotes, parentheses and other special characters would be considered as part of the argument list. It means that the following command would not behave as "usual" (the same way a linux shell behaves):
-
-    `echo "This is a README file" > README.md`
-
-    Instead, it would echo exactly what was written: `"This is a README file" > README.md`
-
 * Running `bin/rshell` by redirecting its input would not work properly. 
     ```
     Do not run:
