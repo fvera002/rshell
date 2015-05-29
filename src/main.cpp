@@ -11,15 +11,11 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <queue>
-
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <signal.h>
 
 using namespace std;
-
-//to do:
-// cat then ^C
 
 void handleIntTerm(int x);
 void handleInt(int x);
@@ -558,11 +554,14 @@ bool builtInCD(cmd c)
 {
     vector<string> clist = c.toVector();
     string path;
+    // cd
     if(clist.size() == 1){
         path = getenv("HOME");
     }
     else if(clist.size() == 2){
+        // cd -
         if(clist.at(1)== "-")  path = getenv("OLDPWD");
+        // cd <PATH>
         else path = clist.at(1);
     }
     const char *pwd0 = "PWD";
@@ -719,27 +718,31 @@ string getPrompt(){
 
 }
 
-void handleInt(int x)
-{
-    cout<<endl;
-    cout<<flush;
-}
-
-void handleIntTerm(int x)
-{
-    cout<<endl<<flush;
-    cin.clear();
-    if(raise(SIGKILL) != 0){
-        perror("There was an error in raise()");
-        //exit(1);
-    }
-}
-
 void handleStop(int x)
 {
     if(raise(SIGSTOP) != 0){
         perror("There was an error in raise()");
         //exit(1);
+    }
+}
+
+void handleInt(int x)
+{
+    if(x==SIGINT){
+        cout<<endl;
+        cout<<flush;
+    }
+}
+
+void handleIntTerm(int x)
+{
+    if(x==SIGINT){
+        cout<<endl<<flush;
+        cin.clear();
+        if(raise(SIGINT) != 0){
+            perror("There was an error in raise()");
+            //exit(1);
+        }
     }
 }
 
@@ -750,7 +753,7 @@ void handleStop(int x)
 int main() {
    
     while(true){
-         struct sigaction sa;
+        struct sigaction sa;
         sa.sa_handler = handleInt;
         sigemptyset(&sa.sa_mask);
         //sa.sa_flags = SA_RESTART; //Restart
@@ -769,6 +772,5 @@ int main() {
         cout << flush;
         cin.clear();
     }
-    //*/
     return 0;
 }
