@@ -101,6 +101,15 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
             perror("There was an error in fork");
         ids.push_back(pid);
         if (pid == 0) {
+            //This is the child process 
+            struct sigaction sa;
+            sa.sa_handler = handleIntTerm;
+            sigemptyset(&sa.sa_mask);
+            sa.sa_flags = SA_RESTART; //Restart
+            if (sigaction(SIGINT, &sa, NULL) == -1) {
+                perror("There was an error in sigaction()");
+                exit(1);
+            }
             if (in != 0) {
                 if (dup2(in , 0) == -1) {
                     perror("There was an error in dup2 1");
@@ -146,6 +155,15 @@ bool piping(vector <cmd> &v, const char * ff1, const char * ff2, int flags1, int
         exec2(v.at(v.size() - 1));
         
     } else if (pid > 0){
+        //parent process
+        struct sigaction sa;
+        sa.sa_handler = handleInt;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
         FOR(ids) {
             if (waitpid(ids[i], NULL, 0) == -1)
                 perror("There was an error in wait");
@@ -395,8 +413,8 @@ bool exec(cmd c)
         exit(1);
     }
     //if pid is not 0 then we?re in the parent
-    //parent process
     else{
+        //parent process
         struct sigaction sa;
         sa.sa_handler = handleInt;
         sigemptyset(&sa.sa_mask);
@@ -730,15 +748,16 @@ void handleStop(int x)
 // get input until in a infinite loop
 // within functions are responsible for exiting the program
 int main() {
-    struct sigaction sa;
-    sa.sa_handler = handleInt;
-    sigemptyset(&sa.sa_mask);
-    //sa.sa_flags = SA_RESTART; //Restart
-    if (sigaction(SIGINT, &sa, NULL) == -1) {
-        perror("There was an error in sigaction()");
-        exit(1);
-    }
+   
     while(true){
+         struct sigaction sa;
+        sa.sa_handler = handleInt;
+        sigemptyset(&sa.sa_mask);
+        //sa.sa_flags = SA_RESTART; //Restart
+        if (sigaction(SIGINT, &sa, NULL) == -1) {
+            perror("There was an error in sigaction()");
+            exit(1);
+        }
         cin.clear();
         cout << getPrompt();
         string st;
